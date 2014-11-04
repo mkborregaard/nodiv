@@ -20,11 +20,12 @@ inv_logit <- function(a)
 quasiswap_nodesig <- function(simcom, node.sp, repeats, show = F)
 {
   ll <- 0
+  if (show) pb <- txtProgressBar(min = 0, max = repeats, style = 3)
   replicate(repeats-1,
   {
     simcom <- commsimulator(simcom, method = "quasiswap")
     rowSums(simcom[, node.sp])
-    if(show) print(ll<<-ll+1)
+    if (show) setTxtProgressBar(pb, ll <<- ll + 1)
     })
 }
 
@@ -34,6 +35,7 @@ rdtable_nodesig <- function(simcom, node.sp, repeats, show = F)
   r <- rowSums(tempcom)
   c <- colSums(tempcom)
   ll <- 0
+  if (show) pb <- txtProgressBar(min = 0, max = repeats, style = 3)
   
   # Use the quasiswap algorithm to created random matrices, basing each new matrix on the previous
   nodereps <- replicate(repeats-1,
@@ -43,13 +45,15 @@ rdtable_nodesig <- function(simcom, node.sp, repeats, show = F)
     # perform the randomization
     simcom <- r2dtable(1, r, c)[[1]]
     # return the simulated species richness of sites
-    if(show) print(ll<<-ll+1)
+    if (show) setTxtProgressBar(pb, ll <<- ll + 1)
     simcom[, 1]
     
   })
   return(nodereps)
 }
 
+
+## TODO write a wrapper for this function, that will allow you to compare any two clades
 Nodesig <- function(commat, node.sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
 {
   if(sum(node.sp)== 1 | sum(!node.sp) == 1) return(NA) #if one of the descendant clades is a single species
