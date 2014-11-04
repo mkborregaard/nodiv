@@ -1,4 +1,6 @@
 
+## These functions are all internal
+
 pval_sig <- function(pval) 
   2*(0.5-abs(pval-0.5))
 

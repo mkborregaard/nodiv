@@ -13,6 +13,9 @@ create.cols <- function(vec, col = rev(rainbow(256,start=0.02,end=0.59)), zlims 
 }
 
 
+#TODO should this be redone as a raster function?
+# spatial grids data frame.
+
 map.var = function(variable, Long, Lat, new.window = FALSE, xrange = range(Long), yrange = range(Lat), bordercolor = "darkgrey", cut.to.coast = FALSE, ...)
 # a function that will create a pretty color-coded map of any variable with Long/Lat information
 {
@@ -44,7 +47,7 @@ map.var = function(variable, Long, Lat, new.window = FALSE, xrange = range(Long)
 
 
 
-
+# TODO edit to give the output format used in the figure
 
 plot_tree_nodes <- function(variable, label = variable, tree = htree, main = deparse(substitute(variable)),  new.window = FALSE, col = rev(rainbow(256,start=0.02,end=0.59)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, genera.lines = FALSE, ...)
 # plots a tree, where the colors of the nodes reflects the values of variable
@@ -97,26 +100,28 @@ plot_tree_nodes <- function(variable, label = variable, tree = htree, main = dep
 }
 
 
+# TODO can probably just be deleted
+# plot_richness_nodesize <- function(dats = dispersion, cutoff = 0.95)  #refactor
+# # a diagnostic plot showing the species richness of sites against the mean species richness of overrepresented nodes
+# {
+# 	# dats   : the representation matrix (resulting from measure_dispersion()) used to calculate the measures
+# 	# cutoff : the cutoff value to use for significant over/under representation	 
+# 	
+# 	mean_richness_of_overrepresented_nodes <- numeric()
+# 	for (i in 1:length(siteresults$cell))
+# 	{
+# 		site <- siteresults$cell[i]
+# 		represented_nodes <- which(dats[rownames(dats) == as.character(site),] > cutoff)
+# 		mean_richness_of_overrepresented_nodes[i] <- mean(noderesults$nodesize[represented_nodes])
+# 	}
+# 	plot(siteresults$richness, mean_richness_of_overrepresented_nodes, pch = 16)
+# 	abline(lm(mean_richness_of_overrepresented_nodes ~ siteresults$richness))
+# 	abline(h = mean(noderesults$nodesize), lty = 2)
+# 	print(summary(lm(mean_richness_of_overrepresented_nodes ~ siteresults$richness)))
+# }
 
-plot_richness_nodesize <- function(dats = dispersion, cutoff = 0.95)  #refactor
-# a diagnostic plot showing the species richness of sites against the mean species richness of overrepresented nodes
-{
-	# dats   : the representation matrix (resulting from measure_dispersion()) used to calculate the measures
-	# cutoff : the cutoff value to use for significant over/under representation	 
-	
-	mean_richness_of_overrepresented_nodes <- numeric()
-	for (i in 1:length(siteresults$cell))
-	{
-		site <- siteresults$cell[i]
-		represented_nodes <- which(dats[rownames(dats) == as.character(site),] > cutoff)
-		mean_richness_of_overrepresented_nodes[i] <- mean(noderesults$nodesize[represented_nodes])
-	}
-	plot(siteresults$richness, mean_richness_of_overrepresented_nodes, pch = 16)
-	abline(lm(mean_richness_of_overrepresented_nodes ~ siteresults$richness))
-	abline(h = mean(noderesults$nodesize), lty = 2)
-	print(summary(lm(mean_richness_of_overrepresented_nodes ~ siteresults$richness)))
-}
 
+#TODO refactor
 plotsite = function(site, dats = dispersion_corr, tree = htree, comm = hcom, genera_lines = TRUE) #update to be reasonable
 # an exploratory plotting function 
 # given a site number, this shows the location of the site, and a tree illustrating which nodes are overrepresented at the site
@@ -147,58 +152,10 @@ plotsite = function(site, dats = dispersion_corr, tree = htree, comm = hcom, gen
 	points(siteresults$Long[site], siteresults$Lat[site],col = "red", pch = 16, cex = 1.5)
 }
 
-hist_ranks = function(node = sample(Nnode(tree),1) + Ntip(tree), tree = htree, dats = dispersion_corr, comm = hcom, new.window = FALSE)
-# another exploratory plotting function
-# given a node number, this will show a histogram of the degree of overrepresentation in each site (i.e. each value corresponds to the percentile of the empirical value in the random distribution)
-# occupied sites are red, unoccupied sites are red
-{
-	# node    :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
-	# dats   : the representation matrix (resulting from measure_dispersion()) 
 
-	require(ape)
-	
-	nodetree <- extract.clade(tree, node)
-	presents <- subset(comm, Species %in% nodetree$tip.label)
-	presents_index <- which(rownames(dats) %in% presents$Plot)
-	
-	print(paste("Node",node,"with",length(nodetree$tip.label),"species"))
-	
-	if(new.window) quartz()
-	
-	hist(dats[,which(as.numeric(colnames(dats)) == node)], main = paste("Node",node,"with",length(nodetree$tip.label),"species"), xlim = c(0,1), breaks = -2:20/20+0.025, xlab = "mean rank in random distribution", col = "green")
-	hist(dats[presents_index,which(as.numeric(colnames(dats)) == node)], add = T, breaks = -2:20/20+0.025, col = "red")
-	abline(v = 0.5, lty = 2)
-	abline(v = 0.95,lty = 2)
-	abline (v = 0.05, lty = 2)
-	
-} 
 
-plotnode_maps <- function(node_number, dispersion, siteresults, new.window = FALSE)
-# An exploratory plotting function
-# Given a node number, this draws four maps in the same window: 
-#	- a map of the location of overrepresented sites for that node
-#	- a map of the location of underrepresented sites for that node
-#	- a map of the species richness of species descending from that node
-#	- a map of the overall species richness
-{
-	# node_number   :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
-	# dispersion	: the representation matrix (resulting from calling measure_dispersion())
 
-	richs <- Node.richness(node_number)
-	overrep <- dispersion[,colnames(dispersion)==as.character(node_number)] > 0.95
-	underrep <- dispersion[,colnames(dispersion)==as.character(node_number)] < 0.05
-	
-	if(new.window) quartz()
-	par(mfrow = c(2,2))
-	
-	map.var(overrep, siteresults$Long, siteresults$Lat, FALSE, main = paste("overrepresented sites for node", node_number), col = c("white","red2"))
-	
-	map.var(underrep, siteresults$Long, siteresults$Lat, FALSE, main = paste("underrepresented sites for node", node_number), col = c("white","red2"))
-	
-	map.var(richs$richness, richs$Long, richs$Lat, FALSE, main = paste("richness of node", node_number))
-	
-	map.var(siteresults$richness, siteresults$Long, siteresults$Lat, FALSE, main = "richness of all species")
-}
+
 
 plotnode <- function(node_number, comm, tree = htree, coords = dat.LL, plottype = c("map", "points"), ...)
 {
@@ -246,34 +203,7 @@ plotoverrep <- function(node_number, dispersion_eff = rep_matrix, coords = dat.L
 }
 
 
-plotnode_maps_new <- function(node_number, dispersion_eff = rep_matrix, tree = htree, comm = hcom, coords = dat.LL, new.window = FALSE, plottype = c("map", "points"))
-# An exploratory plotting function
-# Given a node number, this draws four maps in the same window: 
-#	- a map of the location of overrepresented sites for that node
-#	- a map of the location of underrepresented sites for that node
-#	- a map of the species richness of species descending from that node
-#	- a map of the overall species richness
-# - NOTE the code will crash if plottype is incorrectly specified
-{
-	# node_number   :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
-	# dispersion	: the representation matrix (resulting from calling measure_dispersion())
-
-	require(ape)
-	
-	if(new.window) quartz()
-	par(mfrow = c(2,2))
-	
-	plotoverrep(node_number, dispersion_eff, coords, tree, new.window = FALSE, plottype = plottype)
-	
-	plotnode(node_number, comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of node", node_number))
-
-	plotnode(Parent(node_number), comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of parent node", Parent(node_number)))
-	
-	plotnode(basal.node(htree), comm, tree, coords, new.window = FALSE, plottype = plottype, main = "richness of basal node")
-	
-}
-
-
+# TODO rename and make an S3 method of function
 plotnode_maps_new_parent <- function(node_number, par_rep_matrix = parent_rep_matrix, tree = htree, comm = hcom, coords = dat.LL, new.window = FALSE, plottype = c("map", "points"))
   # An exploratory plotting function
   # Given a node number, this draws four maps in the same window: 
@@ -300,30 +230,3 @@ plotnode_maps_new_parent <- function(node_number, par_rep_matrix = parent_rep_ma
   
 }
 
-
-plottree.dispersion.heights <- function(disp = noderesults$overdisp, tree = htree, nodelab = FALSE, ...)
-# an experimental plotting function
-# draws the phylogenetic tree (without tips). The node locations on the y axis correspond to the number of sites in which the node is overrepresented
-{
-	# disp		: the variable for the overrepresentation of nodes. Should be noderesults$overdisp or noderesults$overdisp_corr
-	# tree		: the phylogenetic tree
-	# nodelab	: should the nodenames be printed next to the numbers
-	# ...		: extra arguments to be passed on to plot()
-	
-	nodeages <- max(branching.times(tree)) - branching.times(tree)
-
-	draw.edge <- function(node1, node2)
-	{
-		segments(nodeages[node1-Ntip(tree)], disp[noderesults$nodenumbers == node1], nodeages[node2-Ntip(tree)], disp[noderesults$nodenumbers == node2])
-	}
-
-	plot(nodeages, disp, pch = 16, ...)
-
-	for (i in 1:length(tree$edge[,1]))
-	{
-		if(tree$edge[i,2] > Ntip(tree))
-			draw.edge(tree$edge[i,1], tree$edge[i,2])
-	}
-	if(nodelab)
-		text(nodeages - 0.3, disp, 1:Nnode(tree) + Ntip(tree))
-}

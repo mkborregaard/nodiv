@@ -1,4 +1,21 @@
+#TODO replace with import
 library(picante)
+
+Definition of nodiv_data-class
+
+
+
+
+
+
+
+
+
+
+
+Definition of nodiv-class
+
+
 
 commat <- read.delim("../OCCUR_ALL.xls")
 hcom <- matrix2sample(commat)

@@ -1,12 +1,13 @@
 #FUNCTIONS
 
 
-
+#TODO replace with imports
 source("Node_based_analysis.R")
 source("Nodesig_function.R")
 
   
 # Set up parallel processing (recommended, as the analysis is computationally heavy for large matrices)
+#TODO this is an alternative method.
 require(foreach)
 require(doSNOW)
 
@@ -16,10 +17,11 @@ cl = makeCluster(number_of_cores)
 registerDoSNOW(cl)
 repeats <- 100
   
-#forloop res_list <- list()
-#forloop for(node in nodenumbers(htree)) 
-# The main loop, which creates the representation value for each node and returns a matrix with sites as rows and individual nodes as columns: 
-nodesig_raw_results_new <- foreach (node = nodenumbers(htree), .combine = cbind, .packages = c("picante","vegan","ape"))  %dopar%
+
+#TODO put all this in a function
+
+show <- T #TODO remove
+representation_matrix <- foreach (node = nodenumbers(htree), .combine = cbind, .packages = c("picante","vegan","ape"))  %dopar%
 {
   # create the return vector of NA's. This means that all sites occupied by the parent node will retain the value NA in the final matrix
   ret = rep(NA, length(unique(hcom$Plot)))
@@ -57,7 +59,6 @@ nodesig_raw_results_new <- foreach (node = nodenumbers(htree), .combine = cbind,
   #forloop print(node)} 
 }
 
-save(nodesig_raw_results_new, file = "nodesigRawResults_new.Rdata")
 
 
 
