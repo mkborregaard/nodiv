@@ -19,21 +19,21 @@ inv_logit <- function(a)
 }
 
 
-quasiswap_nodesig <- function(simcom, node.sp, repeats, show = F)
+quasiswap_nodesig <- function(simcom, Node_sp, repeats, show = F)
 {
   ll <- 0
   if (show) pb <- txtProgressBar(min = 0, max = repeats, style = 3)
   replicate(repeats-1,
   {
     simcom <- commsimulator(simcom, method = "quasiswap")
-    rowSums(simcom[, node.sp])
+    rowSums(simcom[, Node_sp])
     if (show) setTxtProgressBar(pb, ll <<- ll + 1)
     })
 }
 
-rdtable_nodesig <- function(simcom, node.sp, repeats, show = F)
+rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
 {
-  tempcom <- cbind(rowSums(simcom[,node.sp]), rowSums(simcom[,!node.sp]))
+  tempcom <- cbind(rowSums(simcom[,Node_sp]), rowSums(simcom[,!Node_sp]))
   r <- rowSums(tempcom)
   c <- colSums(tempcom)
   ll <- 0
@@ -56,9 +56,9 @@ rdtable_nodesig <- function(simcom, node.sp, repeats, show = F)
 
 
 ## TODO write a wrapper for this function, that will allow you to compare any two clades
-Nodesig <- function(commat, node.sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
+Nodesig <- function(commat, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
 {
-  if(sum(node.sp)== 1 | sum(!node.sp) == 1) return(NA) #if one of the descendant clades is a single species
+  if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(NA) #if one of the descendant clades is a single species
   method = match.arg(method)
   # A global variable to count the number of repeats
   require(vegan)
@@ -66,12 +66,12 @@ Nodesig <- function(commat, node.sp, repeats = 100, method = c("quasiswap","rdta
   simcom <- commat
   
   nodereps <- switch(method,
-         quasiswap = quasiswap_nodesig(simcom, node.sp, repeats, show),
-         rdtable = rdtable_nodesig(simcom, node.sp, repeats, show)
+         quasiswap = quasiswap_nodesig(simcom, Node_sp, repeats, show),
+         rdtable = rdtable_nodesig(simcom, Node_sp, repeats, show)
   )
   
   
-  nodeemp <- rowSums(commat[, node.sp])
+  nodeemp <- rowSums(commat[, Node_sp])
   nodereps <- cbind(nodeemp, nodereps)
   ord <- apply(nodereps, 1,  rank)[1,]
   ord[ord == repeats] <- repeats - 1

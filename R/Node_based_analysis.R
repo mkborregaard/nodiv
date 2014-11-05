@@ -6,42 +6,41 @@
 
 ##############INTERNAL FUNCTIONS (NOT TO BE EXPORTED)###############
 
-# most functions here require the 'ape' package
-require(ape) #TODO import instead
 
 ## Functions relating trees and sites
 	 
 # returns the internal node number of the basal node on the phylogeny
 basal.node <- function(tree) return(Ntip(tree) + 1)
 
-Descendants <- function(node, tree = htree) 
+Descendants <- function(node, tree) 
   return(tree$edge[ tree$edge[,1] == node , 2])
 
-Parent <- function(node, tree = htree)
+Parent <- function(node, tree)
 {
   if (node == Ntip(tree) +1 )   # If the node is the basal node it does not have a parent node
     return (NA)
   return(tree$edge[ tree$edge[,2] == node , 1])
 }
 
-Sister <- function(node, tree = htree) 
+Sister <- function(node, tree) 
 {
   if (node == Ntip(tree) +1 )   # If the node is the basal node it does not have a sister node
     return (NA)
-  sisters = Descendants(Parent(node, tree) , tree)
+  sisters = Descendants(Parent(node, tree), tree)
   return(sisters[! sisters == node])
 }	
 
 
 
-Site.species <- function(site, comm = hcom)
+Site_species <- function(site, comm)
 {
 	# returns a list of the species that occur in a site
 	sitecom <- comm[comm$Plot == unique(comm$Plot)[site],]  # find all species records of the grid cell (called Plot)
 	return( as.character(sitecom$Species))
 }
 
-Sitestats <- function(comm = hcom, tree = htree)
+
+Sitestats <- function(comm, tree )
 #summarizes statistics, such as richness, for each site
 {
 	# comm  	: the occurrence matrix
@@ -72,7 +71,7 @@ Sitestats <- function(comm = hcom, tree = htree)
 	return(data.frame(cell, richness, mean_range_in_cell))
 }
 
-Node.species <- function(node, tree = htree)
+Node_species <- function(node, tree = htree)
   # returns a character vector with names of species that descend from a node
 {
   # node : the internal (ape) number of the node
@@ -99,7 +98,7 @@ Create_node_by_species_matrix = function(tree = htree)
   
   for ( i in 1:Nnode(tree))
   {
-    nodespecies[i,which(colnames(nodespecies) %in% Node.species(nodenumbers(tree)[i]))] <- 1
+    nodespecies[i,which(colnames(nodespecies) %in% Node_species(nodenumbers(tree)[i]))] <- 1
   }
   
   return(nodespecies)
@@ -112,15 +111,15 @@ Create_node_by_species_matrix = function(tree = htree)
 
 
 ## TODO these should all be available from the data object, S3
-Node.size <- function(node)
+Node_size <- function(node)
 # calculates the number of species that descend from a certain node
 {
 	# node : the internal (ape) number of the node 
-	return(length(Node.species2(node)))
+	return(length(Node_species2(node)))
 }
 
 #TODO rename here and everywhere and make an S3 function
-Node.species2 <- function(node, tree = htree, nodespecmatrix = node_species)
+Node_species2 <- function(node, tree = htree, nodespecmatrix = node_species)
   # returns a character vector with names of species that descend from a node
 {
   # node : the internal (ape) number of the node
@@ -129,42 +128,42 @@ Node.species2 <- function(node, tree = htree, nodespecmatrix = node_species)
 }
 
 
-Node.comm <- function(node, comm = hcom, tree = htree)
+Node_comm <- function(node, comm = hcom, tree = htree)
 # returns a samplelist of sites occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node
 	if (node < Ntip(tree)) #if it is in fact a tip
-		nodespecs = tree$tip.label[node] else nodespecs <- Node.species2(node, tree)
+		nodespecs = tree$tip.label[node] else nodespecs <- Node_species2(node, tree)
 	
 	nodecom <- subset(comm, Species %in% nodespecs)
 	return(nodecom)
 }
 
-Node.sites <- function(node, comm = hcom, tree = htree)
+Node_sites <- function(node, comm = hcom, tree = htree)
 # calculates which sites are occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node
 	
-	nodecom <- Node.comm(node, comm, tree)
+	nodecom <- Node_comm(node, comm, tree)
 	return(unique(nodecom$Plot))
 }
 	
 
-Node.occupancy <- function(node, comm = hcom, tree = htree)
+Node_occupancy <- function(node, comm = hcom, tree = htree)
 # calculates the number of sites occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node 
-	return(length(Node.sites(node, comm, tree)))
+	return(length(Node_sites(node, comm, tree)))
 }
 
-Node.richness <- function(node_number, comm = hcom, tree = htree, coords = dat.LL)
+Node_richness <- function(node_number, comm = hcom, tree = htree, coords = dat.LL)
 # A summary function that calculates the species richness pattern of all species that descend from a certain node
 {
 	# node_number  :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
 
 	require(ape)
 	
-	nodecom = Node.comm(node_number, comm, tree)
+	nodecom = Node_comm(node_number, comm, tree)
 	richs <- data.frame(table(as.character(nodecom$Plot)), stringsAsFactors = FALSE)
 	names(richs) <- c("cell", "richness")
 	richs <- merge(coords, richs, all.x = T, by="cell")

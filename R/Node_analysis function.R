@@ -14,7 +14,7 @@ nodiv_anal <- function(node, nodiv_data, repeats, method = c("quasiswap", "rdtab
   
   #TODO delete this
   # take the subset of species that descend from the parent node
-  ########################parentcom = Node.comm(Parent(node), hcom, htree)
+  ########################parentcom = Node_comm(Parent(node, htree), hcom, htree)
   # create a species x site community matrix for those species
   ########################parentmat = sample2matrix(parentcom)
   # make sure the community matrix species are sorted in the same way as the tiplabels
@@ -22,17 +22,17 @@ nodiv_anal <- function(node, nodiv_data, repeats, method = c("quasiswap", "rdtab
   # remove empty columns (may be created if Species is a factor in hcom)
   ########################parentmat = parentmat[,colSums(parentmat)>0]
   
-  parentmat <- commat[,match(Node.species2(Parent(node)), colnames(commat))]
+  parentmat <- commat[,match(Node_species2(Parent(node, htree)), colnames(commat))]
   
   
   # a boolean vector indicating which of all sites are considered for this node
-  parnode.sites = (sort(unique(hcom$Plot)) %in% Node.sites(Parent(node),hcom, htree))
+  parNode_sites = (sort(unique(hcom$Plot)) %in% Node_sites(Parent(node, htree),hcom, htree))
   # a boolean vector indicating which of species descending from the parent node that descend from the focal node
-  node.sp = (colnames(parentmat) %in% Node.species2(node))  
+  Node_sp = (colnames(parentmat) %in% Node_species2(node))  
   
   # A global variable to count the number of repeats
-  res_object <- Nodesig(parentmat, node.sp, repeats, method)
-  if(!is.na(res_object)) res_object$sites <- parnode.sites
+  res_object <- Nodesig(parentmat, Node_sp, repeats, method)
+  if(!is.na(res_object)) res_object$sites <- parNode_sites
   return(res_object)
   
   

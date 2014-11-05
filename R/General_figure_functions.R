@@ -133,7 +133,7 @@ plotsite = function(site, dats = dispersion_corr, tree = htree, comm = hcom, gen
 	quartz(width=20,height=12)
 	layout(matrix(c(1,2),ncol = 2),width = c(4,4))
 
-	spec_index = which(tree$tip.label %in% Site.species(site, comm))
+	spec_index = which(tree$tip.label %in% Site_species(site, comm))
 	colortip <- rep("transparent",Ntip(tree)) 
 	colortip[spec_index] <- "black"
 
@@ -162,10 +162,10 @@ plotnode <- function(node_number, comm, tree = htree, coords = dat.LL, plottype 
 	plottype = match.arg(plottype)
 	if(plottype == "map")
 	{
-		richs <- Node.richness(node_number, comm, tree, coords)
+		richs <- Node_richness(node_number, comm, tree, coords)
 		map.var(richs$richness, richs$Long, richs$Lat, ...)
 	} 	else  {
-		richs <- Node.richness(node_number, comm, tree, coords)
+		richs <- Node_richness(node_number, comm, tree, coords)
 		oldpar <- par()
 		par(mar = c(5,4,4,4) + 0.1)
     plot(richs$Long, richs$Lat, col = create.cols(richs$richness), pch = 16, cex = 1.5, ...)#sqrt(richs$richness))
@@ -224,9 +224,9 @@ plotnode_maps_new_parent <- function(node_number, par_rep_matrix = parent_rep_ma
   
   plotnode(node_number, comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of node", node_number))
   
-  plotnode(Descendants(node_number)[1], comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of descendant 1", Descendants(node_number)[1]))
+  plotnode(Descendants(node_number, tree)[1], comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of descendant 1", Descendants(node_number)[1]))
   
-  plotnode(Descendants(node_number)[2], comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of descendant 2", Descendants(node_number)[2]))
+  plotnode(Descendants(node_number, tree)[2], comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of descendant 2", Descendants(node_number)[2]))
   
 }
 
