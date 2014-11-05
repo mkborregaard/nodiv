@@ -35,7 +35,7 @@ Sister <- function(node, tree)
 Site_species <- function(site, comm)
 {
 	# returns a list of the species that occur in a site
-	sitecom <- comm[comm$Plot == unique(comm$Plot)[site],]  # find all species records of the grid cell (called Plot)
+	sitecom <- comm[comm$plot == unique(comm$plot)[site],]  # find all species records of the grid cell (called plot)
 	return( as.character(sitecom$Species))
 }
 
@@ -48,7 +48,7 @@ Sitestats <- function(comm, tree )
 	
 	require(ape)
 	# some important statistics for each site
-	cell <- sort(unique(comm$Plot))
+	cell <- sort(unique(comm$plot))
 	richness = numeric()
 	mean_range_in_cell = numeric()
 	
@@ -60,7 +60,7 @@ Sitestats <- function(comm, tree )
 	{
 		print(plotnum)
 		
-		testcom <- comm[comm$Plot == cell[plotnum],]  # find all species records of the grid cell (called Plot)
+		testcom <- comm[comm$plot == cell[plotnum],]  # find all species records of the grid cell (called plot)
 		emp <- as.character(testcom$Species)                       # a list of species present at the site
 
 		# calculate mean range and richness
@@ -145,7 +145,7 @@ Node_sites <- function(node, comm = hcom, tree = htree)
 	# node : the internal (ape) number of the node
 	
 	nodecom <- Node_comm(node, comm, tree)
-	return(unique(nodecom$Plot))
+	return(unique(nodecom$plot))
 }
 	
 
@@ -164,7 +164,7 @@ Node_richness <- function(node_number, comm = hcom, tree = htree, coords = dat.L
 	require(ape)
 	
 	nodecom = Node_comm(node_number, comm, tree)
-	richs <- data.frame(table(as.character(nodecom$Plot)), stringsAsFactors = FALSE)
+	richs <- data.frame(table(as.character(nodecom$plot)), stringsAsFactors = FALSE)
 	names(richs) <- c("cell", "richness")
 	richs <- merge(coords, richs, all.x = T, by="cell")
 	richs <- richs[match(as.character(coords$cell), as.character(richs$cell)),]

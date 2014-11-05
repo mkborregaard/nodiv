@@ -4,7 +4,7 @@
 nodiv_anal <- function(node, nodiv_data, repeats, method = c("quasiswap", "rdtable"))
 {
   # create the return vector of NA's. This means that all sites occupied by the parent node will retain the value NA in the final matrix
-  ret = rep(NA, length(unique(hcom$Plot)))
+  ret = rep(NA, length(unique(hcom$plot)))
   ret_ses <- ret
   ret_pval <- ret
   # return a vector of NAs if the node is the basal node (as that has no parent node)
@@ -26,7 +26,7 @@ nodiv_anal <- function(node, nodiv_data, repeats, method = c("quasiswap", "rdtab
   
   
   # a boolean vector indicating which of all sites are considered for this node
-  parNode_sites = (sort(unique(hcom$Plot)) %in% Node_sites(Parent(node, htree),hcom, htree))
+  parNode_sites = (sort(unique(hcom$plot)) %in% Node_sites(Parent(node, htree),hcom, htree))
   # a boolean vector indicating which of species descending from the parent node that descend from the focal node
   Node_sp = (colnames(parentmat) %in% Node_species2(node))  
   
