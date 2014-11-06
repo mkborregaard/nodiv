@@ -32,6 +32,12 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(
   
   nodiv_dat$coords <- dist_dat$coords[match(rownames(nodiv_dat$comm), dist_dat$coords$sites),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm)
+  nodiv_dat$hcom[,1] <- as.character(nodiv_dat$hcom[,1])
+  nodiv_dat$hcom[,2] <- as.character(nodiv_dat$hcom[,2])
+  
+  cat("Calculating which species descend from each node\n")
+  nodiv_dat$node_species <- Create_node_by_species_matrix(nodiv_dat$phylo)
+  
   class(nodiv_dat) <- c("nodiv_data","distrib_data")
   return(nodiv_dat)
 }
@@ -39,6 +45,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(
 
 distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"))
 {
+  type = match.arg(type)
   cat("Checking input data\n")
   ## Testing that input objects are all right
   if(class(coords) == "SpatialPointsDataFrame" | class(coords) == "SpatialPixelsDataFrame")
@@ -55,7 +62,7 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
   if(!all.equal(sort(unique(as.numeric(commatrix))), 0:1)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   
   if(is.matrix(coords)) coords <- as.data.frame(coords)
-  if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commat, type)
+  if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commatrix, type)
 
   if(class(coords) == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords) == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
   
@@ -65,8 +72,7 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
   commatrix <- match_commat_coords(commatrix, coords$sites)  
   
   ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
-  ret$species <- rownames(ret$comm)
-  ret$sites <- colnames(ret$comm)
+  ret$species <- colnames(ret$comm)
   
   class(ret) <- "distrib_data"
   return(ret)
@@ -79,11 +85,6 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
 #TODO
 #much of this testing can be done with try-catch phrases
 #use the testthat library to test everything
-
-#TODO implement a function to subset the data, e.g. only to sites with a given species richness, or to a subset of the clade
-
-#TODO implement plot function(which for distrib_data shows a richness map, for nodiv_data a richness map and the phylogeny); a print, summary and print.summary functions for both classes; introspection functions for richness, range size etc. Delete NND
-
 
 
 match_commat_coords <- function(commatrix, sitenames)
@@ -103,8 +104,6 @@ match_commat_coords <- function(commatrix, sitenames)
   commatrix <- commatrix[match(sitenames, rownames(commatrix)),]
   return(commatrix) 
 }
-
-
 
 
 toSpatialPoints <- function(coords, proj4string, commat, type)
@@ -138,15 +137,15 @@ toSpatialPoints <- function(coords, proj4string, commat, type)
         if(!is.null(rownames(coords))) sitenames <- rownames(coords) else 
           stop("There must be valid site names in the rownames of commatrix or in the coords data")
     
-    type_auto <- ifelse(isGrid(coordinates(commatrix)), "grid", "points")
+    type_auto <- ifelse(isGrid(ret), "grid", "points")
     
     if(type == "auto") type <- type_auto else 
       if(!type == type_auto)
         warning("The specified type of data (points or grid) seems to conflict with the automatic setting. This may cause problems")
     
     
-    if(type == "grid") ret <- SpatialPixelsDataFrame(ret, data.frame(sites = sitenames)) else
-      ret <- SpatialPointsDataFrame(ret, data.frame(sites = sitenames))
+    if(type == "grid") ret <- SpatialPixelsDataFrame(ret, data.frame(sites = sitenames, stringsAsFactors = F)) else
+      ret <- SpatialPointsDataFrame(ret, data.frame(sites = sitenames, stringsAsFactors = F))
     
     return(ret)  
 }
@@ -163,23 +162,3 @@ isGridVar <- function(gridVar)
   return(all.equal(dists/smallest, floor(dists/smallest)) & smallest %in% most_common)
   #if all differences are a multiplum of the smallest, and the smallest distance is the most common, it is probably a grid
 }
-
-
-
-# 
-# 
-# commat <- read.delim("../OCCUR_ALL.xls")
-# hcom <- matrix2sample(commat)
-# 
-# htree <- read.tree("../phylogeny.txt")
-# 
-# commat = commat[, match(htree$tip.label, colnames(commat))]
-# 
-# source("Node_based_analysis.R")
-# 
-# node_species = Create_node_by_species_matrix(htree)
-# 
-# dat.LL <- NA
-# 
-# save(hcom, dat.LL, htree, commat, node_species, file = "GlobMammals_data.RData")
-# 

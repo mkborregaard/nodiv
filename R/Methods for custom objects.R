@@ -11,15 +11,151 @@ Nsites<- function(x)
 {
   if (!inherits(x, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")
-  length(x$sites)
+  length(x$coords)
 }
 
-print.distrib_data <- function(x, printlen = 5, ...)
+print.distrib_data <- function(x, printlen = 4, ...)
 {
-  cat(paste("Data object with distributions of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
+  cat(paste("Data object with", x$type," distributions of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
   cat("Species names:\n")
-  cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),"\n\n"))
+  cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n", sep = ""))
   cat("Site names:\n")
-  cat(paste("\t", paste(x$sites[1:printlen], collapse = ", "),"\n\n"))
+  cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n", sep = ""))
 }
+
+print.nodiv_data <- function(x, printlen = 4, ...)
+{
+  cat(paste("Data object with", x$type,"distributions and phylogenetic relationships of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
+  cat("Species names:\n")
+  cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n", sep = ""))
+  cat("Site names:\n")
+  cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n", sep = ""))
+}
+
+summary.distrib_data <- function(object, ...)
+{
+  richness <- if(object$type == "grid")
+    SpatialPixelsDataFrame(SpatialPoints(object$coords), data.frame(richness = rowSums(object$comm))) else
+    SpatialPointsDataFrame(SpatialPoints(object$coords), data.frame(richness = rowSums(object$comm))) 
+      
+  occupancy <- colSums(object$comm)
+  ret <- list(species = object$species, coords = object$coords, richness = richness, occupancy = occupancy, type = object$type)
+  class(ret) <- "summary_distrib_data"
+  ret
+}
+
+print.summary_distrib_data <- function(x, printlen = 4, ...)
+{
+  cat(paste("Data object with", x$type,"distributions of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
+  cat("Species names:\n")
+  cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n", sep = ""))
+  cat("Site names:\n")
+  cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
+  cat(paste("Species richness:  min", min(x$richness$richness, "max", max(x$richness$richness), "mean",mean(x$richness$richness,"\n"))))
+  cat(paste("Species occupancy:  min", min(x$occupancy, "max", max(x$occupancy), "mean",mean(x$occupancy,"\n"))))
+}
+
+summary.nodiv_data <- function(object, ...)
+{
+  ret <- summary.distrib_data(object, ...)
+  ret$nodes <- Nnode(object$phylo)
+  ret$node.label = object$phylo.node.label
+  class(ret) <- "summary_nodiv_data"
+  ret
+}
+
+print.summary_nodiv_data <- function(x, printlen = 4, ...)
+{
+  cat(paste("Data object with", x$type,"distributions and phylogenetic relationships of", length(x$species) ,"species in", length(x$sites),"sites\n\n"))
+  cat("Species names:\n")
+  cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n", sep = ""))
+  cat("Site names:\n")
+  cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
+  cat(paste("Species richness:   min", min(x$richness$richness), "max", max(x$richness$richness), "mean", round(mean(x$richness$richness),2),"\n"))
+  cat(paste("Species occupancy:  min", min(x$occupancy), "max", max(x$occupancy), "mean",round(mean(x$occupancy),2),"\n\n"))
+  cat(paste("The phylogeny has", x$nodes, "internal nodes"))
+  if (!is.null(x$node.label)) 
+  {
+    cat("Node labels:\n")
+    if (x$nodes > printlen) 
+    {
+      cat(paste("\t", paste(x$node.label[1:printlen], collapse = ", "),", ...\n", sep = ""))
+    } else print(x$node.label)
+  }
+}
+
+plot.distrib_data <- function(object, ...)
+{
+  if(object$type == "grid")
+    map_var(summary(object)$richness, object$coords, ...) else
+    plot_points(summary(object)$richness, object$coords, ...)
+}  
+
+plot.nodiv_data <- function(object, col = rev(rainbow(256,start=0.02,end=0.59)), ...)
+{
+  par(mfrow = c(1,2))
+  plot.distrib_data(object, col = col)
+  plot(object$phylo, ...) #need to specify explicitly which
+}
+
+subsample<- function(x, ...) UseMethod("subsample")
+
+subsample.distrib_data <- function(x, sites = NULL, species = NULL)
+{
+  if(inherits(sites, "SpatialPoints")) sites <- as.character(sites@data)
+  keep_sites <- F
+  if(is.character(sites)) 
+  {
+    if(length(sites) == 1)
+    {
+      if(sites == "all") keep_sites <- T 
+    } else 
+      sites <- match(sites, x$coords$sites)
+  }  
+  if(is.null(sites) | keep_sites) sites <- 1:Nsites(x)
+  
+  keep_species <- F
+  if(length(species) == 1)
+  {
+    if(species == "all") keep_species <- T 
+  } else
+  species <- match(species, x$species)
+  if(is.null(species) | keep_species) species <- 1:Nspecies(x)
+  
+  ret <- x
+  ret$comm <- ret$comm[sites, species]
+  
+  if(keep_sites) sites_keep <- rep_len(TRUE, nrow(ret$comm)) else sites_keep <- (rowSums(ret$comm, na.rm = T) > 0)
+  
+  if(keep_species) sites_keep <- rep_len(TRUE, nrow(ret$comm)) else species_keep <- (colSums(ret$comm, na.rm = T) > 0)
+
+  ret$comm <- ret$comm[sites_keep, species_keep]
+  
+  ret$species <- colnames(ret$comm)
+  ret$coords <- ret$coords[ret$coords$sites %in% rownames(ret$comm),]
+  
+  return(ret)
+}
+
+subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL)
+{
+#   if(sum(!is.null(species), !is.null(node), !is.null(sites)) > 1) stop("you can only specify one of sites, species or node")
+#   if(sum(!is.null(species), !is.null(node), !is.null(sites)) == 0) stop("you must specify one of sites, species or node")
+  
+  if(!node == 0)
+  {
+    ret_phylo <- extract.clade(x$phylo, node)
+    species <- ret_phylo$tip.label
+  } else ret_phylo <- x$phylo
+  
+  ret <- subsample.distrib_data(x, sites, species)
+  ret$phylo <- match.phylo.comm(ret_phylo, ret$comm)$phy
+  
+  ret$hcom <- subset(x$hcom, plot %in% ret$coords$sites & id %in% ret$species)
+  ret$node_species <- x$node_species[, colnames(x$node_species) %in% ret$species]
+  ret$node_species <- ret$node_species[rowSums(ret$node_species) > 0,]
+  return(ret)
+}
+
+
 

@@ -31,15 +31,14 @@ Sister <- function(node, tree)
 }	
 
 
-
-Site_species <- function(site, comm)
+Site_species <- function(site, nodiv_data)
 {
 	# returns a list of the species that occur in a site
-	sitecom <- comm[comm$plot == unique(comm$plot)[site],]  # find all species records of the grid cell (called plot)
-	return( as.character(sitecom$id))
+	spec_index <- nodiv_data$comm[site,] == 1
+	return(nodiv_data$species[spec_index])
 }
 
-
+## TODO change this - richness is already calculated, but perhaps mean_range_in_cell is relevant?
 Sitestats <- function(comm, tree )
 #summarizes statistics, such as richness, for each site
 {
@@ -71,7 +70,7 @@ Sitestats <- function(comm, tree )
 	return(data.frame(cell, richness, mean_range_in_cell))
 }
 
-Node_species <- function(node, tree = htree)
+Node_spec <- function(node, tree)
   # returns a character vector with names of species that descend from a node
 {
   # node : the internal (ape) number of the node
@@ -84,21 +83,26 @@ Node_species <- function(node, tree = htree)
 
 
 # returns a vector with the internal numbers of all nodes on the tree
-nodenumbers <- function(tree) {require(ape); return(1:Nnode(tree) + Ntip(tree))}
+nodenumbers <- function(x) 
+{
+  if(inherits(x, "nodiv_data"))
+    x <- x$phylo
+  if(!inherits(x, "phylo"))
+    stop("x must be of type phylo or nodiv_data")
+  return(1:Nnode(tree) + Ntip(tree))
+}
 
 
-Create_node_by_species_matrix = function(tree = htree)
+Create_node_by_species_matrix = function(tree)
 {
   # create a matrix with 0s and 1s indicating which species descend from each node
-  require(ape)
-  
   nodespecies <- matrix(0, nrow = Nnode(tree), ncol = Ntip(tree))
-  colnames(nodespecies) <- htree$tip.label
+  colnames(nodespecies) <- tree$tip.label
   rownames(nodespecies) <- 1:Nnode(tree) + Ntip(tree)
   
   for ( i in 1:Nnode(tree))
   {
-    nodespecies[i,which(colnames(nodespecies) %in% Node_species(nodenumbers(tree)[i]))] <- 1
+    nodespecies[i,which(colnames(nodespecies) %in% Node_spec(nodenumbers(tree)[i], tree))] <- 1
   }
   
   return(nodespecies)
@@ -119,41 +123,42 @@ Node_size <- function(node)
 }
 
 #TODO rename here and everywhere and make an S3 function
-Node_species2 <- function(node, tree = htree, nodespecmatrix = node_species)
+Node_species <- function(node, nodiv_data)
   # returns a character vector with names of species that descend from a node
 {
   # node : the internal (ape) number of the node
+  if(!inherits(nodiv_data, "nodiv_data"))
   
-  return(colnames(nodespecmatrix)[nodespecmatrix[node-Ntip(tree),] > 0])
+  return(colnames(nodiv_data$node_species)[nodiv_data$node_species[node-Nspecies(nodiv_data),] > 0])
 }
 
 
-Node_comm <- function(node, comm, tree)
+Node_comm <- function(node, nodiv_data)
 # returns a samplelist of sites occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node
-	if (node < Ntip(tree)) #if it is in fact a tip
-		nodespecs = tree$tip.label[node] else nodespecs <- Node_species2(node, tree)
+	if (node < Ntip(nodiv_data$tree)) #if it is in fact a tip
+		nodespecs = nodiv_data$species[node] else nodespecs <- Node_species(node, nodiv_data)
 	
-	nodecom <- subset(comm, id %in% nodespecs)
+	nodecom <- subset(nodiv_data$hcom, id %in% nodespecs)
 	return(nodecom)
 }
 
-Node_sites <- function(node, comm, tree)
+Node_sites <- function(node, nodiv_data)
 # calculates which sites are occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node
 	
-	nodecom <- Node_comm(node, comm, tree)
+	nodecom <- Node_comm(node, nodiv_data)
 	return(unique(nodecom$plot))
 }
 	
 
-Node_occupancy <- function(node, comm = hcom, tree = htree)
+Node_occupancy <- function(node, nodiv_data)
 # calculates the number of sites occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node 
-	return(length(Node_sites(node, comm, tree)))
+	return(length(Node_sites(node, nodiv_data)))
 }
 
 Node_richness <- function(node_number, comm = hcom, tree = htree, coords = dat.LL)
@@ -172,13 +177,9 @@ Node_richness <- function(node_number, comm = hcom, tree = htree, coords = dat.L
 	return(richs)
 }
 
-## TODO should just be deleted
-# Node_representation = function(species_index, node_species_matrix = node_species)
-# {
-# 	# returns a vector of how many times each node is represented in a community (species list)
-# 	submatrix = node_species_matrix[,as.logical(species_index)]
-# 	return(rowSums(submatrix))
-# }
+## TODO almost all of the above functions can be changed to simple access functions 
+## of a nodiv_data object that has been subsetted
+
 
 	
 

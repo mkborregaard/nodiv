@@ -42,8 +42,6 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
   # Use the quasiswap algorithm to created random matrices, basing each new matrix on the previous
   nodereps <- replicate(repeats-1,
   {
-    
-    # Illustrate the progress in the chart window
     # perform the randomization
     simcom <- r2dtable(1, r, c)[[1]]
     # return the simulated species richness of sites
@@ -54,11 +52,9 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
   return(nodereps)
 }
 
-
-
 Nodesig <- function(commat, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
 {
-  if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(NA) #if one of the descendant clades is a single species
+  if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(rep(NA,5)) #if one of the descendant clades is a single species
   method = match.arg(method)
   # A global variable to count the number of repeats
   require(vegan)

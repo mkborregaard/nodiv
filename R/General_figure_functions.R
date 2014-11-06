@@ -16,34 +16,61 @@ create.cols <- function(vec, col = rev(rainbow(256,start=0.02,end=0.59)), zlims 
 #TODO should this be redone as a raster function?
 # spatial grids data frame.
 
-map.var = function(variable, Long, Lat, new.window = FALSE, xrange = range(Long), yrange = range(Lat), bordercolor = "darkgrey", cut.to.coast = FALSE, ...)
-# a function that will create a pretty color-coded map of any variable with Long/Lat information
+map_var <- function(x, coords, polygon = NULL, ...)
 {
-	# variable : the variable controlling the color
-	# Long : longitude of each point
-	# Lat : latitude of each point
-	# new.window : should the plot be created in a new window? Set to FALSE, e.g. for saving to a postscript file
-	# ... : extra arguments to be passed to the "image.plot" function
-
-	require(fields)
-	require(maptools)
-	variable[is.na(variable)] <- -9999  #I am doing this trick to ensure that the whole range of Lat/Long values are printed, not just the ones with valid values of 'variable'
-	cellsize_x <- min(diff(sort(unique(Long))),na.rm = T)
-	cellsize_y <- min(diff(sort(unique(Lat))),na.rm = T)
-	map <- as.image(variable, x = cbind(Long, Lat), grid = list(x = seq(xrange[1],xrange[2], by = cellsize_x), y = seq(yrange[1],yrange[2],by = cellsize_y)))
-	map$z[map$z == -9999] <- NA
-
-	if(new.window) quartz()
-	image.plot(map, ...)
-  sa <- readShapePoly('~/shapecoast/World_coast.shp')
-	plot(sa,add=T, border = bordercolor)
-	if(cut.to.coast)
-	{
-		sc <- readShapePoly('~/shapecoast/World_coast.shp')
-		plot(sc, add = T, border = NULL, col = "white", usePolypath = TRUE)
-		box()
-	}
+  if(inherits(x, "SpatialPixelsDataFrame"))
+    rast <- raster(x) else
+    if(missing(coords)) stop("coords must be defined if x is not a SpatialPixelsDataFrame") else
+      if(inherits(coords, "SpatialPoints"))
+      {
+        if(!isGrid(coords)) stop("this function is only suitable for gridded data")
+        coords <- SpatialPoints(coords)
+        rast <- raster(SpatialPixelsDataFrame( coords, as.data.frame(x)))
+      } else 
+        if(is.matrix(coords)) coords <- as.data.frame(coords) else
+          if(is.data.frame(coords))
+          {
+            if(!is.vector(x)) stop("x must be a vector or a SpatialPixelsDataFrame")
+            if(!nrow(coords) == length(x)) stop("x and coords must have the same number of elements")
+            if(!ncol(coords) == 2) stop("coords must have exactly two columns, for the x and y coordinates of data")
+            if(!isGrid(coords)) stop("this function is only suitable for gridded data")
+            coords <- SpatialPoints(coords)
+            rast <- raster(SpatialPixelDataFrame(coords, as.data.frame(x)))
+          } else stop("Undefined arguments")
+  
+  plot(rast, ...)
+  if(!is.null(polygon)) plot(polygon, add = T, col = "darkgrey")
+  invisible(rast)
 }
+
+# map.var = function(variable, Long, Lat, new.window = FALSE, xrange = range(Long), yrange = range(Lat), bordercolor = "darkgrey", cut.to.coast = FALSE, ...)
+# # a function that will create a pretty color-coded map of any variable with Long/Lat information
+# {
+# 	# variable : the variable controlling the color
+# 	# Long : longitude of each point
+# 	# Lat : latitude of each point
+# 	# new.window : should the plot be created in a new window? Set to FALSE, e.g. for saving to a postscript file
+# 	# ... : extra arguments to be passed to the "image.plot" function
+
+# 	require(fields)
+# 	require(maptools)
+# 	variable[is.na(variable)] <- -9999  #I am doing this trick to ensure that the whole range of Lat/Long values are printed, not just the ones with valid values of 'variable'
+# 	cellsize_x <- min(diff(sort(unique(Long))),na.rm = T)
+# 	cellsize_y <- min(diff(sort(unique(Lat))),na.rm = T)
+# 	map <- as.image(variable, x = cbind(Long, Lat), grid = list(x = seq(xrange[1],xrange[2], by = cellsize_x), y = seq(yrange[1],yrange[2],by = cellsize_y)))
+# 	map$z[map$z == -9999] <- NA
+
+# 	if(new.window) quartz()
+# 	image.plot(map, ...)
+#   sa <- readShapePoly('~/shapecoast/World_coast.shp')
+# 	plot(sa,add=T, border = bordercolor)
+# 	if(cut.to.coast)
+# 	{
+# 		sc <- readShapePoly('~/shapecoast/World_coast.shp')
+# 		plot(sc, add = T, border = NULL, col = "white", usePolypath = TRUE)
+# 		box()
+# 	}
+# }
 
 
 
