@@ -36,7 +36,7 @@ Site_species <- function(site, comm)
 {
 	# returns a list of the species that occur in a site
 	sitecom <- comm[comm$plot == unique(comm$plot)[site],]  # find all species records of the grid cell (called plot)
-	return( as.character(sitecom$Species))
+	return( as.character(sitecom$id))
 }
 
 
@@ -53,7 +53,7 @@ Sitestats <- function(comm, tree )
 	mean_range_in_cell = numeric()
 	
 	# the range sizes of all species
-	ranges = table(comm$Species)
+	ranges = table(comm$id)
 	ranges = ranges[match(tree$tip.label,names(ranges))]
 
 	for ( plotnum in seq_along(cell))
@@ -61,7 +61,7 @@ Sitestats <- function(comm, tree )
 		print(plotnum)
 		
 		testcom <- comm[comm$plot == cell[plotnum],]  # find all species records of the grid cell (called plot)
-		emp <- as.character(testcom$Species)                       # a list of species present at the site
+		emp <- as.character(testcom$id)                       # a list of species present at the site
 
 		# calculate mean range and richness
 		mean_range_in_cell[plotnum] = mean(ranges[tree$tip.label %in% emp])
@@ -128,18 +128,18 @@ Node_species2 <- function(node, tree = htree, nodespecmatrix = node_species)
 }
 
 
-Node_comm <- function(node, comm = hcom, tree = htree)
+Node_comm <- function(node, comm, tree)
 # returns a samplelist of sites occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node
 	if (node < Ntip(tree)) #if it is in fact a tip
 		nodespecs = tree$tip.label[node] else nodespecs <- Node_species2(node, tree)
 	
-	nodecom <- subset(comm, Species %in% nodespecs)
+	nodecom <- subset(comm, id %in% nodespecs)
 	return(nodecom)
 }
 
-Node_sites <- function(node, comm = hcom, tree = htree)
+Node_sites <- function(node, comm, tree)
 # calculates which sites are occupied by at least one member of the node
 {
 	# node : the internal (ape) number of the node

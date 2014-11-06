@@ -55,7 +55,7 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
 }
 
 
-## TODO write a wrapper for this function, that will allow you to compare any two clades
+
 Nodesig <- function(commat, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
 {
   if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(NA) #if one of the descendant clades is a single species

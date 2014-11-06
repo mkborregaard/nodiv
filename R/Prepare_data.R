@@ -1,15 +1,4 @@
-#TODO replace with import
-library(picante)
 
-# Definition of nodiv_data-class
-# 
-# spatialDataPoints coords : the points/grid
-# phylo htree             : the tree
-# commatrix commat        : the community matrix
-# phylocom  hcom          : the phylocom dataset
-# attribute(type = c("grid", "points")
-#           #baseret på korteste afstand mellem unikke værdier
-# 
 # Definition of nodiv-class
 # #samme som ovenfor (har det samme i sig) +
 # 
@@ -30,30 +19,32 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(
   if(!class(commatrix) == "distrib_data")
   {
     if(missing(coords)) stop("if commatrix is not an object of type distrib_data, coords must be specified")
-    ret <- distrib_data(commatrix, coords, proj4string , type)
-  } else ret <- commatrix
+    dist_dat <- distrib_data(commatrix, coords, proj4string, type)
+  } else dist_dat <- commatrix
   
-  cat("Comparing taxon names in phylogeny and communities with picante\n")
-  dat <- match.phylo.comm(phylo, ret$commatrix)
-  phylo <- dat$phy
-  commatrix <- dat$comm
-  if(!is.matrix(commatrix)) stop("The names do not match")
+  nodiv_dat <- dist_dat
   
-  ret <- match_commat_coords(commatrix, ret$coords)
+  cat("Comparing taxon names in phylogeny and communities (using picante)\n")
+  dat <- match.phylo.comm(phylo, dist_dat$comm)
+  nodiv_dat$phylo <- dat$phy
+  nodiv_dat$comm <- dat$comm
+  if(!(is.data.frame(nodiv_dat$comm) & nrow(nodiv_dat$comm) > 1)) stop("The tip labels in the phylogeny do not match the names in the community matrix")
   
-  ret$phylo <- phylo
-  ret$hcom <- matrix2sample(commat)
-  class(ret) <- c("nodiv_data")
-  return(ret)
+  nodiv_dat$coords <- dist_dat$coords[match(rownames(nodiv_dat$comm), dist_dat$coords$sites),]
+  nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm)
+  class(nodiv_dat) <- c("nodiv_data","distrib_data")
+  return(nodiv_dat)
 }
 
 
-distrib_data <- function(commatrix, coords, proj4string = CRS(as.character(NA)), type = c("auto", "grid", "points"))
+distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"))
 {
+  cat("Checking input data\n")
+  ## Testing that input objects are all right
   if(class(coords) == "SpatialPointsDataFrame" | class(coords) == "SpatialPixelsDataFrame")
-    if(!proj4string == proj4string(coords))
+    if(!all.equal(proj4string_in,coords@proj4string))
     { 
-      proj4string <- proj4string(coords)
+      proj4string_in <- proj4string(coords)
       warning("specified proj4string overridden by the coords data")
     } 
 
@@ -64,10 +55,19 @@ distrib_data <- function(commatrix, coords, proj4string = CRS(as.character(NA)),
   if(!all.equal(sort(unique(as.numeric(commatrix))), 0:1)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   
   if(is.matrix(coords)) coords <- as.data.frame(coords)
-  if(is.data.frame(coords)) coords <- toSpatialPoints(coords, commatrix, type, proj4string)
-  if(!(class(coords) == "SpatialPointsDataFrame" | class(coords) == "SpatialPixelsDataFrame")) stop("coords must be a data.frame of coordinates or a SpatialPoints object")
+  if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commat, type)
+
+  if(class(coords) == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords) == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
   
-  ret <- match_commat_coords(commatrix, coords)
+  ## making sure that the points and the commatrix fit
+  
+  
+  commatrix <- match_commat_coords(commatrix, coords$sites)  
+  
+  ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
+  ret$species <- rownames(ret$comm)
+  ret$sites <- colnames(ret$comm)
+  
   class(ret) <- "distrib_data"
   return(ret)
 
@@ -86,28 +86,28 @@ distrib_data <- function(commatrix, coords, proj4string = CRS(as.character(NA)),
 
 
 
-match_commat_coords <- function(commatrix, spatialPointData)
+match_commat_coords <- function(commatrix, sitenames)
 {
   cat("Comparing sites in community data and spatial points\n")
   
-  if(!nrow(commatrix) == nrow(spatialPointData)) 
-  {  
-    if(is.null(rownames(commatrix)))
-      stop("The number of sites in coords and the data matrix do not fit") else rownames(commatrix) <- spatialPointData$cell
-    if(sum(spatialPointData$cell %in% rownames(commatrix)) < 2)
-      stop("the coordinate names and the rownammes of the community matrix do not match")
+  if(is.null(rownames(commatrix)))
+    if(nrow(commatrix) == length(sitenames)) 
+      rownames(commatrix) <- sitenames else stop("The number of sites in coords and the data matrix do not fit and there are no rownames in the community matrix to use for matching")  
+      
+  if(sum(sitenames %in% rownames(commatrix)) < 2)
+        stop("the coordinate names and the rownammes of the community matrix do not match")
+      
+  sitenames <- sitenames[sitenames %in% rownames(commatrix)]
+
     
-    spatialPointData <- spatialPointData[spatialPointData$cell %in% rownames(commatrix),]
-  }
-    
-  commatrix <- commatrix[match(spatialPointData$cell, rownames(commatrix)),]
-  return(list(commatrix = commatrix, coords = spatialPointData)) 
+  commatrix <- commatrix[match(sitenames, rownames(commatrix)),]
+  return(commatrix) 
 }
 
 
 
 
-toSpatialPoints <- function(coords, commatrix, type, proj4string)
+toSpatialPoints <- function(coords, proj4string, commat, type)
 {
     xcol <- 0
     ycol <- 0
@@ -130,27 +130,25 @@ toSpatialPoints <- function(coords, commatrix, type, proj4string)
     }
     
     if(!ncol(ret) == 2) stop("ret should be a data.frame or spatial data.frame with 2 columns, giving the x/longitude, and y/latitude of all sites")
+      
+    ret <- SpatialPoints(ret, proj4string)
     
-    names(ret) <- c("Long", "Lat")
-    
-    sitenames <- character()
-    if (ncol(coords)==3 & !(xcol + ycol == 0)) sitenames <- coords[,-c(xcol, ycol)] else
-      if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix))) sitenames <- rownames(commatrix) else
+    if (ncol(coords)==3 & !(xcol + ycol == 0)) sitenames <- coords[,-c(xcol, ycol)] else 
+      if(length(coords) == nrow(commatrix) & !is.null(rownames(commatrix))) sitenames <- rownames(commatrix) else
         if(!is.null(rownames(coords))) sitenames <- rownames(coords) else 
           stop("There must be valid site names in the rownames of commatrix or in the coords data")
-  
-  
-  type_auto <- ifelse(isGrid(ret), "grid", "points")
-  
-  if(type == "auto") type <- type_auto else 
-    if(!type == type_auto)
-      warning("The specified type of data (points or grid) seems to conflict with the automatic setting. This may cause problems")
-  
-  ret <- SpatialPoints(ret, proj4string)
-  if(type == "grid") ret <- SpatialPixelsDataFrame(ret, data.frame(cell = sitenames)) else
-    ret <- SpatialPointsDataFrame(ret, data.frame(cell = sitenames))
-  
-  return(ret)  
+    
+    type_auto <- ifelse(isGrid(coordinates(commatrix)), "grid", "points")
+    
+    if(type == "auto") type <- type_auto else 
+      if(!type == type_auto)
+        warning("The specified type of data (points or grid) seems to conflict with the automatic setting. This may cause problems")
+    
+    
+    if(type == "grid") ret <- SpatialPixelsDataFrame(ret, data.frame(sites = sitenames)) else
+      ret <- SpatialPointsDataFrame(ret, data.frame(sites = sitenames))
+    
+    return(ret)  
 }
 
 isGrid <- function(coords)
