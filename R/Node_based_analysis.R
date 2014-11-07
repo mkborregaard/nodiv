@@ -10,13 +10,31 @@
 ## Functions relating trees and sites
 	 
 # returns the internal node number of the basal node on the phylogeny
-basal.node <- function(tree) return(Ntip(tree) + 1)
+basal_node <- function(tree) 
+{
+  if(inherits(tree, "nodiv_data"))
+    tree <- tree$phylo
+  if(!inherits(tree, "phylo"))
+    stop("tree must be an object of type phylo or nodiv_data")
+  return(Ntip(tree) + 1)
+}
 
 Descendants <- function(node, tree) 
+{
+  if(inherits(tree, "nodiv_data"))
+    tree <- tree$phylo
+  if(!inherits(tree, "phylo"))
+    stop("tree must be an object of type phylo or nodiv_data")
   return(tree$edge[ tree$edge[,1] == node , 2])
+}
+  
 
 Parent <- function(node, tree)
 {
+  if(inherits(tree, "nodiv_data"))
+    tree <- tree$phylo
+  if(!inherits(tree, "phylo"))
+    stop("tree must be an object of type phylo or nodiv_data")  
   if (node == Ntip(tree) +1 )   # If the node is the basal node it does not have a parent node
     return (NA)
   return(tree$edge[ tree$edge[,2] == node , 1])
@@ -24,12 +42,17 @@ Parent <- function(node, tree)
 
 Sister <- function(node, tree) 
 {
+  if(inherits(tree, "nodiv_data"))
+    tree <- tree$phylo
+  if(!inherits(tree, "phylo"))
+    stop("tree must be an object of type phylo or nodiv_data")
   if (node == Ntip(tree) +1 )   # If the node is the basal node it does not have a sister node
     return (NA)
   sisters = Descendants(Parent(node, tree), tree)
   return(sisters[! sisters == node])
 }	
 
+########
 
 Site_species <- function(site, nodiv_data)
 {
@@ -89,7 +112,7 @@ nodenumbers <- function(x)
     x <- x$phylo
   if(!inherits(x, "phylo"))
     stop("x must be of type phylo or nodiv_data")
-  return(1:Nnode(tree) + Ntip(tree))
+  return(1:Nnode(x) + Ntip(x))
 }
 
 
@@ -115,19 +138,23 @@ Create_node_by_species_matrix = function(tree)
 
 
 ## TODO these should all be available from the data object, S3
-Node_size <- function(node)
+Node_size <- function(node, nodiv_data)
 # calculates the number of species that descend from a certain node
 {
+  if(node == 0)
+    return(sapply(nodenumbers(nodiv_data), function(nod) Node_size(nodiv_data, nod))) else
+      if(! node %in% nodenumbers(nodiv_data)) stop("node must be one of the internal nodes in nodiv_data$phylo")
 	# node : the internal (ape) number of the node 
-	return(length(Node_species2(node)))
+	return(sum(nodiv_data$node_species[node - Nspecies(nodiv_data),]))
 }
 
-#TODO rename here and everywhere and make an S3 function
+
 Node_species <- function(node, nodiv_data)
   # returns a character vector with names of species that descend from a node
 {
   # node : the internal (ape) number of the node
   if(!inherits(nodiv_data, "nodiv_data"))
+    stop("nodiv_data must be an object of type nodiv_data")
   
   return(colnames(nodiv_data$node_species)[nodiv_data$node_species[node-Nspecies(nodiv_data),] > 0])
 }
@@ -154,28 +181,31 @@ Node_sites <- function(node, nodiv_data)
 }
 	
 
-Node_occupancy <- function(node, nodiv_data)
+Node_occupancy <- function(nodiv_data, node = 0)
 # calculates the number of sites occupied by at least one member of the node
 {
-	# node : the internal (ape) number of the node 
-	return(length(Node_sites(node, nodiv_data)))
-}
-
-Node_richness <- function(node_number, comm = hcom, tree = htree, coords = dat.LL)
-# A summary function that calculates the species richness pattern of all species that descend from a certain node
-{
-	# node_number  :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
-
-	require(ape)
+  if(node == 0)
+    return(sapply(nodenumbers(nodiv_data), function(nod) Node_occupancy(nodiv_data, nod))) else
+    if(! node %in% nodenumbers(nodiv_data)) stop("node must be one of the internal nodes in nodiv_data$phylo")
 	
-	nodecom = Node_comm(node_number, comm, tree)
-	richs <- data.frame(table(as.character(nodecom$plot)), stringsAsFactors = FALSE)
-	names(richs) <- c("cell", "richness")
-	richs <- merge(coords, richs, all.x = T, by="cell")
-	richs <- richs[match(as.character(coords$cell), as.character(richs$cell)),]
-
-	return(richs)
+  return(length(Node_sites(node, nodiv_data)))
 }
+
+# Node_richness <- function(node_number, comm = hcom, tree = htree, coords = dat.LL)
+# # A summary function that calculates the species richness pattern of all species that descend from a certain node
+# {
+# 	# node_number  :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
+# 
+# 	require(ape)
+# 	
+# 	nodecom = Node_comm(node_number, comm, tree)
+# 	richs <- data.frame(table(as.character(nodecom$plot)), stringsAsFactors = FALSE)
+# 	names(richs) <- c("cell", "richness")
+# 	richs <- merge(coords, richs, all.x = T, by="cell")
+# 	richs <- richs[match(as.character(coords$cell), as.character(richs$cell)),]
+# 
+# 	return(richs)
+# }
 
 ## TODO almost all of the above functions can be changed to simple access functions 
 ## of a nodiv_data object that has been subsetted

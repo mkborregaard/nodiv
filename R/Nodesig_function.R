@@ -22,12 +22,12 @@ inv_logit <- function(a)
 quasiswap_nodesig <- function(simcom, Node_sp, repeats, show = F)
 {
   ll <- 0
-  if (show) pb <- txtProgressBar(min = 0, max = repeats, style = 3)
+  if (show) pb <- txtProgressBar(min = 0, max = repeats-1, style = 3)
   replicate(repeats-1,
   {
+    if (show) setTxtProgressBar(pb, ll <<- ll + 1)
     simcom <- commsimulator(simcom, method = "quasiswap")
     rowSums(simcom[, Node_sp])
-    if (show) setTxtProgressBar(pb, ll <<- ll + 1)
     })
 }
 
@@ -37,7 +37,7 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
   r <- rowSums(tempcom)
   c <- colSums(tempcom)
   ll <- 0
-  if (show) pb <- txtProgressBar(min = 0, max = repeats, style = 3)
+  if (show) pb <- txtProgressBar(min = 0, max = repeats-1, style = 3)
   
   # Use the quasiswap algorithm to created random matrices, basing each new matrix on the previous
   nodereps <- replicate(repeats-1,
@@ -52,14 +52,14 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
   return(nodereps)
 }
 
-Nodesig <- function(commat, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
+Nodesig <- function(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
 {
   if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(rep(NA,5)) #if one of the descendant clades is a single species
   method = match.arg(method)
   # A global variable to count the number of repeats
   require(vegan)
   require(fields)
-  simcom <- commat
+  simcom <- nodiv_data$comm
   
   nodereps <- switch(method,
          quasiswap = quasiswap_nodesig(simcom, Node_sp, repeats, show),
@@ -67,11 +67,11 @@ Nodesig <- function(commat, Node_sp, repeats = 100, method = c("quasiswap","rdta
   )
   
   
-  nodeemp <- rowSums(commat[, Node_sp])
+  nodeemp <- rowSums(nodiv_data$comm[, Node_sp])
   nodereps <- cbind(nodeemp, nodereps)
   ord <- apply(nodereps, 1,  rank)[1,]
   ord[ord == repeats] <- repeats - 1
-  ord[rowSums(commat) == 0] <- NA
+  ord[rowSums(nodiv_data$comm) == 0] <- NA
   
   #calculates the effect size (take care of sd = 0)!
   nodemeans <- rowMeans(nodereps)

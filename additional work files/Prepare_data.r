@@ -76,13 +76,11 @@ distrib_data <- function(commatrix, coords, proj4string = CRS(as.character(NA)),
 
 #internal functions
 
-#TODO
-#much of this testing can be done with try-catch phrases
+#TODO #much of this testing can be done with try-catch phrases
 #use the testthat library to test everything
 
-#TODO implement a function to subset the data, e.g. only to sites with a given species richness, or to a subset of the clade
 
-#TODO implement plot function(which for distrib_data shows a richness map, for nodiv_data a richness map and the phylogeny); a print, summary and print.summary functions for both classes; introspection functions for richness, range size etc. Delete NND
+#TODO implement plot function for the result object
 
 
 
