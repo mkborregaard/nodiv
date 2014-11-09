@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{plot.nodiv_result}
+\alias{plot.nodiv_result}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,24 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+plot.nodiv_result(x, label = nodenumbers(x), main = "", zlims = 0:1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{x}{
+%%     ~~Describe \code{x} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{label}{
+%%     ~~Describe \code{label} here~~
+}
+  \item{main}{
+%%     ~~Describe \code{main} here~~
+}
+  \item{zlims}{
+%%     ~~Describe \code{zlims} here~~
+}
+  \item{\dots}{
+%%     ~~Describe \code{\dots} here~~
 }
 }
 \details{
@@ -50,13 +59,11 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (x, label = nodenumbers(x), main = "", zlims = 0:1, 
+    ...) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    plot_nodes_phylo(x$GND, label = label, tree = x$phylo, main = main, 
+        zlims = zlims, show.legend = TRUE, ...)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

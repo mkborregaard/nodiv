@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{nodiv_res}
+\alias{nodiv_res}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,21 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+nodiv_res(results, nodiv_data, repeats, method)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{results}{
+%%     ~~Describe \code{results} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
+}
+  \item{repeats}{
+%%     ~~Describe \code{repeats} here~~
+}
+  \item{method}{
+%%     ~~Describe \code{method} here~~
 }
 }
 \details{
@@ -50,13 +56,24 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (results, nodiv_data, repeats, method) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    ret <- nodiv_data
+    class(ret) <- c("nodiv_result", class(nodiv_data))
+    ret$method <- method
+    ret$repeats <- repeats
+    SR <- sapply(results, "[[", 1)
+    ret$SOS <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, 
+        SR, nodiv_data))
+    rval <- sapply(results, "[[", 2)
+    par_rval <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, 
+        rval, nodiv_data))
+    pval <- apply(par_rval, 2, pval_sig)
+    pval[pval > 1 - 2/repeats] <- 1 - 2/repeats
+    pval[pval < 2/repeats] <- 2/repeats
+    ret$GND <- apply(pval, 2, function(x) 1 - inv_logit(mean(logit(x), 
+        na.rm = T)))
+    return(ret)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

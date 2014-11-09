@@ -46,19 +46,19 @@ summary.distrib_data <- function(object, ...)
 
 print.summary_distrib_data <- function(x, printlen = 4, ...)
 {
-  cat(paste("Data object with", x$type,"distributions of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
+  cat(paste("Data object with", x$type,"distributions of", length(x$species),"species in", nrow(x$coords),"sites\n\n"))
   cat("Species names:\n")
   cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n", sep = ""))
   cat("Site names:\n")
   cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
-  cat(paste("Species richness:  min", min(x$richness$richness, "max", max(x$richness$richness), "mean",mean(x$richness$richness,"\n"))))
+  cat(paste("Species richness:  min", min(x$richness$richness), "max", max(x$richness$richness), "mean",mean(x$richness$richness),"\n"))
   cat(paste("Species occupancy:  min", min(x$occupancy, "max", max(x$occupancy), "mean",mean(x$occupancy,"\n"))))
 }
 
 summary.nodiv_data <- function(object, ...)
 {
   ret <- summary.distrib_data(object, ...)
-  ret$nodes <- Nnode(object$phylo)
+  ret$nodes <- nodenumbers(object$phylo)
   ret$node.label = object$phylo.node.label
   class(ret) <- "summary_nodiv_data"
   ret
@@ -71,9 +71,9 @@ print.summary_nodiv_data <- function(x, printlen = 4, ...)
   cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n", sep = ""))
   cat("Site names:\n")
   cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
-  cat(paste("Species richness:   min", min(x$richness$richness), "max", max(x$richness$richness), "mean", round(mean(x$richness$richness),2),"\n"))
-  cat(paste("Species occupancy:  min", min(x$occupancy), "max", max(x$occupancy), "mean",round(mean(x$occupancy),2),"\n\n"))
-  cat(paste("The phylogeny has", x$nodes, "internal nodes"))
+  cat(paste("Species richness:   min:", min(x$richness$richness), "\tmax:", max(x$richness$richness), "\tmean:", round(mean(x$richness$richness),2),"\n"))
+  cat(paste("Species occupancy:  min:", min(x$occupancy), "\tmax:", max(x$occupancy), "\tmean:",round(mean(x$occupancy),2),"\n\n"))
+  cat(paste("The phylogeny has", length(x$nodes), "internal nodes"))
   if (!is.null(x$node.label)) 
   {
     cat("Node labels:\n")
@@ -84,14 +84,23 @@ print.summary_nodiv_data <- function(x, printlen = 4, ...)
   }
 }
 
+add_shape <- function(distrib_data, shape)
+{
+  if(!inherits(distrib_data, "distrib_data"))
+    stop("argument must be an object of types distrib_data, nodiv_data or nodiv_results")
+  distrib_data$shape <- shape
+  distrib_data
+}
+
 plot.distrib_data <- function(object, ...)
 {
+  if(is.null(object$shape)) shape <- NULL else shape <- object$shape
   if(object$type == "grid")
-    map_var(summary(object)$richness, object$coords, ...) else
-    plot_points(richness(object), object$coords, ...)
+    map_var(summary.distrib_data(object)$richness, object$coords, shape = shape, ...) else
+    plot_points(richness(object), object$coords, shape = shape, ...)
 }  
 
-plot.nodiv_data <- function(object, col = rev(terrain.colors(255)), ...)
+plot.nodiv_data <- function(object,  col = rev(terrain.colors(255)), ...)
 {
   par(mfrow = c(1,2))
   plot.distrib_data(object, col = col)
@@ -170,5 +179,4 @@ richness <- function(distrib_data)
 }
 
 
-##TODO her mangler en function til at plot color points,
-## og så skal jeg have en måde at få shapefiles enten ind i plottet, eller måske i selve nodiv objektet?
+

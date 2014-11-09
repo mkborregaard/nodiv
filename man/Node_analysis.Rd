@@ -1,5 +1,5 @@
-\name{rdtable_nodesig}
-\alias{rdtable_nodesig}
+\name{Node_analysis}
+\alias{Node_analysis}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,21 +8,21 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-rdtable_nodesig(simcom, Node_sp, repeats, show = F)
+Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{simcom}{
-%%     ~~Describe \code{simcom} here~~
-}
-  \item{Node_sp}{
-%%     ~~Describe \code{Node_sp} here~~
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
 }
   \item{repeats}{
 %%     ~~Describe \code{repeats} here~~
 }
-  \item{show}{
-%%     ~~Describe \code{show} here~~
+  \item{method}{
+%%     ~~Describe \code{method} here~~
+}
+  \item{cores}{
+%%     ~~Describe \code{cores} here~~
 }
 }
 \details{
@@ -56,22 +56,27 @@ rdtable_nodesig(simcom, Node_sp, repeats, show = F)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (simcom, Node_sp, repeats, show = F) 
+function (nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), 
+    cores = 1) 
 {
-    tempcom <- cbind(rowSums(simcom[, Node_sp]), rowSums(simcom[, 
-        !Node_sp]))
-    r <- rowSums(tempcom)
-    c <- colSums(tempcom)
-    ll <- 0
-    if (show) 
-        pb <- txtProgressBar(min = 0, max = repeats - 1, style = 3)
-    nodereps <- replicate(repeats - 1, {
-        simcom <- r2dtable(1, r, c)[[1]]
-        if (show) 
-            setTxtProgressBar(pb, ll <<- ll + 1)
-        simcom[, 1]
-    })
-    return(nodereps)
+    if (!inherits(nodiv_data, "nodiv_data")) 
+        stop("This function only works on objects of class nodiv_data")
+    method <- match.arg(method)
+    if (cores > 1) {
+        stop("The parallel interface is currently unimplemented")
+    }
+    else {
+        pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, 
+            max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), 
+            style = 3)
+        results <- lapply(nodenumbers(nodiv_data), function(node) {
+            setTxtProgressBar(pb, node)
+            ret <- nodiv_anal(node, nodiv_data, repeats, method)
+            ret[, 1:2]
+        })
+    }
+    nodiv_result <- nodiv_res(results, nodiv_data, repeats, method)
+    return(nodiv_result)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

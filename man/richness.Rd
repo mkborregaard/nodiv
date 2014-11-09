@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{richness}
+\alias{richness}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,12 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+richness(distrib_data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
-}
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{distrib_data}{
+%%     ~~Describe \code{distrib_data} here~~
 }
 }
 \details{
@@ -50,13 +47,11 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (distrib_data) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    if (!inherits(distrib_data, "distrib_data")) 
+        stop("distrib_data must be an object of type distrib_data")
+    return(summary(distrib_data)$richness$richness)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

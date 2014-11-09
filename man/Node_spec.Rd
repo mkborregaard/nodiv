@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{Node_spec}
+\alias{Node_spec}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+Node_spec(node, tree)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,11 +52,9 @@ Descendants(node, tree)
 ## The function is currently defined as
 function (node, tree) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    require(ape)
+    nodetree <- extract.clade(tree, node)
+    return(nodetree$tip.label)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

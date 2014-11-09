@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{summary.distrib_data}
+\alias{summary.distrib_data}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+summary.distrib_data(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{object}{
+%%     ~~Describe \code{object} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{\dots}{
+%%     ~~Describe \code{\dots} here~~
 }
 }
 \details{
@@ -50,13 +50,18 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (object, ...) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    richness <- if (object$type == "grid") 
+        SpatialPixelsDataFrame(SpatialPoints(object$coords), 
+            data.frame(richness = rowSums(object$comm)))
+    else SpatialPointsDataFrame(SpatialPoints(object$coords), 
+        data.frame(richness = rowSums(object$comm)))
+    occupancy <- colSums(object$comm)
+    ret <- list(species = object$species, coords = object$coords, 
+        richness = richness, occupancy = occupancy, type = object$type)
+    class(ret) <- "summary_distrib_data"
+    ret
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

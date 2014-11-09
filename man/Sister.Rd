@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Sister(node, tree = htree)
+Sister(node, tree)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,8 +50,12 @@ Sister(node, tree = htree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree = htree) 
+function (node, tree) 
 {
+    if (inherits(tree, "nodiv_data")) 
+        tree <- tree$phylo
+    if (!inherits(tree, "phylo")) 
+        stop("tree must be an object of type phylo or nodiv_data")
     if (node == Ntip(tree) + 1) 
         return(NA)
     sisters = Descendants(Parent(node, tree), tree)

@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{plot.distrib_data}
+\alias{plot.distrib_data}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+plot.distrib_data(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{object}{
+%%     ~~Describe \code{object} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{\dots}{
+%%     ~~Describe \code{\dots} here~~
 }
 }
 \details{
@@ -50,13 +50,16 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (object, ...) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    if (is.null(object$shape)) 
+        shape <- NULL
+    else shape <- object$shape
+    if (object$type == "grid") 
+        map_var(summary.distrib_data(object)$richness, object$coords, 
+            shape = shape, ...)
+    else plot_points(richness(object), object$coords, shape = shape, 
+        ...)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

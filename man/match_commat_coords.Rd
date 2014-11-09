@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{match_commat_coords}
+\alias{match_commat_coords}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+match_commat_coords(commatrix, sitenames)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{commatrix}{
+%%     ~~Describe \code{commatrix} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{sitenames}{
+%%     ~~Describe \code{sitenames} here~~
 }
 }
 \details{
@@ -50,13 +50,19 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (commatrix, sitenames) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    cat("Comparing sites in community data and spatial points\n")
+    if (is.null(rownames(commatrix))) 
+        if (nrow(commatrix) == length(sitenames)) 
+            rownames(commatrix) <- sitenames
+        else stop("The number of sites in coords and the data matrix do not fit and there are no rownames in the community matrix to use for matching")
+    if (sum(sitenames \%in\% rownames(commatrix)) < 2) 
+        stop("the coordinate names and the rownammes of the community matrix do not match")
+    sitenames <- sitenames[sitenames \%in\% rownames(commatrix)]
+    commatrix <- commatrix[match(sitenames, rownames(commatrix)), 
+        ]
+    return(commatrix)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

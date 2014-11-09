@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{summary.nodiv_result}
+\alias{summary.nodiv_result}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+summary.nodiv_result(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{object}{
+%%     ~~Describe \code{object} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{\dots}{
+%%     ~~Describe \code{\dots} here~~
 }
 }
 \details{
@@ -50,13 +50,17 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (object, ...) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    ret <- summary.nodiv_data(object, ...)
+    ret$GND <- object$GND
+    ret$method <- object$method
+    ret$repeats <- object$repeats
+    if (sum(ret$GND > 0.6, na.rm = T) > 0) 
+        ret$sign <- which(ret$GND > 0.6)
+    else ret$sign <- numeric()
+    class(ret) <- "summary_nodiv_result"
+    ret
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

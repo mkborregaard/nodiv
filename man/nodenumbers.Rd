@@ -8,12 +8,12 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-nodenumbers(tree)
+nodenumbers(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{x}{
+%%     ~~Describe \code{x} here~~
 }
 }
 \details{
@@ -47,10 +47,13 @@ nodenumbers(tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (tree) 
+function (x) 
 {
-    require(ape)
-    return(1:Nnode(tree) + Ntip(tree))
+    if (inherits(x, "nodiv_data")) 
+        x <- x$phylo
+    if (!inherits(x, "phylo")) 
+        stop("x must be of type phylo or nodiv_data")
+    return(1:Nnode(x) + Ntip(x))
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

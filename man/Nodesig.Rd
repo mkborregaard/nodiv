@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Nodesig(commat, node.sp, repeats = 100, method = c("quasiswap", "rdtable"), show = F)
+Nodesig(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", "rdtable"), show = F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{commat}{
-%%     ~~Describe \code{commat} here~~
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
 }
-  \item{node.sp}{
-%%     ~~Describe \code{node.sp} here~~
+  \item{Node_sp}{
+%%     ~~Describe \code{Node_sp} here~~
 }
   \item{repeats}{
 %%     ~~Describe \code{repeats} here~~
@@ -59,23 +59,23 @@ Nodesig(commat, node.sp, repeats = 100, method = c("quasiswap", "rdtable"), show
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (commat, node.sp, repeats = 100, method = c("quasiswap", 
+function (nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", 
     "rdtable"), show = F) 
 {
-    if (sum(node.sp) == 1 | sum(!node.sp) == 1) 
-        return(NA)
+    if (sum(Node_sp) == 1 | sum(!Node_sp) == 1) 
+        return(rep(NA, 5))
     method = match.arg(method)
     require(vegan)
     require(fields)
-    simcom <- commat
+    simcom <- nodiv_data$comm
     nodereps <- switch(method, quasiswap = quasiswap_nodesig(simcom, 
-        node.sp, repeats, show), rdtable = rdtable_nodesig(simcom, 
-        node.sp, repeats, show))
-    nodeemp <- rowSums(commat[, node.sp])
+        Node_sp, repeats, show), rdtable = rdtable_nodesig(simcom, 
+        Node_sp, repeats, show))
+    nodeemp <- rowSums(nodiv_data$comm[, Node_sp])
     nodereps <- cbind(nodeemp, nodereps)
     ord <- apply(nodereps, 1, rank)[1, ]
     ord[ord == repeats] <- repeats - 1
-    ord[rowSums(commat) == 0] <- NA
+    ord[rowSums(nodiv_data$comm) == 0] <- NA
     nodemeans <- rowMeans(nodereps)
     nodesds <- apply(nodereps, 1, sd)
     ses <- (nodeemp - nodemeans)/nodesds

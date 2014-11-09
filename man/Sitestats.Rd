@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Sitestats(comm = hcom, tree = htree)
+Sitestats(comm, tree)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -50,18 +50,18 @@ Sitestats(comm = hcom, tree = htree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (comm = hcom, tree = htree) 
+function (comm, tree) 
 {
     require(ape)
-    cell <- sort(unique(comm$Plot))
+    cell <- sort(unique(comm$plot))
     richness = numeric()
     mean_range_in_cell = numeric()
-    ranges = table(comm$Species)
+    ranges = table(comm$id)
     ranges = ranges[match(tree$tip.label, names(ranges))]
     for (plotnum in seq_along(cell)) {
         print(plotnum)
-        testcom <- comm[comm$Plot == cell[plotnum], ]
-        emp <- as.character(testcom$Species)
+        testcom <- comm[comm$plot == cell[plotnum], ]
+        emp <- as.character(testcom$id)
         mean_range_in_cell[plotnum] = mean(ranges[tree$tip.label \%in\% 
             emp])
         richness[plotnum] = length(emp)

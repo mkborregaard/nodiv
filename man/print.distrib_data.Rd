@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{print.distrib_data}
+\alias{print.distrib_data}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,18 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+print.distrib_data(x, printlen = 4, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{x}{
+%%     ~~Describe \code{x} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{printlen}{
+%%     ~~Describe \code{printlen} here~~
+}
+  \item{\dots}{
+%%     ~~Describe \code{\dots} here~~
 }
 }
 \details{
@@ -50,13 +53,16 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (x, printlen = 4, ...) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    cat(paste("Data object with", x$type, " distributions of", 
+        Nspecies(x), "species in", Nsites(x), "sites\n\n"))
+    cat("Species names:\n")
+    cat(paste("\t", paste(x$species[1:printlen], collapse = ", "), 
+        ", ...\n", sep = ""))
+    cat("Site names:\n")
+    cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "), 
+        ", ...\n", sep = ""))
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

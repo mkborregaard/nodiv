@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{nodiv_anal}
+\alias{nodiv_anal}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,21 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+nodiv_anal(node, nodiv_data, repeats, method)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{node}{
 %%     ~~Describe \code{node} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
+}
+  \item{repeats}{
+%%     ~~Describe \code{repeats} here~~
+}
+  \item{method}{
+%%     ~~Describe \code{method} here~~
 }
 }
 \details{
@@ -50,13 +56,24 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (node, nodiv_data, repeats, method) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    if (node == basal_node(nodiv_data)) 
+        return(data.frame(ses = rep(NA, Nsites(nodiv_data)), 
+            pval = rep(NA, Nsites(nodiv_data)), nodeemp = rep(NA, 
+                Nsites(nodiv_data)), nodemeans = rep(NA, Nsites(nodiv_data)), 
+            nodesds = rep(NA, Nsites(nodiv_data))))
+    parent_data <- subsample(nodiv_data, node = Parent(node, 
+        nodiv_data))
+    parNode_sites <- match(parent_data$coords$sites, nodiv_data$coords$sites)
+    Node_sp <- (parent_data$species \%in\% Node_species(node, nodiv_data))
+    res_object <- Nodesig(parent_data, Node_sp, repeats, method)
+    res_object <- lapply(res_object, function(x) {
+        ret <- rep(NA, Nsites(nodiv_data))
+        ret[parNode_sites] <- x
+        ret
+    })
+    return(as.data.frame(res_object))
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

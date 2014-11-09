@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{Node_occupancy}
+\alias{Node_occupancy}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+Node_occupancy(nodiv_data, node = 0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
+}
   \item{node}{
 %%     ~~Describe \code{node} here~~
-}
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
 }
 }
 \details{
@@ -50,13 +50,14 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (nodiv_data, node = 0) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    if (node == 0) 
+        return(sapply(nodenumbers(nodiv_data), function(nod) Node_occupancy(nodiv_data, 
+            nod)))
+    else if (!node \%in\% nodenumbers(nodiv_data)) 
+        stop("node must be one of the internal nodes in nodiv_data$phylo")
+    return(length(Node_sites(node, nodiv_data)))
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

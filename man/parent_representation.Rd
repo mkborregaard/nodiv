@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-parent_representation(node_number, rep_matrix, tree = htree)
+parent_representation(node_number, rep_matrix, nodiv_data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,8 +18,8 @@ parent_representation(node_number, rep_matrix, tree = htree)
   \item{rep_matrix}{
 %%     ~~Describe \code{rep_matrix} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
 }
 }
 \details{
@@ -53,14 +53,14 @@ parent_representation(node_number, rep_matrix, tree = htree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node_number, rep_matrix, tree = htree) 
+function (node_number, rep_matrix, nodiv_data) 
 {
-    desc = Descendants(node_number)
-    if (desc[1] < basal.node(tree) | desc[2] < basal.node(tree)) 
+    desc = Descendants(node_number, nodiv_data)
+    if (desc[1] < basal_node(nodiv_data) | desc[2] < basal_node(nodiv_data)) 
         return(rep(NA, nrow(rep_matrix)))
-    desc1row = which(colnames(rep_matrix) == as.character(desc[1]))
-    desc2row = which(colnames(rep_matrix) == as.character(desc[2]))
-    return(rowMeans(cbind(rep_matrix[, desc1row], -rep_matrix[, 
+    desc1row = desc[1] - Nspecies(nodiv_data)
+    desc2row = desc[2] - Nspecies(nodiv_data)
+    return(rowMeans(cbind(rep_matrix[, desc1row], 1 - rep_matrix[, 
         desc2row])))
   }
 }

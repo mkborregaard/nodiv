@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-quasiswap_nodesig(simcom, node.sp, repeats, show = F)
+quasiswap_nodesig(simcom, Node_sp, repeats, show = F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{simcom}{
 %%     ~~Describe \code{simcom} here~~
 }
-  \item{node.sp}{
-%%     ~~Describe \code{node.sp} here~~
+  \item{Node_sp}{
+%%     ~~Describe \code{Node_sp} here~~
 }
   \item{repeats}{
 %%     ~~Describe \code{repeats} here~~
@@ -56,14 +56,16 @@ quasiswap_nodesig(simcom, node.sp, repeats, show = F)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (simcom, node.sp, repeats, show = F) 
+function (simcom, Node_sp, repeats, show = F) 
 {
     ll <- 0
+    if (show) 
+        pb <- txtProgressBar(min = 0, max = repeats - 1, style = 3)
     replicate(repeats - 1, {
-        simcom <- commsimulator(simcom, method = "quasiswap")
-        rowSums(simcom[, node.sp])
         if (show) 
-            print(ll <<- ll + 1)
+            setTxtProgressBar(pb, ll <<- ll + 1)
+        simcom <- commsimulator(simcom, method = "quasiswap")
+        rowSums(simcom[, Node_sp])
     })
   }
 }

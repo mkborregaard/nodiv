@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-create.cols(vec, col = rev(rainbow(256, start = 0.02, end = 0.59)), zlims = c(min(vec, na.rm = T), max(vec, na.rm = T)))
+create.cols(vec, col, zlims)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,9 +53,14 @@ create.cols(vec, col = rev(rainbow(256, start = 0.02, end = 0.59)), zlims = c(mi
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (vec, col = rev(rainbow(256, start = 0.02, end = 0.59)), 
-    zlims = c(min(vec, na.rm = T), max(vec, na.rm = T))) 
+function (vec, col, zlims) 
 {
+    if (missing(col)) 
+        if (min(col) < 0) 
+            col <- rev(brewer.pal(11, "RdYlBu"))
+        else col <- brewer.pal(9, "YlOrRd")
+    if (missing(zlims)) 
+        zlims <- c(min(vec, na.rm = T), max(vec, na.rm = T))
     vec = vec - zlims[1]
     vec = floor(vec * (length(col) - 1)/(zlims[2] - zlims[1])) + 
         1

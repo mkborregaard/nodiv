@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{plot.nodiv_data}
+\alias{plot.nodiv_data}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,18 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+plot.nodiv_data(object, col = rev(terrain.colors(255)), ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{object}{
+%%     ~~Describe \code{object} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{col}{
+%%     ~~Describe \code{col} here~~
+}
+  \item{\dots}{
+%%     ~~Describe \code{\dots} here~~
 }
 }
 \details{
@@ -50,13 +53,11 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (object, col = rev(terrain.colors(255)), ...) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    par(mfrow = c(1, 2))
+    plot.distrib_data(object, col = col)
+    plot(object$phylo, ...)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -1,16 +1,7 @@
 
-# Definition of nodiv-class
-# #samme som ovenfor (har det samme i sig) +
-# 
-# matrix parent_representation_matrix
-# spatialGrid/PointsDataframe sitestatistics
-# data.frame nodestatistics
-# vector GND
 
 
-
-
-nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(NA)), type = c("auto", "grid", "points"))
+nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 {
   type = match.arg(type)
   
@@ -19,7 +10,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(
   if(!class(commatrix) == "distrib_data")
   {
     if(missing(coords)) stop("if commatrix is not an object of type distrib_data, coords must be specified")
-    dist_dat <- distrib_data(commatrix, coords, proj4string, type)
+    dist_dat <- distrib_data(commatrix, coords, proj4string, type, shape)
   } else dist_dat <- commatrix
   
   nodiv_dat <- dist_dat
@@ -43,7 +34,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(
 }
 
 
-distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"))
+distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 {
   type = match.arg(type)
   cat("Checking input data\n")
@@ -59,6 +50,7 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
   
   if(is.data.frame(commatrix)) commatrix <- as.matrix(commatrix)
   if(!is.matrix(commatrix)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
+  if(!is.numeric(commatrix)) stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
   if(!all.equal(sort(unique(as.numeric(commatrix))), 0:1)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   
   if(is.matrix(coords)) coords <- as.data.frame(coords)
@@ -73,6 +65,8 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
   
   ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
   ret$species <- colnames(ret$comm)
+  
+  if(!is.null(shape)) ret$shape <- shape
   
   class(ret) <- "distrib_data"
   return(ret)
@@ -106,7 +100,7 @@ match_commat_coords <- function(commatrix, sitenames)
 }
 
 
-toSpatialPoints <- function(coords, proj4string, commat, type)
+toSpatialPoints <- function(coords, proj4string, commatrix, type)
 {
     xcol <- 0
     ycol <- 0
@@ -133,7 +127,7 @@ toSpatialPoints <- function(coords, proj4string, commat, type)
     ret <- SpatialPoints(ret, proj4string)
     
     if (ncol(coords)==3 & !(xcol + ycol == 0)) sitenames <- coords[,-c(xcol, ycol)] else 
-      if(length(coords) == nrow(commatrix) & !is.null(rownames(commatrix))) sitenames <- rownames(commatrix) else
+      if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix))) sitenames <- rownames(commatrix) else
         if(!is.null(rownames(coords))) sitenames <- rownames(coords) else 
           stop("There must be valid site names in the rownames of commatrix or in the coords data")
     
@@ -159,6 +153,6 @@ isGridVar <- function(gridVar)
   distab <- table(dists)
   smallest <- as.numeric(names(distab[1]))
   most_common <- as.numeric(names(distab))[distab == max(distab)]
-  return(all.equal(dists/smallest, floor(dists/smallest)) & smallest %in% most_common)
+  return(isTRUE(all.equal(dists/smallest, floor(dists/smallest))) & smallest %in% most_common)
   #if all differences are a multiplum of the smallest, and the smallest distance is the most common, it is probably a grid
 }

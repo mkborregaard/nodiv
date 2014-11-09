@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{Nsites}
+\alias{Nsites}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,12 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+Nsites(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
-}
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{x}{
+%%     ~~Describe \code{x} here~~
 }
 }
 \details{
@@ -50,13 +47,11 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (x) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    if (!inherits(x, "distrib_data")) 
+        stop("object is not of class \"distrib_data\"")
+    length(x$coords)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{add_shape}
+\alias{add_shape}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+add_shape(distrib_data, shape)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{distrib_data}{
+%%     ~~Describe \code{distrib_data} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{shape}{
+%%     ~~Describe \code{shape} here~~
 }
 }
 \details{
@@ -50,13 +50,12 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (distrib_data, shape) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    if (!inherits(distrib_data, "distrib_data")) 
+        stop("argument must be an object of types distrib_data, nodiv_data or nodiv_results")
+    distrib_data$shape <- shape
+    distrib_data
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

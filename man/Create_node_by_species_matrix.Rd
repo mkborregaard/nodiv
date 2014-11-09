@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Create_node_by_species_matrix(tree = htree)
+Create_node_by_species_matrix(tree)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,14 +47,14 @@ Create_node_by_species_matrix(tree = htree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (tree = htree) 
+function (tree) 
 {
-    require(ape)
     nodespecies <- matrix(0, nrow = Nnode(tree), ncol = Ntip(tree))
-    colnames(nodespecies) <- htree$tip.label
+    colnames(nodespecies) <- tree$tip.label
     rownames(nodespecies) <- 1:Nnode(tree) + Ntip(tree)
     for (i in 1:Nnode(tree)) {
-        nodespecies[i, which(colnames(nodespecies) \%in\% Node.species(nodenumbers(tree)[i]))] <- 1
+        nodespecies[i, which(colnames(nodespecies) \%in\% Node_spec(nodenumbers(tree)[i], 
+            tree))] <- 1
     }
     return(nodespecies)
   }

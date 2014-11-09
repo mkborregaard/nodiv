@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{Site_species}
+\alias{Site_species}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,15 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+Site_species(site, nodiv_data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
+  \item{site}{
+%%     ~~Describe \code{site} here~~
 }
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{nodiv_data}{
+%%     ~~Describe \code{nodiv_data} here~~
 }
 }
 \details{
@@ -50,13 +50,10 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (site, nodiv_data) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    spec_index <- nodiv_data$comm[site, ] == 1
+    return(nodiv_data$species[spec_index])
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

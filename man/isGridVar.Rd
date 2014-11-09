@@ -1,5 +1,5 @@
-\name{Descendants}
-\alias{Descendants}
+\name{isGridVar}
+\alias{isGridVar}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 %%  ~~function to do ... ~~
@@ -8,15 +8,12 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-Descendants(node, tree)
+isGridVar(gridVar)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{node}{
-%%     ~~Describe \code{node} here~~
-}
-  \item{tree}{
-%%     ~~Describe \code{tree} here~~
+  \item{gridVar}{
+%%     ~~Describe \code{gridVar} here~~
 }
 }
 \details{
@@ -50,13 +47,14 @@ Descendants(node, tree)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (node, tree) 
+function (gridVar) 
 {
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(tree$edge[tree$edge[, 1] == node, 2])
+    dists <- diff(sort(unique(gridVar)))
+    distab <- table(dists)
+    smallest <- as.numeric(names(distab[1]))
+    most_common <- as.numeric(names(distab))[distab == max(distab)]
+    return(isTRUE(all.equal(dists/smallest, floor(dists/smallest))) & 
+        smallest \%in\% most_common)
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
