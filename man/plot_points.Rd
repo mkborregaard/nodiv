@@ -1,72 +1,70 @@
 \name{plot_points}
 \alias{plot_points}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{plot_grid}
+
 \title{
-%%  ~~function to do ... ~~
+Plot a variable on spatial points or a spatial grid using a color scale
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Plots the variable either as colored points or as a colored raster
 }
 \usage{
-plot_points(x, coords, pch = 16, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlims, bg = par("bg"), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, ...)
+plot_points(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= c(min(vec,na.rm = T),max(vec,na.rm = T)),  zoom_to_points = FALSE, xlim = NULL, ylim = NULL, pch = 16, bg = par("bg"), ...)
+plot_grid(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = c(min(vec,na.rm = T),max(vec,na.rm = T)), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-%%     ~~Describe \code{x} here~~
+A numerical variable to be plotted using a color scale
 }
   \item{coords}{
-%%     ~~Describe \code{coords} here~~
-}
-  \item{pch}{
-%%     ~~Describe \code{pch} here~~
+A matrix or \code{data.frame} with two columns, or an object inheriting from \code{SpatialPoints}, of the same length as \code{x}
 }
   \item{col}{
-%%     ~~Describe \code{col} here~~
+The color palette to use for the color scale
 }
   \item{shape}{
-%%     ~~Describe \code{shape} here~~
+A shape file giving a map to use as a background for the plot
 }
   \item{shapefill}{
-%%     ~~Describe \code{shapefill} here~~
+If shape is a polygon, the color to use to fill the polygons. If shape is a line shapefile, the color to use for plotting lines
 }
   \item{shapeborder}{
-%%     ~~Describe \code{shapeborder} here~~
+If shape is a polygon, the color of the border around polygons
 }
   \item{zlims}{
-%%     ~~Describe \code{zlims} here~~
-}
-  \item{bg}{
-%%     ~~Describe \code{bg} here~~
+The values to use for the extremes of the color scale
 }
   \item{zoom_to_points}{
-%%     ~~Describe \code{zoom_to_points} here~~
+Given a shapefile, the function will set the outer limits of the plot to the bounding box of the shapefile. If \code{zoom_to_points} is \code{TRUE}, the outer limits will be set by the bounding box of the data points instead.
 }
   \item{xlim}{
-%%     ~~Describe \code{xlim} here~~
+The x limits of the plotting area
 }
   \item{ylim}{
-%%     ~~Describe \code{ylim} here~~
+The y limits of the plotting area
+}
+  \item{pch}{
+The point character to use for plotting points
+}
+  \item{bg}{
+The central color of points when using a pch value between 21 and 25
 }
   \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+Additional arguments to pass to plot
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+\code{plot_grid} invisibly returns the \code{raster} object used for plotting 
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard 
 }
 \note{
 %%  ~~further notes~~
@@ -75,68 +73,12 @@ plot_points(x, coords, pch = 16, col = rev(terrain.colors(255)), shape = NULL, s
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x, coords, pch = 16, col = rev(terrain.colors(255)), 
-    shape = NULL, shapefill = "grey", shapeborder = "grey", zlims, 
-    bg = par("bg"), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, 
-    ...) 
-{
-    if (inherits(x, "SpatialPointsDataFrame")) {
-        x <- x@data
-        coords <- SpatialPoints(x)
-    }
-    else {
-        if (missing(coords)) 
-            stop("coords must be defined if x is not a SpatialPixelsDataFrame")
-        else {
-            if (!inherits(coords, "SpatialPoints")) {
-                if (is.matrix(coords)) 
-                  coords <- as.data.frame(coords)
-                if (is.data.frame(coords)) {
-                  if (!is.vector(x)) 
-                    stop("x must be a vector or a SpatialPointsDataFrame")
-                  if (!nrow(coords) == length(x)) 
-                    stop("x and coords must have the same number of elements")
-                  if (!ncol(coords) == 2) 
-                    stop("coords must have exactly two columns, for the x and y coordinates of data")
-                  coords <- SpatialPoints(coords)
-                }
-                else stop("Undefined arguments")
-            }
-        }
-    }
-    if (zoom_to_points & !is.null(shape)) {
-        if (is.null(xlim)) 
-            xlim <- 1.1 * bbox(coords)[1, ]
-        if (is.null(ylim)) 
-            ylim <- 1.1 * bbox(coords)[2, ]
-    }
-    if (missing(zlims)) 
-        zlims <- c(min(x, na.rm = T), max(x, na.rm = T))
-    coords <- SpatialPoints(coords)
-    oldpar <- par()
-    par(mar = c(5, 4, 4, 6) + 0.1)
-    if (is.null(shape)) 
-        plot(coords, col = create.cols(x, col, zlim = zlims), 
-            pch = pch, ...)
-    else {
-        plot(shape, col = shapefill, border = shapeborder, xlim = xlim, 
-            ylim = ylim, ...)
-        plot(coords, col = create.cols(x, col, zlim = zlims), 
-            pch = pch, bg = bg, add = T)
-    }
-    library(fields)
-    par <- oldpar
-    image.plot(zlim = zlims, legend.only = TRUE, smallplot = c(0.85, 
-        0.87, 0.38, 0.65), col = col)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

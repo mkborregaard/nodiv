@@ -1,45 +1,62 @@
 \name{Node_analysis}
 \alias{Node_analysis}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{nodiv_result}
+\alias{print.nodiv_result}
+\alias{summary.nodiv_result}
+\alias{print.summary_nodiv_result}
+\alias{plot.nodiv_result}
+
+
 \title{
-%%  ~~function to do ... ~~
+Calculate GND and SOS scores for a phylogeny and community data set
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Goes through each node in the phylogeny, and compares the distribution overlap of sister clades to that expected from a null mode that considers node size, species richness and range size.
 }
 \usage{
 Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1)
+\method{summary}{nodiv_result}(object, ...)
+\method{print}{nodiv_result}print.nodiv_result(x, printlen = 4, ...)
+\method{plot}{nodiv_result}(x, label = nodenumbers(x), main = \"\", zlims = 0:1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{nodiv_data}{
-%%     ~~Describe \code{nodiv_data} here~~
+An object created by the \code{nodiv_data} function
 }
   \item{repeats}{
-%%     ~~Describe \code{repeats} here~~
+Number of null communities to create at each node
 }
   \item{method}{
-%%     ~~Describe \code{method} here~~
+The null model algorithm used to simulate random communities
 }
   \item{cores}{
-%%     ~~Describe \code{cores} here~~
+The number of cores to use in the computation. Note that multi-core processing is yet unimplemented.
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+The \"rdtable\" algorithm is efficient, but may underestimate the deviation between nodes. It should primarily be used for exploratory data analysis. Note that the more robust \"quasiswap\" algorithm may take days to run on larger data sets.
+
+The \code{plot} function for \code{nodiv_result} plots the phylogenetic tree with colored symbols at the nodes. The color and size the nodes are proportional with the GND value of the node.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The result is an object of type \code{nodiv_result}, which has the following components:
+ \item{GND}{A numeric vector between 0 and 1 describing the distributional divergence associated with a node}
+ \item{SOS}{A numeric matrix given the SOS of values, which expresses the difference between empirical and expected species richness of each clade at each site}
+ It also includes all the elements of the \code{nodiv_data} object:
+ \item{coords}{A \code{SpatialPointsDataFrame} or \code{SpatialPixelsDataFrame} (from \code{sp}) with spatial coordinates, and one column named \code{sites} containing the site names}
+ \item{comm}{The community matrix}
+ \item{type}{A character vector describing the type of data}
+ \item{species}{A list of species names}
+ \item{shape}{An optional slot detailing a shapefile object for plotting the data}
+ \item{phylo}{A phylogeny of type \code{phylo} from package \code{ape}} 
+
 }
 \references{
-%% ~put references to the literature/web site here ~
+Borregaard, M.K., Rahbek, C., Fjeldså, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -48,36 +65,13 @@ Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cor
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{plotSOS}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), 
-    cores = 1) 
-{
-    if (!inherits(nodiv_data, "nodiv_data")) 
-        stop("This function only works on objects of class nodiv_data")
-    method <- match.arg(method)
-    if (cores > 1) {
-        stop("The parallel interface is currently unimplemented")
-    }
-    else {
-        pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, 
-            max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), 
-            style = 3)
-        results <- lapply(nodenumbers(nodiv_data), function(node) {
-            setTxtProgressBar(pb, node)
-            ret <- nodiv_anal(node, nodiv_data, repeats, method)
-            ret[, 1:2]
-        })
-    }
-    nodiv_result <- nodiv_res(results, nodiv_data, repeats, method)
-    return(nodiv_result)
-  }
+data(Fluvicolines)
+res <- Node_analysis(Fluvicolines, 50, "rdtable")
+plot(res)
+plotSOS(res, 398)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

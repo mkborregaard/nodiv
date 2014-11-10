@@ -1,48 +1,50 @@
 \name{Nodesig}
 \alias{Nodesig}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-%%  ~~function to do ... ~~
+Compare the distributions of a pair of sister clades
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Compares the overlap of species richness of a pair of sister clades to the expectation from a null model
 }
 \usage{
 Nodesig(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", "rdtable"), show = F)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{nodiv_data}{
-%%     ~~Describe \code{nodiv_data} here~~
+An object of type \code{nodiv_data}
 }
   \item{Node_sp}{
-%%     ~~Describe \code{Node_sp} here~~
+A boolean vector of the same length as the number of species in nodiv_data, with TRUE for all species belonging to one clade and FALSE for all species belonging to the other
 }
   \item{repeats}{
-%%     ~~Describe \code{repeats} here~~
+The number of repeats to use for the null model
 }
   \item{method}{
-%%     ~~Describe \code{method} here~~
+The null model algorithm used in the calculations
 }
   \item{show}{
-%%     ~~Describe \code{show} here~~
+Should a progress bar be printed during calculations?
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+The \"rdtable\" algorithm is efficient, but may underestimate the deviation between nodes. It should primarily be used for exploratory data analysis. Note that the more robust \"quasiswap\" algorithm may take hours to run on data sets with a few hundred species.
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The return value is a list with 5 elements:
+  \item{SR}{A numeric vector of the standardized difference between the empirical and simulated species richness for one node in each site}
+  \item{rval}{The rank of the empirical species richness of one node in the distribution of simulated values}
+  \item{nodeemp}{The numerical species richness in each site}
+  \item{nodemeans}{The mean simulated species richness of one node in each site}
+  \item{nodesds}{The standard deviation of the simulated species richness of one node in each site}
+
 }
 \references{
-%% ~put references to the literature/web site here ~
+Borregaard, M.K., Rahbek, C., Fjeldså, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -51,38 +53,14 @@ Nodesig(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", "rdtable"), 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{Node_analysis}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", 
-    "rdtable"), show = F) 
-{
-    if (sum(Node_sp) == 1 | sum(!Node_sp) == 1) 
-        return(rep(NA, 5))
-    method = match.arg(method)
-    require(vegan)
-    require(fields)
-    simcom <- nodiv_data$comm
-    nodereps <- switch(method, quasiswap = quasiswap_nodesig(simcom, 
-        Node_sp, repeats, show), rdtable = rdtable_nodesig(simcom, 
-        Node_sp, repeats, show))
-    nodeemp <- rowSums(nodiv_data$comm[, Node_sp])
-    nodereps <- cbind(nodeemp, nodereps)
-    ord <- apply(nodereps, 1, rank)[1, ]
-    ord[ord == repeats] <- repeats - 1
-    ord[rowSums(nodiv_data$comm) == 0] <- NA
-    nodemeans <- rowMeans(nodereps)
-    nodesds <- apply(nodereps, 1, sd)
-    ses <- (nodeemp - nodemeans)/nodesds
-    pval <- ord/repeats
-    return(list(ses = ses, pval = pval, nodeemp = nodeemp, nodemeans = nodemeans, 
-        nodesds = nodesds))
-  }
+data(Fluvicolines)
+desc1 <- Descendants(basal_node(Fluvicolines))[1]
+Node_sp <- Fluvicolines$species %in% Node_species(desc1)
+res <- Nodesig(Fluvicolines, Node_sp, repeats = 50)
+hist(res$SR)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

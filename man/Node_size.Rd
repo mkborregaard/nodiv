@@ -1,39 +1,41 @@
 \name{Node_size}
 \alias{Node_size}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{Node_sites}
+\alias{Node_species}
+\alias{Node_occupancy}
+
 \title{
-%%  ~~function to do ... ~~
+Attributes of individual clades
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Functions that summarize the species that descend from a node, and their distribution
 }
 \usage{
-Node_size(node, nodiv_data)
+Node_size(nodiv_data, node = NULL)
+Node_sites(nodiv_data, node)
+Node_species(nodiv_data, node)
+Node_occupancy(nodiv_data, node = NULL)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{node}{
-%%     ~~Describe \code{node} here~~
+A character or numeric variable specifying a certain node in the phylogeny
 }
   \item{nodiv_data}{
-%%     ~~Describe \code{nodiv_data} here~~
+An object of type \code{nodiv_data} or \code{nodiv_result} 
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+If no \code{node} is specified in \code{Node_size} or \code{Node_occupancy}, the function will calculate the value for all nodes in the phylogeny
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+For \code{Node_size} and \code{Node_occupancy} the number of species or number of occupied sites of the node; or a vector giving this value for all nodes. For \code{Node_species} or \code{Node_sites} a character vector of names of species descending from a node, or the sites where they occur.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -49,17 +51,6 @@ Node_size(node, nodiv_data)
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (node, nodiv_data) 
-{
-    if (node == 0) 
-        return(sapply(nodenumbers(nodiv_data), function(nod) Node_size(nodiv_data, 
-            nod)))
-    else if (!node \%in\% nodenumbers(nodiv_data)) 
-        stop("node must be one of the internal nodes in nodiv_data$phylo")
-    return(sum(nodiv_data$node_species[node - Nspecies(nodiv_data), 
-        ]))
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

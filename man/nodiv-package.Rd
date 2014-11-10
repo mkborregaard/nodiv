@@ -3,40 +3,38 @@
 \alias{nodiv}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+nodiv - Node-based analysis of species distributions
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+The package implements Borregaard et al. (2014) method for identifying nodes in a phylogeny associated with divergent distributions. The main algorithm goes through each node in the phylogeny and relates node overlap to a null model. The package also provides functions for preparing the data sets, for exploratory plots and further analysis
 }
 \details{
 \tabular{ll}{
 Package: \tab nodiv\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
+Version: \tab 0.9\cr
 Date: \tab 2014-11-09\cr
-License: \tab What license is it under?\cr
+License: \tab GPL-2\cr
 }
 ~~ An overview of how to use the package, including the most ~~
 ~~ important functions ~~
 }
 \author{
-Who wrote it
+Michael Krabbe Borregaard
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Maintainer: Michael Krabbe Borregaard <mkborregaard@snm.ku.dk>
 }
 \references{
-~~ Literature or other references for background information ~~
+Borregaard, M.K., Rahbek, C., Fjeldså, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
 }
 ~~ Optionally other standard keywords, one per line, from file ~~
 ~~ KEYWORDS in the R documentation directory ~~
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-~~ simple examples of the most important functions ~~
+data(Fluvicolines)
+res <- Node_analysis(Fluvicolines, 50, "rdtable")
+plot(res)
+plotSOS(res, 398)
 }

@@ -1,36 +1,43 @@
 \name{basal_node}
 \alias{basal_node}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{nodenumbers}
+\alias{Parent}
+\alias{Descendants}
+\alias{Sister}
+
 \title{
-%%  ~~function to do ... ~~
+Identify nodes in a phylogeny
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Returns the internal (\code{ape}) node numbers corresponding to certain nodes in the phylogeny
 }
 \usage{
 basal_node(tree)
+nodenumbers(tree)
+Descendants(node, tree)
+Parent(node, tree)
+Sister(node, tree)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{tree}{
-%%     ~~Describe \code{tree} here~~
+An object of type \code{phylo}, or alternatively an object of type \code{nodiv_data}
+}
+  \item{node}{
+The internal node number of a focal node in the phylogeny
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+\code{Parent} gives the code immediately basal to the focal node, \code{Descendants} gives the nodes descending from the focal node, and \code{Sister} gives the sister node(s).
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The internal (\code{ape}) node number of the node
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -46,15 +53,6 @@ basal_node(tree)
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (tree) 
-{
-    if (inherits(tree, "nodiv_data")) 
-        tree <- tree$phylo
-    if (!inherits(tree, "phylo")) 
-        stop("tree must be an object of type phylo or nodiv_data")
-    return(Ntip(tree) + 1)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

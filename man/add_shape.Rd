@@ -1,11 +1,10 @@
 \name{add_shape}
 \alias{add_shape}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Add a shapefile to a \code{nodiv} data object 
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Takes a shapefile, e.g. as points or polygons, and adds it to the data object
 }
 \usage{
 add_shape(distrib_data, shape)
@@ -13,27 +12,23 @@ add_shape(distrib_data, shape)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{distrib_data}{
-%%     ~~Describe \code{distrib_data} here~~
+An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 }
   \item{shape}{
-%%     ~~Describe \code{shape} here~~
+A GIS shapefile, from e.g. packages \code{maptools} or \code{rgdal}
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+Returns the object with the new shapefile
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -42,21 +37,10 @@ add_shape(distrib_data, shape)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{distrib_data}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (distrib_data, shape) 
-{
-    if (!inherits(distrib_data, "distrib_data")) 
-        stop("argument must be an object of types distrib_data, nodiv_data or nodiv_results")
-    distrib_data$shape <- shape
-    distrib_data
-  }
+## usage: data <- add_shape(data, shapefile)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

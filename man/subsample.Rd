@@ -1,39 +1,48 @@
 \name{subsample}
 \alias{subsample}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{subsample.distrib_data}
+\alias{subsample.nodiv_data}
+
 \title{
-%%  ~~function to do ... ~~
+Subsampling data objects to certain species or sites 
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Takes an object of type \code{distrib_data} or \code{nodiv_data}, and subsamples it to contain certain species or sites, while keeping the integrity of the data.
 }
 \usage{
 subsample(x, ...)
+\method{subsample}{distrib_data}(x, sites = NULL, species = NULL)
+\method{subsample}{nodiv_data}(x, sites = NULL, species = NULL, node = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-%%     ~~Describe \code{x} here~~
+An object of type \code{distrib_data} or \code{nodiv_data} 
+}
+  \item{sites}{
+A numeric or character vector identifying the sites to keep in the new object. If specified, the function will subsample the data object to only include the defined sites, and the species that exist there. If sites == \"all\", all sites will be kept when subsampling for species, even if no species now exist in the sites.
+}
+  \item{species}{
+A numeric or character vector identifying the species to keep in the new object. If specified, the function will subsample the data object to only include the defined species, and the sites where they exist. 
+}
+  \item{node}{
+A numeric or character vector identifying a node in the phylogeny. Only species descending from this node will be kept in the new object, and the sites where they exist.
 }
   \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+Further arguments to the subsample function
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The return value is a new object of the same type as \code{x}
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -42,17 +51,14 @@ subsample(x, ...)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{distrib_data}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (x, ...) 
-UseMethod("subsample")
+data(Fluvicolines)
+new <- subsample(Fluvicolines, sites = which(richness(Fluvicolines) > 3))
+plot(new)
 }
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ ~kwd1 }

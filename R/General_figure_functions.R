@@ -5,18 +5,18 @@
 ##########################################################
 # Here comes a list of functions to use for the analysis. These definitions should all be loaded into R
 
-create.cols <- function(vec, col , zlims)
+create.cols <- function(vec, col , zlim)
 {
   if(missing(col)) 
     if(min(col) < 0) col <- rev(brewer.pal(11, "RdYlBu")) else col <- brewer.pal(9, "YlOrRd")
-  if(missing(zlims)) zlims <- c(min(vec,na.rm = T),max(vec,na.rm = T))
-  vec = vec - zlims[1]
-  vec = floor(vec * (length(col)-1)/(zlims[2]- zlims[1]))+1
+  if(missing(zlim)) zlim <- c(min(vec,na.rm = T),max(vec,na.rm = T))
+  vec = vec - zlim[1]
+  vec = floor(vec * (length(col)-1)/(zlim[2]- zlim[1]))+1
   return(col[vec])
 }
 
 
-map_var <- function(x, coords, shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = c(min(vec,na.rm = T),max(vec,na.rm = T)), col = rev(terrain.colors(255)), ...)
+plot_grid <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = c(min(vec,na.rm = T),max(vec,na.rm = T)), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, ...)
 {
   if(inherits(x, "SpatialPixelsDataFrame"))
     rast <- raster(x) else
@@ -40,18 +40,25 @@ map_var <- function(x, coords, shape = NULL, shapefill = "grey", shapeborder = "
         } else stop("Undefined arguments")
       }
   
+    }
+  
+  if(zoom_to_points & !is.null(shape))
+  {
+    if(is.null(xlim)) xlim <- 1.1*bbox(coords)[1,]
+    if(is.null(ylim)) ylim <- 1.1*bbox(coords)[2,]
+  }
 
   
-  if(is.null(shape)) plot(rast, zlim = zlim, col = col,...) else
+  if(is.null(shape)) plot(rast, zlim = zlim, col = col, xlim = xlim, ylim = ylim, ...) else
   {
-    plot(shape, col = shapefill, border = shapeborder, ...)
+    plot(shape, col = shapefill, border = shapeborder, xlim = xlim, ylim = ylim, ...)
     plot(rast, add = T, zlim = zlim, col = col)
   }
   invisible(rast)
 }
 
 
-plot_points <- function(x, coords, pch = 16, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlims, bg = par("bg"), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, ...)
+plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= c(min(vec,na.rm = T),max(vec,na.rm = T)),  zoom_to_points = FALSE, xlim = NULL, ylim = NULL, pch = 16, bg = par("bg"), ...)
 {  
   if(inherits(x, "SpatialPointsDataFrame"))
   {
@@ -80,7 +87,7 @@ plot_points <- function(x, coords, pch = 16, col = rev(terrain.colors(255)), sha
     if(is.null(ylim)) ylim <- 1.1*bbox(coords)[2,]
   }
   
-  if(missing(zlims)) zlims <- c(min(x,na.rm = T),max(x,na.rm = T))
+  if(missing(zlim)) zlim <- c(min(x,na.rm = T),max(x,na.rm = T))
   coords <- SpatialPoints(coords)
 
   #split.screen( rbind(c(0, .8,0,1), c(.8,1,0,1)))
@@ -88,21 +95,20 @@ plot_points <- function(x, coords, pch = 16, col = rev(terrain.colors(255)), sha
   oldpar <- par()
   par(mar = c(5,4,4,6) + 0.1)
   
-  if(is.null(shape)) plot(coords, col = create.cols(x, col, zlim = zlims), pch = pch,...) else
+  if(is.null(shape)) plot(coords, col = create.cols(x, col, zlim = zlim), pch = pch,...) else
   {
     plot(shape, col = shapefill, border = shapeborder, xlim = xlim, ylim = ylim, ...)
-    plot(coords, col = create.cols(x, col, zlim = zlims), pch = pch, bg = bg, add = T)
+    plot(coords, col = create.cols(x, col, zlim = zlim), pch = pch, bg = bg, add = T)
   } 
-  library(fields) #TODO replace imports
 
   #screen(2)
   par <- oldpar
-  image.plot( zlim = zlims,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
+  image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
   #TODO fix error message when plotting from fields
 }
 
 
-plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(substitute(variable)), zlims, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
+plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(substitute(variable)), zlim, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
   # plots a tree, where the colors of the nodes reflects the values of variable
 {
   # variable  : the variable that controls the colors of nodes - given for ALL nodes, even though some nodes are not plotted!
@@ -117,9 +123,9 @@ plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(su
   plotvar <- variable
   if(roundoff & is.numeric(label)) label = round(label,2)
   
-  if(missing(zlims)) zlims <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
+  if(missing(zlim)) zlim <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
   
-  sizes <- par("cex") * 4 * sqrt((plotvar - zlims[1])/zlims[2])
+  sizes <- par("cex") * 4 * sqrt((plotvar - zlim[1])/zlim[2])
   
   if(missing(nodes)) node_index = rep(TRUE, Nnode(tree)) else {
     node_index <- rep(FALSE, Nnode(tree))
@@ -147,7 +153,7 @@ plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(su
   
   plot(tree, show.tip.label = show.tip.label, ...)
   title(main)
-  nodelabels(pch = 16, node = nodes, col = create.cols(plotvar, col, zlims), cex = sizes)
+  nodelabels(pch = 16, node = nodes, col = create.cols(plotvar, col, zlim), cex = sizes)
   nodelabels(text = as.character(label), node = nodes, cex = 0.6, frame = "none") 
   
   if(show.legend)
@@ -161,7 +167,7 @@ plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(su
     par <- oldpar
     #screen(2)
     
-    image.plot(zlim = range(variable, na.rm = T), col = col, legend.only = T, zlim = zlims,smallplot=c(.85,.87, .38,.65))
+    image.plot(zlim = range(variable, na.rm = T), col = col, legend.only = T, zlim = zlim,smallplot=c(.85,.87, .38,.65))
   }
 }
 

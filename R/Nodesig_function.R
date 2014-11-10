@@ -1,5 +1,5 @@
 
-## These functions are all internal
+### INTERNAL FUNCTIONS
 
 pval_sig <- function(pval) 
   2*(0.5-abs(pval-0.5))
@@ -52,6 +52,8 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
   return(nodereps)
 }
 
+### EXPORTED FUNCTIONS ########
+
 Nodesig <- function(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
 {
   if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(rep(NA,5)) #if one of the descendant clades is a single species
@@ -66,7 +68,6 @@ Nodesig <- function(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap","
          rdtable = rdtable_nodesig(simcom, Node_sp, repeats, show)
   )
   
-  
   nodeemp <- rowSums(nodiv_data$comm[, Node_sp])
   nodereps <- cbind(nodeemp, nodereps)
   ord <- apply(nodereps, 1,  rank)[1,]
@@ -79,7 +80,7 @@ Nodesig <- function(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap","
   
   # all sites occupied by the parent node get an SES value - the rest retain NA
   ses <- (nodeemp - nodemeans )/ nodesds
-  pval <-  ord/repeats
+  rval <-  ord/repeats
   
-  return(list(ses = ses,  pval = pval, nodeemp = nodeemp, nodemeans = nodemeans, nodesds = nodesds))
+  return(list(SR = ses,  rval = rval, nodeemp = nodeemp, nodemeans = nodemeans, nodesds = nodesds))
 }

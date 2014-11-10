@@ -1,48 +1,74 @@
 \name{distrib_data}
 \alias{distrib_data}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{nodiv_data}
+\alias{plot.distrib_data}
+\alias{plot.nodiv_data}
+\alias{print.distrib_data}
+\alias{print.nodiv_data}
+\alias{summary.distrib_data}
+\alias{summary.nodiv_data}
 \title{
-%%  ~~function to do ... ~~
+Data objects for node-based analysis
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Functions to collect and display data with matching species distributions and phylogenies
 }
 \usage{
 distrib_data(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
+nodiv_data(phylo, commatrix, coords, proj4string = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
+\method{summary}{distrib_data}(object, ...)
+\method{summary}{nodiv_data}(object, ...)
+\method{plot}{distrib_data}(object, ...)
+\method{plot}{nodiv_data}(object, col = rev(terrain.colors(255)), ...)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
+  \item{phylo}{
+A phylogeny in ape's phylo format, with tip.labels that correspond to the species names in commatrix
+}
   \item{commatrix}{
-%%     ~~Describe \code{commatrix} here~~
+A community matrix or data.frame of species distributions, with species as columns, sites as rows, and 0/1 denoting the absence or presence of a species in a given site. Alternatively, the functions accept a \code{data.frame} in the phylocom format, i.e. with three columns containing plot id, abundance (ignored) and species id. The \code{nodiv_data} function also accepts an object of type \code{distrib_data}, in which case \code{coords} is ignored. The \code{nodiv_data} function matches the species in the matrix to the tips of \code{phylo}.
 }
   \item{coords}{
-%%     ~~Describe \code{coords} here~~
+The coordinates of all sites in the data. The input can be of a variety of different formats. Can be a \code{data.frame} or \code{matrix} with two columns. If more columns are present, the function will search for typical coordinate names such as X/Y or Lon/Lat. Alternatively, an object inheriting from \code{SpatialPoints} from package \code{sp} is accepted. The coordinates are transformed to \code{SpatialPoints} using the proj4string argument. Site names can be given as a third column of the data.frame, as rownames for the matrix or omitted. If site names are given, and \code{commatrix} has row.names, these are matched. 
 }
   \item{proj4string_in}{
-%%     ~~Describe \code{proj4string_in} here~~
+Projection string as defined in package \code{sp} 
 }
   \item{type}{
-%%     ~~Describe \code{type} here~~
+A descriptor of whether the sites are point (community) sites, or the centres of regular grid cells. If omitted or set to \code{auto}, the function will guess the type from \code{coords}.
 }
   \item{shape}{
-%%     ~~Describe \code{shape} here~~
+An optional shapefile to overlay plots upon.
+}
+ \item{object}{
+An object of type distrib_data or nodiv_data
+}
+ \item{col}{
+The color palette used for mapping species richness
+}
+ \item{\dots}{
+Further arguments to be passed to the plotting function
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+The \code{distrib_data} function produces an object of type \code{distrib_data}, which has the following components:
+ \item{coords}{A \code{SpatialPointsDataFrame} or \code{SpatialPixelsDataFrame} (from \code{sp}) with spatial coordinates, and one column named \code{sites} containing the site names
+ \item{comm}{The community matrix}
+ \item{type}{A character vector describing the type of data}
+ \item{species}{A list of species names}
+ \item{shape}{An optional slot detailing a shapefile object for plotting the data}
+ The \code{nodiv_data} function produces an object of type \code{nodiv_data}, which contains the additional component:
+ \item{phylo}{A phylogeny of type \code{phylo} from package \code{ape}} 
+
 }
 \references{
-%% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -51,55 +77,14 @@ distrib_data(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+ \code{\link{Node_analysis}}
 }
 \examples{
 ##---- Should be DIRECTLY executable !! ----
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (commatrix, coords, proj4string_in = CRS(as.character(NA)), 
-    type = c("auto", "grid", "points"), shape = NULL) 
-{
-    type = match.arg(type)
-    cat("Checking input data\n")
-    if (class(coords) == "SpatialPointsDataFrame" | class(coords) == 
-        "SpatialPixelsDataFrame") 
-        if (!all.equal(proj4string_in, coords@proj4string)) {
-            proj4string_in <- proj4string(coords)
-            warning("specified proj4string overridden by the coords data")
-        }
-    if (is.data.frame(commatrix) & ncol(commatrix) == 3 & !is.numeric(commatrix[, 
-        3])) 
-        commatrix <- sample2matrix(commatrix)
-    if (is.data.frame(commatrix)) 
-        commatrix <- as.matrix(commatrix)
-    if (!is.matrix(commatrix)) 
-        stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
-    if (!is.numeric(commatrix)) 
-        stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
-    if (!all.equal(sort(unique(as.numeric(commatrix))), 0:1)) 
-        stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
-    if (is.matrix(coords)) 
-        coords <- as.data.frame(coords)
-    if (is.data.frame(coords)) 
-        coords <- toSpatialPoints(coords, proj4string_in, commatrix, 
-            type)
-    if (class(coords) == "SpatialPixelsDataFrame") 
-        type <- "grid"
-    else if (class(coords) == "SpatialPointsDataFrame") 
-        type <- "points"
-    else stop("coords must be a data.frame of coordinates or an sp data.frame object")
-    commatrix <- match_commat_coords(commatrix, coords$sites)
-    ret <- list(comm = as.data.frame(commatrix), type = type, 
-        coords = coords)
-    ret$species <- colnames(ret$comm)
-    if (!is.null(shape)) 
-        ret$shape <- shape
-    class(ret) <- "distrib_data"
-    return(ret)
-  }
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

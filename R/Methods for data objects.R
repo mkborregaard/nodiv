@@ -96,7 +96,7 @@ plot.distrib_data <- function(object, ...)
 {
   if(is.null(object$shape)) shape <- NULL else shape <- object$shape
   if(object$type == "grid")
-    map_var(summary.distrib_data(object)$richness, object$coords, shape = shape, ...) else
+    plot_grid(summary.distrib_data(object)$richness, object$coords, shape = shape, ...) else
     plot_points(richness(object), object$coords, shape = shape, ...)
 }  
 
@@ -143,6 +143,8 @@ subsample.distrib_data <- function(x, sites = NULL, species = NULL)
   ret$species <- colnames(ret$comm)
   ret$coords <- ret$coords[ret$coords$sites %in% rownames(ret$comm),]
   
+  if(!is.null(x$shape)) ret$shape <- x$shape
+  
   return(ret)
 }
 
@@ -153,8 +155,16 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL)
   
   ret_phylo <- x$phylo
   ret_phylo$node.label <- nodenumbers(x)  #this line
-  if(!node == 0)
+  
+  if(!is.null(node))
   {
+    node <- node[1]
+    if(is.character(node))
+    {
+      if(node %in% x$phylo$node.label)
+        node <- which(x$phylo$node.label == node) else stop("no nodelabels in phylo corresponds to that node")
+    } 
+
     ret_phylo <- extract.clade(ret_phylo, node)
     species <- ret_phylo$tip.label
   } 
@@ -171,11 +181,11 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL)
   return(ret)
 }
 
-richness <- function(distrib_data)
+richness <- function(x)
 {  
-  if(!inherits(distrib_data, "distrib_data"))
-    stop("distrib_data must be an object of type distrib_data")
-  return(summary(distrib_data)$richness$richness)
+  if(!inherits(x, "distrib_data"))
+    stop("x must be an object of type distrib_data")
+  return(summary(x)$richness$richness)
 }
 
 

@@ -1,1 +1,40 @@
-exportPattern("^[[:alpha:]]+")
+export(add_shape, basal_node, Descendants, distrib_data, plot_grid, Node_analysis, Node_species, 
+       nodenumbers, Nodesig, nodiv_data, nodiv_res, nodiv_result, Nsites, Nspecies, Parent, plot_points, plotSOS, 
+       plot_nodes_phylo, richness, Sister, subsample)
+S3Method(plot, distrib_data)
+S3Method(plot, nodiv_data)
+S3Method(plot, nodiv_result)
+S3Method(print, distrib_data)
+S3Method(print, nodiv_data)
+S3Method(print, nodiv_result)
+S3Method(summary, distrib_data)
+S3Method(summary, nodiv_data)
+S3Method(summary, nodiv_result)
+S3Method(print, summary_distrib_data)
+S3Method(print, summary_nodiv_data)
+S3Method(print, summary_nodiv_result)
+S3Method(subsample, distrib_data)
+S3Method(subsample, nodiv_data)
+importFrom("RColorBrewer", brewer.pal)
+importFrom("RColorBrewer", display.brewer.all)
+importFrom("ape", Ntip)
+importFrom("ape", Nnode)
+importFrom("ape", plot)
+importFrom("picante", match.phylo.comm)
+importFrom("picante", sample2matrix)
+importFrom("picante", matrix2sample)
+importFrom("vegan", commsimulator)
+importFrom("fields", image.plot)
+import(raster, sp)
+
+
+
+
+
+
+
+
+
+
+
+

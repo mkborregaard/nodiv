@@ -1,33 +1,4 @@
 
-# 
-# 
-# 
-# # TODO rename and make an S3 method of function
-# plotnode_maps_new_parent <- function(node_number, par_rep_matrix = parent_rep_matrix, tree = htree, comm = hcom, coords = dat.LL, new.window = FALSE, plottype = c("map", "points"))
-#   # An exploratory plotting function
-#   # Given a node number, this draws four maps in the same window: 
-#   #  - a map of the location of overrepresented sites for that node
-#   #	- a map of the location of underrepresented sites for that node
-#   #	- a map of the species richness of species descending from that node
-#   #	- a map of the overall species richness
-# {
-#   # node_number   :  the internal ape node number (the number showed when calling nodelabels() on a plot of the phylogenetic tree)
-#   # dispersion	: the representation matrix (resulting from calling measure_dispersion())
-#   
-#   require(ape)
-#   
-#   if(new.window) quartz()
-#   par(mfrow = c(2,2))
-#   
-#   plotoverrep(node_number, par_rep_matrix, coords, tree, new.window = FALSE, plottype = plottype)
-#   
-#   plotnode(node_number, comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of node", node_number))
-#   
-#   plotnode(Descendants(node_number, tree)[1], comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of descendant 1", Descendants(node_number)[1]))
-#   
-#   plotnode(Descendants(node_number, tree)[2], comm, tree, coords, new.window = FALSE, plottype = plottype, main = paste("richness of descendant 2", Descendants(node_number)[2]))
-#   
-# }
 
 print.nodiv_result <- function(x, printlen = 4, ...)
 {
@@ -113,6 +84,6 @@ plotSOS <- function(nodiv_result, node, col = brewer.pal(11, "RdYlBu"), zlim, ..
   
   if(is.null(nodiv_result$shape)) shape <- NULL else shape <- nodiv_result$shape
   if(nodiv_result$type == "grid")
-    map_var(SOS, nodiv_result$coords, col = brewer.pal(11, "RdYlBu"), zlim = zlim, shape = shape, ...) else
+    plot_grid(SOS, nodiv_result$coords, col = brewer.pal(11, "RdYlBu"), zlim = zlim, shape = shape, ...) else
     plot_points(SOS, nodiv_result$coords, col = brewer.pal(11, "RdYlBu"), zlim = zlim, shape = shape, ...)
 }

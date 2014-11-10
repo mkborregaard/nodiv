@@ -1,36 +1,36 @@
 \name{Nspecies}
 \alias{Nspecies}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{Nsites}
+\alias{richness}
+
 \title{
-%%  ~~function to do ... ~~
+Basic attributes of \code{distrib_data} objects
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Calculates the species richness and site occupancy of a \code{distrib_data} object
 }
 \usage{
 Nspecies(x)
+Nsites(x)
+richness(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-%%     ~~Describe \code{x} here~~
+An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 }
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+\code{Nspecies} gives the number of species in the dataset, and \code{Nsites} the number of sites. \code{richness} gives a numeric vector with the species richness of all sites.
 }
 \references{
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Michael Krabbe Borregaard
 }
 \note{
 %%  ~~further notes~~
@@ -46,13 +46,6 @@ Nspecies(x)
 ##-- ==>  Define data, use random,
 ##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (x) 
-{
-    if (!inherits(x, "distrib_data")) 
-        stop("object is not of class \"distrib_data\"")
-    length(x$species)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
