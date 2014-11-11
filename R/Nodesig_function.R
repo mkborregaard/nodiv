@@ -19,7 +19,7 @@ inv_logit <- function(a)
 }
 
 
-quasiswap_nodesig <- function(simcom, Node_sp, repeats, show = F)
+quasiswap_nodesig <- function(simcom, Node_sp, repeats, show )
 {
   ll <- 0
   if (show) pb <- txtProgressBar(min = 0, max = repeats-1, style = 3)
@@ -31,15 +31,15 @@ quasiswap_nodesig <- function(simcom, Node_sp, repeats, show = F)
     })
 }
 
-rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
+rdtable_nodesig <- function(simcom, Node_sp, repeats, show )
 {
-  tempcom <- cbind(rowSums(simcom[,Node_sp]), rowSums(simcom[,!Node_sp]))
+  tempcom <- cbind(rowSums(simcom[,Node_sp]), rowSums(simcom[,-Node_sp]))
   r <- rowSums(tempcom)
   c <- colSums(tempcom)
   ll <- 0
   if (show) pb <- txtProgressBar(min = 0, max = repeats-1, style = 3)
   
-  # Use the quasiswap algorithm to created random matrices, basing each new matrix on the previous
+  # Use the rdtable algorithm to created random matrices, basing each new matrix on the previous
   nodereps <- replicate(repeats-1,
   {
     # perform the randomization
@@ -54,20 +54,21 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show = F)
 
 ### EXPORTED FUNCTIONS ########
 
-Nodesig <- function(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap","rdtable"), show = F)
+Nodesig <- function(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"), show = T)
 {
-  if(sum(Node_sp)== 1 | sum(!Node_sp) == 1) return(rep(NA,5)) #if one of the descendant clades is a single species
+  if(is.null(Node_sp)) Node_sp <- Node_species(nodiv_data, Descendants(basal_node(nodiv_data), nodiv_data)[1])
+  # a boolean vector indicating which of species descending from the parent node that descend from the focal node
+  if(is.character(Node_sp))
+    Node_sp <- which(nodiv_data$species %in% Node_sp)  # make a boolean vector
+  if(length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1) return(rep(NA,5)) #if one of the descendant clades is a single species
   method = match.arg(method)
   # A global variable to count the number of repeats
-  require(vegan)
-  require(fields)
+
   simcom <- nodiv_data$comm
-  
   nodereps <- switch(method,
          quasiswap = quasiswap_nodesig(simcom, Node_sp, repeats, show),
          rdtable = rdtable_nodesig(simcom, Node_sp, repeats, show)
   )
-  
   nodeemp <- rowSums(nodiv_data$comm[, Node_sp])
   nodereps <- cbind(nodeemp, nodereps)
   ord <- apply(nodereps, 1,  rank)[1,]

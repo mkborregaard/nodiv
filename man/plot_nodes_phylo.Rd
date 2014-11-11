@@ -1,128 +1,62 @@
 \name{plot_nodes_phylo}
 \alias{plot_nodes_phylo}
-%- Also NEED an '\alias' for EACH other topic documented here.
+
 \title{
-%%  ~~function to do ... ~~
+Plot a phylogeny with colored node labels
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+A wrapper for the plot.phylo function defined in package \code{ape}, which is useful for plotting the values at each node
 }
 \usage{
-plot_nodes_phylo(variable, label = variable, tree, main = deparse(substitute(variable)), zlims, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff = TRUE, show.tip.label = F, ...)
+plot_nodes_phylo(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff = TRUE, show.tip.label = F, ...)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{variable}{
-%%     ~~Describe \code{variable} here~~
+The variable to be plotted
 }
   \item{label}{
-%%     ~~Describe \code{label} here~~
+The text to write in each node label
 }
   \item{tree}{
-%%     ~~Describe \code{tree} here~~
+The phylogeny to plot, in the \code{ape phylo} format
 }
   \item{main}{
-%%     ~~Describe \code{main} here~~
+The title text
 }
-  \item{zlims}{
-%%     ~~Describe \code{zlims} here~~
+  \item{zlim}{
+The values to use for the most extreme colors of the color scale
 }
   \item{col}{
-%%     ~~Describe \code{col} here~~
+The color palette used to create the color scale
 }
   \item{show.legend}{
-%%     ~~Describe \code{show.legend} here~~
+Should a legend for the color scale be plotted?
 }
   \item{sig.cutoff}{
-%%     ~~Describe \code{sig.cutoff} here~~
+The minimum value for nodes to be plotted on the tree, useful for trees with many nodes
 }
   \item{nodes}{
-%%     ~~Describe \code{nodes} here~~
+The nodes to be plotted on the tree
 }
   \item{roundoff}{
-%%     ~~Describe \code{roundoff} here~~
+Whether to round values when writing them as nodelabel text
 }
   \item{show.tip.label}{
-%%     ~~Describe \code{show.tip.label} here~~
+Show tip labels on the tree
 }
   \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+Further arguments to pass to plot.phylo
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+Michael Krabbe Borregaard
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (variable, label = variable, tree, main = deparse(substitute(variable)), 
-    zlims, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, 
-    sig.cutoff, nodes, roundoff = TRUE, show.tip.label = F, ...) 
-{
-    if (!length(variable) == Nnode(tree)) 
-        stop("The length of the variable vector must be the same length as the number of nodes on the tree")
-    plotvar <- variable
-    if (roundoff & is.numeric(label)) 
-        label = round(label, 2)
-    if (missing(zlims)) 
-        zlims <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
-    sizes <- par("cex") * 4 * sqrt((plotvar - zlims[1])/zlims[2])
-    if (missing(nodes)) 
-        node_index = rep(TRUE, Nnode(tree))
-    else {
-        node_index <- rep(FALSE, Nnode(tree))
-        node_index[nodes] <- TRUE
-    }
-    node_index[is.na(variable)] <- FALSE
-    if (!missing(sig.cutoff)) 
-        node_index[variable <= sig.cutoff] <- FALSE
-    nodes <- nodenumbers(tree)[node_index]
-    plotvar <- plotvar[node_index]
-    label <- label[node_index]
-    sizes <- sizes[node_index]
-    if (show.legend) {
-        oldpar <- par()
-        par(mar = c(5, 4, 4, 6) + 0.1)
-    }
-    plot(tree, show.tip.label = show.tip.label, ...)
-    title(main)
-    nodelabels(pch = 16, node = nodes, col = create.cols(plotvar, 
-        col, zlims), cex = sizes)
-    nodelabels(text = as.character(label), node = nodes, cex = 0.6, 
-        frame = "none")
-    if (show.legend) {
-        library(fields)
-        par <- oldpar
-        image.plot(zlim = range(variable, na.rm = T), col = col, 
-            legend.only = T, zlim = zlims, smallplot = c(0.85, 
-                0.87, 0.38, 0.65))
-    }
-  }
+data(Fluvicolines)
+Clade_occupancy <- Node_occupancy(Fluvicolines)
+plot_nodes_phylo(Clade_occupancy, Fluvicolines$phylo)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -92,7 +92,6 @@ nodiv_res <- function(results, nodiv_data, repeats, method)
 # create.datalist <- function(dispersion, sitestatistics, coords)
 # {
 #   # a function to create the final result object after the representation analysis has completed
-#   library(ape)
 #   datalist <- list()
 #   dispersion[abs(dispersion) == Inf] <- NA
 #   datalist$siteresults <- merge(sitestatistics, Summarize.sites(dispersion), by = "cell")

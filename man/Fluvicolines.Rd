@@ -13,8 +13,8 @@ A \code{nodiv_data} object with the phylogeny and distributions of all species
 }
 
 \source{
-Ohlson, J., Irestedt, M., Ericson, P.G. & Fjeldså, J. (2013). Phylogeny and classification of the New World suboscines (Aves, Passeriformes). Zootaxa, 3613, 1–35. 
-Rahbek, C., Hansen, L. A. & Fjeldså, J. (2012). One degree resolution database for the global distribution of birds. 
+Ohlson, J., Irestedt, M., Ericson, P.G. and Fjeldsaa, J. (2013). Phylogeny and classification of the New World suboscines (Aves, Passeriformes). Zootaxa, 3613, 1–35., AND 
+Rahbek, C., Hansen, L. A. and Fjeldsaa, J. (2012). One degree resolution database for the global distribution of birds. 
 }
 
 \examples{

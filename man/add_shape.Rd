@@ -18,26 +18,20 @@ An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 A GIS shapefile, from e.g. packages \code{maptools} or \code{rgdal}
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
+
 \value{
 Returns the object with the new shapefile
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Krabbe Borregaard
 }
-\note{
-%%  ~~further notes~~
-}
+
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{distrib_data}}, ~~~
+\code{\link{distrib_data}}
 }
 \examples{
 ## usage: data <- add_shape(data, shapefile)

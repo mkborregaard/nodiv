@@ -29,19 +29,19 @@ Node_spec <- function(node, tree)
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo")
   
-  if(!node in nodenumbers(tree))
+  if(!node %in% nodenumbers(tree))
     stop("not a valid node number")
   
   nodetree <- extract.clade(tree, node)
   return(nodetree$tip.label)
 }
 
-Node_comm <- function(node, nodiv_data)
+Node_comm <- function(nodiv_data, node)
 # returns a samplelist of sites occupied by at least one member of the node
 {
   # node : the internal (ape) number of the node
-  if (node < Ntip(nodiv_data$tree)) #if it is in fact a tip
-    nodespecs = nodiv_data$species[node] else nodespecs <- Node_species(node, nodiv_data)
+  if (node < Ntip(nodiv_data$phylo)) #if it is in fact a tip
+    nodespecs = nodiv_data$species[node] else nodespecs <- Node_species(nodiv_data, node)
   
   nodecom <- subset(nodiv_data$hcom, id %in% nodespecs)
   return(nodecom)
@@ -166,7 +166,7 @@ Node_sites <- function(nodiv_data, node)
 	if(!inherits(nodiv_data, "nodiv_data"))
     stop("nodiv_data must be an object of type nodiv_data or nodiv_result")
   node <- identify_node(node, nodiv_data)
-	nodecom <- Node_comm(node, nodiv_data)
+	nodecom <- Node_comm(nodiv_data, node)
 	return(unique(nodecom$plot))
 }
 	
@@ -180,7 +180,7 @@ Node_occupancy <- function(nodiv_data, node = NULL)
     return(sapply(nodenumbers(nodiv_data), function(nod) Node_occupancy(nodiv_data, nod))) 
 
   node <- identify_node(node, nodiv_data)
-  return(length(Node_sites(node, nodiv_data)))
+  return(length(Node_sites(nodiv_data, node)))
 }
 
 

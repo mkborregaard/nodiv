@@ -8,7 +8,7 @@
 Attributes of individual clades
 }
 \description{
-Functions that summarize the species that descend from a node, and their distribution
+Functions that summarize the species that descend from a node, and their distribution.
 }
 \usage{
 Node_size(nodiv_data, node = NULL)
@@ -31,27 +31,11 @@ If no \code{node} is specified in \code{Node_size} or \code{Node_occupancy}, the
 \value{
 For \code{Node_size} and \code{Node_occupancy} the number of species or number of occupied sites of the node; or a vector giving this value for all nodes. For \code{Node_species} or \code{Node_sites} a character vector of names of species descending from a node, or the sites where they occur.
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Krabbe Borregaard
 }
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ ~kwd1 }

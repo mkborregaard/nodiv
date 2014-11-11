@@ -92,24 +92,24 @@ add_shape <- function(distrib_data, shape)
   distrib_data
 }
 
-plot.distrib_data <- function(object, ...)
+plot.distrib_data <- function(x, ...)
 {
-  if(is.null(object$shape)) shape <- NULL else shape <- object$shape
-  if(object$type == "grid")
-    plot_grid(summary.distrib_data(object)$richness, object$coords, shape = shape, ...) else
-    plot_points(richness(object), object$coords, shape = shape, ...)
+  if(is.null(x$shape)) shape <- NULL else shape <- x$shape
+  if(x$type == "grid")
+    plot_grid(summary.distrib_data(x)$richness, x$coords, shape = shape, ...) else
+    plot_points(richness(x), x$coords, shape = shape, ...)
 }  
 
-plot.nodiv_data <- function(object,  col = rev(terrain.colors(255)), ...)
+plot.nodiv_data <- function(x,  col = rev(terrain.colors(255)), ...)
 {
   par(mfrow = c(1,2))
-  plot.distrib_data(object, col = col)
-  plot(object$phylo, ...) #need to specify explicitly which
+  plot.distrib_data(x, col = col)
+  plot(x$phylo, ...) #need to specify explicitly which
 }
 
 subsample<- function(x, ...) UseMethod("subsample")
 
-subsample.distrib_data <- function(x, sites = NULL, species = NULL)
+subsample.distrib_data <- function(x, sites = NULL, species = NULL, ...)
 {
   if(inherits(sites, "SpatialPoints")) sites <- as.character(sites@data)
   keep_sites <- F
@@ -124,11 +124,15 @@ subsample.distrib_data <- function(x, sites = NULL, species = NULL)
   if(is.null(sites) | keep_sites) sites <- 1:Nsites(x)
   
   keep_species <- F
-  if(length(species) == 1)
+  if(is.character(species))
   {
-    if(species == "all") keep_species <- T 
-  } else
-  species <- match(species, x$species)
+    if(length(species) == 1)
+    {
+      if(species == "all") keep_species <- T 
+    } else
+    species <- match(species, x$species)
+  }
+  
   if(is.null(species) | keep_species) species <- 1:Nspecies(x)
   
   ret <- x
@@ -148,7 +152,7 @@ subsample.distrib_data <- function(x, sites = NULL, species = NULL)
   return(ret)
 }
 
-subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL)
+subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, ...)
 {
 #   if(sum(!is.null(species), !is.null(node), !is.null(sites)) > 1) stop("you can only specify one of sites, species or node")
 #   if(sum(!is.null(species), !is.null(node), !is.null(sites)) == 0) stop("you must specify one of sites, species or node")

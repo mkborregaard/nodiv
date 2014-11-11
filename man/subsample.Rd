@@ -11,8 +11,8 @@ Takes an object of type \code{distrib_data} or \code{nodiv_data}, and subsamples
 }
 \usage{
 subsample(x, ...)
-\method{subsample}{distrib_data}(x, sites = NULL, species = NULL)
-\method{subsample}{nodiv_data}(x, sites = NULL, species = NULL, node = NULL)
+\method{subsample}{distrib_data}(x, sites = NULL, species = NULL, ...)
+\method{subsample}{nodiv_data}(x, sites = NULL, species = NULL, node = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,20 +32,13 @@ A numeric or character vector identifying a node in the phylogeny. Only species 
 Further arguments to the subsample function
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
+
 \value{
 The return value is a new object of the same type as \code{x}
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Krabbe Borregaard
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -56,7 +49,7 @@ Michael Krabbe Borregaard
 \examples{
 data(Fluvicolines)
 new <- subsample(Fluvicolines, sites = which(richness(Fluvicolines) > 3))
-plot(new)
+plot(new, show.tip = FALSE)
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

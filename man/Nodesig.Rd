@@ -5,10 +5,10 @@
 Compare the distributions of a pair of sister clades
 }
 \description{
-Compares the overlap of species richness of a pair of sister clades to the expectation from a null model
+Compares the overlap of species richness of a pair of sister clades to the expectation from a null model. By default, the function compares the two descendants from the basal node of the phylogeny
 }
 \usage{
-Nodesig(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", "rdtable"), show = F)
+Nodesig(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"), show = T)
 }
 
 \arguments{
@@ -16,7 +16,7 @@ Nodesig(nodiv_data, Node_sp, repeats = 100, method = c("quasiswap", "rdtable"), 
 An object of type \code{nodiv_data}
 }
   \item{Node_sp}{
-A boolean vector of the same length as the number of species in nodiv_data, with TRUE for all species belonging to one clade and FALSE for all species belonging to the other
+A character or numeric vector indicating which species that belong to one of the clades. If NULL, the species of a descendant from the basal node of nodiv_data is chosen randomly 
 }
   \item{repeats}{
 The number of repeats to use for the null model
@@ -41,14 +41,12 @@ The return value is a list with 5 elements:
 
 }
 \references{
-Borregaard, M.K., Rahbek, C., Fjeldså, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
+Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
 }
 \author{
 Michael Krabbe Borregaard
 }
-\note{
-%%  ~~further notes~~
-}
+
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
@@ -57,9 +55,8 @@ Michael Krabbe Borregaard
 }
 \examples{
 data(Fluvicolines)
-desc1 <- Descendants(basal_node(Fluvicolines))[1]
-Node_sp <- Fluvicolines$species %in% Node_species(desc1)
-res <- Nodesig(Fluvicolines, Node_sp, repeats = 50)
+desc1 <- Descendants(basal_node(Fluvicolines), Fluvicolines)[1]
+res <- Nodesig(Fluvicolines, repeats = 50)
 hist(res$SR)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

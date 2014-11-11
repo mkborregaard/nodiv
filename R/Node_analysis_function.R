@@ -16,9 +16,9 @@ nodiv_anal <- function(node, nodiv_data, repeats, method)
   # a vector indicating which of all sites are considered for this node
   
   # a boolean vector indicating which of species descending from the parent node that descend from the focal node
-  Node_sp <- (parent_data$species %in% Node_species(node, nodiv_data))  
+  Node_sp <- Node_species(nodiv_data, node)  
   
-  res_object <- Nodesig(parent_data, Node_sp, repeats, method)
+  res_object <- Nodesig(parent_data, Node_sp, repeats, method, show = F)
 
   res_object <- lapply(res_object, function(x) #ensure that dimensions are the same for merging into matrices
   {
@@ -42,7 +42,7 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
   {
     stop("The parallel interface is currently unimplemented") 
 #TODO 
-#   require(parallel)
+
   # dedicate the desired number of cores to parallel processing
 #   cl = makeCluster(cores)  
 #   pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)

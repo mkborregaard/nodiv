@@ -50,9 +50,9 @@ print.summary_nodiv_result <- function(x, printlen = 4, ...)
   } else(cat("\n"))
 }
 
-plot.nodiv_result <- function(x, label = nodenumbers(x), main = "", zlims = 0:1, ...)
+plot.nodiv_result <- function(x, label = nodenumbers(x), zlim = 0:1, ...)
 {
-  plot_nodes_phylo(x$GND, label = label, tree = x$phylo, main = main, zlims = zlims, show.legend = TRUE,...)
+  plot_nodes_phylo(x$GND, tree = x$phylo, label = label, main = "",  zlim = zlim, show.legend = TRUE,...)
 }
 
 plotSOS <- function(nodiv_result, node, col = brewer.pal(11, "RdYlBu"), zlim, ...)
@@ -61,15 +61,7 @@ plotSOS <- function(nodiv_result, node, col = brewer.pal(11, "RdYlBu"), zlim, ..
   if(!inherits(nodiv_result, "nodiv_result"))
     stop("nodiv_result must be the result object from running Node_analysis")
   
-  node <- node[1]
-  if(is.character(node))
-  {
-    if(is.null(nodiv_result$phylo$node.label))
-      stop("node could not be matched, as the phylogeny does not have node labels")
-    node <- match(node, nodiv_result$phylo$node.label)
-    if(is.na(node))
-      stop("the node could not be matched to the node labels")
-  }
+  node <- identify_node(node, nodiv_result)
   
   if(node > Nspecies(nodiv_result))
     node <- node - Nspecies(nodiv_result)

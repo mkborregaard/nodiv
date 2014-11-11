@@ -16,7 +16,7 @@ create.cols <- function(vec, col , zlim)
 }
 
 
-plot_grid <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = c(min(vec,na.rm = T),max(vec,na.rm = T)), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, ...)
+plot_grid <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = NULL, zoom_to_points = FALSE, ...)
 {
   if(inherits(x, "SpatialPixelsDataFrame"))
     rast <- raster(x) else
@@ -36,29 +36,24 @@ plot_grid <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, s
           if(!ncol(coords) == 2) stop("coords must have exactly two columns, for the x and y coordinates of data")
           if(!isGrid(coords)) stop("this function is only suitable for gridded data")
           coords <- SpatialPoints(coords)
-          rast <- raster(SpatialPixelDataFrame(coords, as.data.frame(x)))
+          rast <- raster(SpatialPixelsDataFrame(coords, as.data.frame(x)))
         } else stop("Undefined arguments")
       }
   
-    }
   
-  if(zoom_to_points & !is.null(shape))
-  {
-    if(is.null(xlim)) xlim <- 1.1*bbox(coords)[1,]
-    if(is.null(ylim)) ylim <- 1.1*bbox(coords)[2,]
-  }
-
+  if(is.null(zlim)) zlim <- c(min(getValues(rast),na.rm = T),max(getValues(rast),na.rm = T))
   
-  if(is.null(shape)) plot(rast, zlim = zlim, col = col, xlim = xlim, ylim = ylim, ...) else
+  if(is.null(shape)) plot(rast, zlim = zlim, col = col, ...) else
   {
-    plot(shape, col = shapefill, border = shapeborder, xlim = xlim, ylim = ylim, ...)
+    if(zoom_to_points)
+      plot(shape, col = shapefill, border = shapeborder, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...) else plot(shape, col = shapefill, border = shapeborder,  ...)
     plot(rast, add = T, zlim = zlim, col = col)
   }
   invisible(rast)
 }
 
 
-plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= c(min(vec,na.rm = T),max(vec,na.rm = T)),  zoom_to_points = FALSE, xlim = NULL, ylim = NULL, pch = 16, bg = par("bg"), ...)
+plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
 {  
   if(inherits(x, "SpatialPointsDataFrame"))
   {
@@ -80,14 +75,9 @@ plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL,
         }
     }
   }
+
   
-  if(zoom_to_points & !is.null(shape))
-  {
-    if(is.null(xlim)) xlim <- 1.1*bbox(coords)[1,]
-    if(is.null(ylim)) ylim <- 1.1*bbox(coords)[2,]
-  }
-  
-  if(missing(zlim)) zlim <- c(min(x,na.rm = T),max(x,na.rm = T))
+  if(is.null(zlim)) zlim <- c(min(x,na.rm = T),max(x,na.rm = T))
   coords <- SpatialPoints(coords)
 
   #split.screen( rbind(c(0, .8,0,1), c(.8,1,0,1)))
@@ -97,7 +87,8 @@ plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL,
   
   if(is.null(shape)) plot(coords, col = create.cols(x, col, zlim = zlim), pch = pch,...) else
   {
-    plot(shape, col = shapefill, border = shapeborder, xlim = xlim, ylim = ylim, ...)
+    if(zoom_to_points)
+      plot(shape, col = shapefill, border = shapeborder, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...) else  plot(shape, col = shapefill, border = shapeborder, ...)
     plot(coords, col = create.cols(x, col, zlim = zlim), pch = pch, bg = bg, add = T)
   } 
 
@@ -108,7 +99,7 @@ plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL,
 }
 
 
-plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(substitute(variable)), zlim, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
+plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
   # plots a tree, where the colors of the nodes reflects the values of variable
 {
   # variable  : the variable that controls the colors of nodes - given for ALL nodes, even though some nodes are not plotted!
@@ -163,11 +154,10 @@ plot_nodes_phylo <- function(variable, label = variable, tree, main = deparse(su
     #     text(0.035 * root_tip_length, 1, min(vals), adj = c(0,0.5))
     #     text(0.035 * root_tip_length, length(valcols)/6, round(max(vals),1), adj = c(0,0.5))
     
-    library(fields)
     par <- oldpar
     #screen(2)
     
-    image.plot(zlim = range(variable, na.rm = T), col = col, legend.only = T, zlim = zlim,smallplot=c(.85,.87, .38,.65))
+    image.plot(col = col, legend.only = T, zlim = zlim,smallplot=c(.85,.87, .38,.65))
   }
 }
 

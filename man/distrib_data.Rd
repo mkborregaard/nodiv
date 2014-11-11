@@ -15,11 +15,11 @@ Functions to collect and display data with matching species distributions and ph
 }
 \usage{
 distrib_data(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
-nodiv_data(phylo, commatrix, coords, proj4string = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
+nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 \method{summary}{distrib_data}(object, ...)
 \method{summary}{nodiv_data}(object, ...)
-\method{plot}{distrib_data}(object, ...)
-\method{plot}{nodiv_data}(object, col = rev(terrain.colors(255)), ...)
+\method{plot}{distrib_data}(x, ...)
+\method{plot}{nodiv_data}(x, col = rev(terrain.colors(255)), ...)
 }
 
 \arguments{
@@ -44,6 +44,9 @@ An optional shapefile to overlay plots upon.
  \item{object}{
 An object of type distrib_data or nodiv_data
 }
+ \item{x}{
+An object of type distrib_data or nodiv_data
+}
  \item{col}{
 The color palette used for mapping species richness
 }
@@ -51,12 +54,10 @@ The color palette used for mapping species richness
 Further arguments to be passed to the plotting function
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
+
 \value{
 The \code{distrib_data} function produces an object of type \code{distrib_data}, which has the following components:
- \item{coords}{A \code{SpatialPointsDataFrame} or \code{SpatialPixelsDataFrame} (from \code{sp}) with spatial coordinates, and one column named \code{sites} containing the site names
+ \item{coords}{A \code{SpatialPointsDataFrame} or \code{SpatialPixelsDataFrame} (from \code{sp}) with spatial coordinates, and one column named \code{sites} containing the site names}
  \item{comm}{The community matrix}
  \item{type}{A character vector describing the type of data}
  \item{species}{A list of species names}
@@ -65,13 +66,9 @@ The \code{distrib_data} function produces an object of type \code{distrib_data},
  \item{phylo}{A phylogeny of type \code{phylo} from package \code{ape}} 
 
 }
-\references{
-}
+
 \author{
 Michael Krabbe Borregaard
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -79,13 +76,7 @@ Michael Krabbe Borregaard
 \seealso{
  \code{\link{Node_analysis}}
 }
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-
-}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ ~kwd1 }

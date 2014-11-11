@@ -9,8 +9,8 @@ Plot a variable on spatial points or a spatial grid using a color scale
 Plots the variable either as colored points or as a colored raster
 }
 \usage{
-plot_points(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= c(min(vec,na.rm = T),max(vec,na.rm = T)),  zoom_to_points = FALSE, xlim = NULL, ylim = NULL, pch = 16, bg = par("bg"), ...)
-plot_grid(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = c(min(vec,na.rm = T),max(vec,na.rm = T)), zoom_to_points = FALSE, xlim = NULL, ylim = NULL, ...)
+plot_points(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
+plot_grid(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = NULL, zoom_to_points = FALSE,  ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,17 +32,11 @@ If shape is a polygon, the color to use to fill the polygons. If shape is a line
   \item{shapeborder}{
 If shape is a polygon, the color of the border around polygons
 }
-  \item{zlims}{
+  \item{zlim}{
 The values to use for the extremes of the color scale
 }
   \item{zoom_to_points}{
 Given a shapefile, the function will set the outer limits of the plot to the bounding box of the shapefile. If \code{zoom_to_points} is \code{TRUE}, the outer limits will be set by the bounding box of the data points instead.
-}
-  \item{xlim}{
-The x limits of the plotting area
-}
-  \item{ylim}{
-The y limits of the plotting area
 }
   \item{pch}{
 The point character to use for plotting points
@@ -54,32 +48,11 @@ The central color of points when using a pch value between 21 and 25
 Additional arguments to pass to plot
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-\code{plot_grid} invisibly returns the \code{raster} object used for plotting 
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 Michael Krabbe Borregaard 
 }
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-
-}
-\examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ ~kwd1 }

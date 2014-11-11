@@ -1,7 +1,7 @@
 
 
 
-nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
+nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 {
   type = match.arg(type)
   
@@ -10,7 +10,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string = CRS(as.character(
   if(!class(commatrix) == "distrib_data")
   {
     if(missing(coords)) stop("if commatrix is not an object of type distrib_data, coords must be specified")
-    dist_dat <- distrib_data(commatrix, coords, proj4string, type, shape)
+    dist_dat <- distrib_data(commatrix, coords, proj4string_in, type, shape)
   } else dist_dat <- commatrix
   
   nodiv_dat <- dist_dat

@@ -16,8 +16,8 @@ Goes through each node in the phylogeny, and compares the distribution overlap o
 \usage{
 Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1)
 \method{summary}{nodiv_result}(object, ...)
-\method{print}{nodiv_result}print.nodiv_result(x, printlen = 4, ...)
-\method{plot}{nodiv_result}(x, label = nodenumbers(x), main = \"\", zlims = 0:1, ...)
+\method{print}{nodiv_result}(x, printlen = 4, ...)
+\method{plot}{nodiv_result}(x, label = nodenumbers(x), zlim = 0:1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,9 +33,27 @@ The null model algorithm used to simulate random communities
   \item{cores}{
 The number of cores to use in the computation. Note that multi-core processing is yet unimplemented.
 }
+  \item{object}{
+The \code{nodiv_result} object
+}
+  \item{x}{
+The \code{nodiv_result} object
+}
+  \item{printlen}{
+The number of species to print to screen
+}
+  \item{label}{
+The text to use for labelling nodes in the plot
+}
+  \item{zlim}{
+The values of GND to use for the extremes of the color scale on the plot
+}
+  \item{\dots}{
+Further arguments to be passed to the function
+}
 }
 \details{
-The \"rdtable\" algorithm is efficient, but may underestimate the deviation between nodes. It should primarily be used for exploratory data analysis. Note that the more robust \"quasiswap\" algorithm may take days to run on larger data sets.
+The "rdtable" algorithm is efficient, but may underestimate the deviation between nodes. It should primarily be used for exploratory data analysis. Note that the more robust "quasiswap" algorithm may take days to run on larger data sets.
 
 The \code{plot} function for \code{nodiv_result} plots the phylogenetic tree with colored symbols at the nodes. The color and size the nodes are proportional with the GND value of the node.
 }
@@ -53,13 +71,10 @@ The result is an object of type \code{nodiv_result}, which has the following com
 
 }
 \references{
-Borregaard, M.K., Rahbek, C., Fjeldså, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
+Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
 }
 \author{
 Michael Krabbe Borregaard
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -70,8 +85,9 @@ Michael Krabbe Borregaard
 \examples{
 data(Fluvicolines)
 res <- Node_analysis(Fluvicolines, 50, "rdtable")
+par(mfrow = c(1,2))
 plot(res)
-plotSOS(res, 398)
+plotSOS(res, 140)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
