@@ -84,10 +84,11 @@ Michael Krabbe Borregaard
 }
 \examples{
 data(Fluvicolines)
-res <- Node_analysis(Fluvicolines, 50, "rdtable")
+res <- Node_analysis(Fluvicolines, 15, "rdtable") # would normally be 50 or 100
 par(mfrow = c(1,2))
 plot(res)
 plotSOS(res, 140)
+summary(res)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

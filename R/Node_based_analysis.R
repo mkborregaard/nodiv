@@ -43,7 +43,7 @@ Node_comm <- function(nodiv_data, node)
   if (node < Ntip(nodiv_data$phylo)) #if it is in fact a tip
     nodespecs = nodiv_data$species[node] else nodespecs <- Node_species(nodiv_data, node)
   
-  nodecom <- subset(nodiv_data$hcom, id %in% nodespecs)
+  nodecom <- subset(nodiv_data$hcom, nodiv_data$hcom$id %in% nodespecs)
   return(nodecom)
 }
 

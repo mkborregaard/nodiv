@@ -7,6 +7,7 @@
 \alias{print.nodiv_data}
 \alias{summary.distrib_data}
 \alias{summary.nodiv_data}
+
 \title{
 Data objects for node-based analysis
 }
@@ -14,8 +15,10 @@ Data objects for node-based analysis
 Functions to collect and display data with matching species distributions and phylogenies
 }
 \usage{
-distrib_data(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
-nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
+distrib_data(commatrix, coords, proj4string_in = CRS(as.character(NA)), 
+  type = c("auto", "grid", "points"), shape = NULL)
+nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)), 
+  type = c("auto", "grid", "points"), shape = NULL)
 \method{summary}{distrib_data}(object, ...)
 \method{summary}{nodiv_data}(object, ...)
 \method{plot}{distrib_data}(x, ...)

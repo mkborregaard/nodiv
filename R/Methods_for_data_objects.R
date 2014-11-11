@@ -100,6 +100,13 @@ plot.distrib_data <- function(x, ...)
     plot_points(richness(x), x$coords, shape = shape, ...)
 }  
 
+plot_richness <- function(distrib_data, ...)
+{
+  if(!inherits(distrib_data, "distrib_data"))
+    stop("argument must be an object of type sdistrib_data, nodiv_data or nodiv_results")
+  plot.distrib_data(distrib_data, ...)
+}
+
 plot.nodiv_data <- function(x,  col = rev(terrain.colors(255)), ...)
 {
   par(mfrow = c(1,2))
@@ -177,7 +184,7 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   new_phylo <- match.phylo.comm(ret_phylo, ret$comm)$phy
   ret$phylo <- drop.tip(x$phylo, which(! x$species %in% new_phylo$tip.label))  #this line
   
-  ret$hcom <- subset(x$hcom, plot %in% ret$coords$sites & id %in% ret$species)
+  ret$hcom <- subset(x$hcom, x$hcom$plot %in% ret$coords$sites & x$hcom$id %in% ret$species)
   ret$node_species <- x$node_species[, colnames(x$node_species) %in% ret$species]
   ret$node_species <- ret$node_species[rowSums(ret$node_species) > 0,]
   ret$node_species <- ret$node_species[as.numeric(rownames(ret$node_species)) >= as.numeric(new_phylo$node.label)[1],] # and this line are an ugly hack to make sure the node_species matrix does not get perverted

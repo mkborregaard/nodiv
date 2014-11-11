@@ -8,7 +8,8 @@ Compare the distributions of a pair of sister clades
 Compares the overlap of species richness of a pair of sister clades to the expectation from a null model. By default, the function compares the two descendants from the basal node of the phylogeny
 }
 \usage{
-Nodesig(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"), show = T)
+Nodesig(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"),
+  show = T)
 }
 
 \arguments{

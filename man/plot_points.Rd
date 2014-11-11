@@ -9,8 +9,12 @@ Plot a variable on spatial points or a spatial grid using a color scale
 Plots the variable either as colored points or as a colored raster
 }
 \usage{
-plot_points(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
-plot_grid(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = NULL, zoom_to_points = FALSE,  ...)
+plot_points(x, coords, col = rev(terrain.colors(255)), shape = NULL, 
+  shapefill = "grey", shapeborder = "grey", zlim= NULL,  zoom_to_points = FALSE, 
+  pch = 16, bg = par("bg"), ...)
+plot_grid(x, coords, col = rev(terrain.colors(255)), shape = NULL, 
+  shapefill = "grey", shapeborder = "grey", zlim = NULL, 
+  zoom_to_points = FALSE,  ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

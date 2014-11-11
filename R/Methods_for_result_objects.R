@@ -55,7 +55,7 @@ plot.nodiv_result <- function(x, label = nodenumbers(x), zlim = 0:1, ...)
   plot_nodes_phylo(x$GND, tree = x$phylo, label = label, main = "",  zlim = zlim, show.legend = TRUE,...)
 }
 
-plotSOS <- function(nodiv_result, node, col = brewer.pal(11, "RdYlBu"), zlim, ...)
+plotSOS <- function(nodiv_result, node, col = cm.colors(255), zlim, ...)
 {
 
   if(!inherits(nodiv_result, "nodiv_result"))
@@ -76,6 +76,6 @@ plotSOS <- function(nodiv_result, node, col = brewer.pal(11, "RdYlBu"), zlim, ..
   
   if(is.null(nodiv_result$shape)) shape <- NULL else shape <- nodiv_result$shape
   if(nodiv_result$type == "grid")
-    plot_grid(SOS, nodiv_result$coords, col = brewer.pal(11, "RdYlBu"), zlim = zlim, shape = shape, ...) else
-    plot_points(SOS, nodiv_result$coords, col = brewer.pal(11, "RdYlBu"), zlim = zlim, shape = shape, ...)
+    plot_grid(SOS, nodiv_result$coords, col = col, zlim = zlim, shape = shape, ...) else
+    plot_points(SOS, nodiv_result$coords, col = col, zlim = zlim, shape = shape, ...)
 }

@@ -8,7 +8,7 @@
 create.cols <- function(vec, col , zlim)
 {
   if(missing(col)) 
-    if(min(col) < 0) col <- rev(brewer.pal(11, "RdYlBu")) else col <- brewer.pal(9, "YlOrRd")
+    if(min(col) < 0) col <- cm.colors(255) else col <- heat.colors(255)
   if(missing(zlim)) zlim <- c(min(vec,na.rm = T),max(vec,na.rm = T))
   vec = vec - zlim[1]
   vec = floor(vec * (length(col)-1)/(zlim[2]- zlim[1]))+1
@@ -57,8 +57,8 @@ plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL,
 {  
   if(inherits(x, "SpatialPointsDataFrame"))
   {
-    x <- x@data
     coords <- SpatialPoints(x)
+    x <- as.numeric(x@data[,1])
   } else {
       if(missing(coords)) stop("coords must be defined if x is not a SpatialPixelsDataFrame") else {
         if(!inherits(coords, "SpatialPoints"))
@@ -94,12 +94,13 @@ plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL,
 
   #screen(2)
   par <- oldpar
-  image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
-  #TODO fix error message when plotting from fields
+  add_legend(col = col, zlim = zlim)
+  #image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
+
 }
 
 
-plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
+plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = heat.colors(255), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
   # plots a tree, where the colors of the nodes reflects the values of variable
 {
   # variable  : the variable that controls the colors of nodes - given for ALL nodes, even though some nodes are not plotted!
@@ -157,8 +158,35 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
     par <- oldpar
     #screen(2)
     
-    image.plot(col = col, legend.only = T, zlim = zlim,smallplot=c(.85,.87, .38,.65))
+    add_legend(col = col, zlim = zlim)
+   # image.plot(col = col, legend.only = T, zlim = zlim,smallplot=c(.85,.87, .38,.65))
   }
 }
 
+add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col)
+{
+  old.par <- par()
+  if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
+    stop("plot region too small to add legend\n")
+  }
+  
+  ix <- 1
+  minz <- zlim[1]
+  maxz <- zlim[2]
+  nlevel <- length(col)
+  binwidth <- (maxz - minz)/nlevel
+  midpoints <- seq(minz + binwidth/2, maxz - binwidth/2, by = binwidth)
+  iy <- midpoints
+  iz <- matrix(iy, nrow = 1, ncol = length(iy))
+  
+  par(new = TRUE, pty = "m", plt = smallplot, err = -1)
+  
+  axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2)
+  image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)
+  
+  do.call("axis", axis.args)
+  box()
+  par(new = FALSE, pty = old.par$pty, plt = old.par$plt, err = old.par$err)
+  invisible()
+}
 

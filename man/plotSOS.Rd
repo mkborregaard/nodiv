@@ -8,7 +8,7 @@ Plot a map of SOS values for a given node
 Create a plot used in the interpretation of node-based analysis of species distributions, after running \code{Node_analysis}
 }
 \usage{
-plotSOS(nodiv_result, node, col = brewer.pal(11, "RdYlBu"), zlim, ...)
+plotSOS(nodiv_result, node, col = cm.colors(255), zlim, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

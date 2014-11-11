@@ -31,7 +31,7 @@ Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graha
 
 \examples{
 data(Fluvicolines)
-res <- Node_analysis(Fluvicolines, 50, "rdtable")
+res <- Node_analysis(Fluvicolines, 15, "rdtable")
 par(mfrow = c(1,2))
 plot(res)
 plotSOS(res, 140)

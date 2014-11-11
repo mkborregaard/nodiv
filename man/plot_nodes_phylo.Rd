@@ -8,7 +8,9 @@ Plot a phylogeny with colored node labels
 A wrapper for the plot.phylo function defined in package \code{ape}, which is useful for plotting the values at each node
 }
 \usage{
-plot_nodes_phylo(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = brewer.pal(9, "YlOrRd"), show.legend = TRUE, sig.cutoff, nodes, roundoff = TRUE, show.tip.label = F, ...)
+plot_nodes_phylo(variable, tree, label = variable, main = deparse(substitute(variable)),
+  zlim, col = heat.colors(255), show.legend = TRUE, sig.cutoff, nodes, roundoff = TRUE, 
+  show.tip.label = F, ...)
 }
 
 \arguments{
