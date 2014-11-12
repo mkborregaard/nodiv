@@ -96,15 +96,23 @@ plot.distrib_data <- function(x, ...)
 {
   if(is.null(x$shape)) shape <- NULL else shape <- x$shape
   if(x$type == "grid")
-    plot_grid(summary.distrib_data(x)$richness, x$coords, shape = shape, ...) else
+    plot_grid(richness(x), x$coords, shape = shape, ...) else
     plot_points(richness(x), x$coords, shape = shape, ...)
 }  
 
 plot_richness <- function(distrib_data, ...)
 {
   if(!inherits(distrib_data, "distrib_data"))
-    stop("argument must be an object of type sdistrib_data, nodiv_data or nodiv_results")
+    stop("argument must be an object of type distrib_data, nodiv_data or nodiv_results")
   plot.distrib_data(distrib_data, ...)
+}
+
+plot_node <- function(nodiv_data, node = basal_node(nodiv_data), ...)
+{
+  if(!inherits(nodiv_data, node))
+    stop("argument must be an object of type nodiv_data or nodiv_result")
+  node <- identify_node(node, nodiv_data)
+  plot_richness(subsample(nodiv_data, node = node), ...)
 }
 
 plot.nodiv_data <- function(x,  col = rev(terrain.colors(255)), ...)
