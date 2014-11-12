@@ -115,11 +115,11 @@ plot_node <- function(nodiv_data, node = basal_node(nodiv_data), ...)
   plot_richness(subsample(nodiv_data, node = node), ...)
 }
 
-plot.nodiv_data <- function(x,  col = rev(terrain.colors(255)), ...)
+plot.nodiv_data <- function(x,  col = rev(heat.colors(64)), ...)
 {
   par(mfrow = c(1,2))
-  plot.distrib_data(x, col = col)
-  plot(x$phylo, ...) #need to specify explicitly which
+  plot.distrib_data(x, col = col, ...)
+  plot(x$phylo, show.tip.label = isTRUE(Nspecies(x) < 40), cex = 0.7) #need to specify explicitly which
 }
 
 subsample<- function(x, ...) UseMethod("subsample")
@@ -189,13 +189,15 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   } 
   
   ret <- subsample.distrib_data(x, sites, species)
-  new_phylo <- match.phylo.comm(ret_phylo, ret$comm)$phy
+  dat <- match.phylo.comm(ret_phylo, ret$comm)
+  new_phylo <- dat$phy
   ret$phylo <- drop.tip(x$phylo, which(! x$species %in% new_phylo$tip.label))  #this line
+  ret$species <- ret$phylo$tip.label
   
   ret$hcom <- subset(x$hcom, x$hcom$plot %in% ret$coords$sites & x$hcom$id %in% ret$species)
   ret$node_species <- x$node_species[, colnames(x$node_species) %in% ret$species]
   ret$node_species <- ret$node_species[rowSums(ret$node_species) > 0,]
-  ret$node_species <- ret$node_species[as.numeric(rownames(ret$node_species)) >= as.numeric(new_phylo$node.label)[1],] # and this line are an ugly hack to make sure the node_species matrix does not get perverted
+  ret$node_species <- ret$node_species[as.numeric(rownames(ret$node_species)) %in% as.numeric(new_phylo$node.label),] # and this line are an ugly hack to make sure the node_species matrix does not get perverted
   rownames(ret$node_species) <- nodenumbers(ret$phylo)
   return(ret)
 }

@@ -9,8 +9,8 @@ A wrapper for the plot.phylo function defined in package \code{ape}, which is us
 }
 \usage{
 plot_nodes_phylo(variable, tree, label = variable, main = deparse(substitute(variable)),
-  zlim, col = heat.colors(255), show.legend = TRUE, sig.cutoff, nodes, roundoff = TRUE, 
-  show.tip.label = F, ...)
+  zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, 
+  roundoff = TRUE, show.tip.label = NULL, ...)
 }
 
 \arguments{
@@ -56,9 +56,9 @@ Further arguments to pass to plot.phylo
 Michael Krabbe Borregaard
 }
 \examples{
-data(Fluvicolines)
-Clade_occupancy <- Node_occupancy(Fluvicolines)
-plot_nodes_phylo(Clade_occupancy, Fluvicolines$phylo)
+data(coquettes)
+Clade_occupancy <- Node_occupancy(coquettes)
+plot_nodes_phylo(Clade_occupancy, coquettes$phylo, cex = 0.7)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

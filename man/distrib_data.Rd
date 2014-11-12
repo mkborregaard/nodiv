@@ -22,7 +22,7 @@ nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)),
 \method{summary}{distrib_data}(object, ...)
 \method{summary}{nodiv_data}(object, ...)
 \method{plot}{distrib_data}(x, ...)
-\method{plot}{nodiv_data}(x, col = rev(terrain.colors(255)), ...)
+\method{plot}{nodiv_data}(x, col = rev(heat.colors(64)), ...)
 }
 
 \arguments{

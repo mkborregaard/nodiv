@@ -8,7 +8,7 @@
 create.cols <- function(vec, col , zlim)
 {
   if(missing(col)) 
-    if(min(col) < 0) col <- cm.colors(255) else col <- heat.colors(255)
+    if(min(col) < 0) col <- cm.colors(64) else col <- rev(heat.colors(64))
   if(missing(zlim)) zlim <- c(min(vec,na.rm = T),max(vec,na.rm = T))
   vec = vec - zlim[1]
   vec = floor(vec * (length(col)-1)/(zlim[2]- zlim[1]))+1
@@ -16,7 +16,7 @@ create.cols <- function(vec, col , zlim)
 }
 
 
-plot_grid <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim = NULL, zoom_to_points = FALSE, ...)
+plot_grid <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, shapefill = "grey", zlim = NULL, zoom_to_points = FALSE, ...)
 {
   if(inherits(x, "SpatialPixelsDataFrame"))
     rast <- raster(x) else
@@ -46,14 +46,14 @@ plot_grid <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, s
   if(is.null(shape)) plot(rast, zlim = zlim, col = col, ...) else
   {
     if(zoom_to_points)
-      plot(shape, col = shapefill, border = shapeborder, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...) else plot(shape, col = shapefill, border = shapeborder,  ...)
+      plot(shape, col = shapefill,  xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...) else plot(shape, col = shapefill, ...)
     plot(rast, add = T, zlim = zlim, col = col)
   }
   invisible(rast)
 }
 
 
-plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL, shapefill = "grey", shapeborder = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
+plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, shapefill = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
 {  
   if(inherits(x, "SpatialPointsDataFrame"))
   {
@@ -85,22 +85,31 @@ plot_points <- function(x, coords, col = rev(terrain.colors(255)), shape = NULL,
   oldpar <- par()
   par(mar = c(5,4,4,6) + 0.1)
   
-  if(is.null(shape)) plot(coords, col = create.cols(x, col, zlim = zlim), pch = pch,...) else
+  plotcol <- create.cols(x, col, zlim = zlim)
+  if(pch %in% 21:25)
+  {
+    bg <- plotcol
+    plotcol <- 1
+  }
+    
+  
+  if(is.null(shape)) plot(coords, col = plotcol, pch = pch, bg = bg, ...) else
   {
     if(zoom_to_points)
-      plot(shape, col = shapefill, border = shapeborder, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...) else  plot(shape, col = shapefill, border = shapeborder, ...)
-    plot(coords, col = create.cols(x, col, zlim = zlim), pch = pch, bg = bg, add = T)
+      plot(shape, col = shapefill,  xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = FALSE, ...) else  plot(shape, col = shapefill, legend = FALSE, ...)
+    plot(coords, col = plotcol, pch = pch, bg = bg, add = T)
   } 
 
   #screen(2)
   par <- oldpar
+
   add_legend(col = col, zlim = zlim)
   #image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
 
 }
 
 
-plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = heat.colors(255), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = F, ...)
+plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, ...)
   # plots a tree, where the colors of the nodes reflects the values of variable
 {
   # variable  : the variable that controls the colors of nodes - given for ALL nodes, even though some nodes are not plotted!
@@ -111,6 +120,8 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   
   if(!length(variable) == Nnode(tree))
     stop("The length of the variable vector must be the same length as the number of nodes on the tree")
+  
+  if(is.null(show.tip.label)) show.tip.label <- isTRUE(Ntip(tree) < 50)
   
   plotvar <- variable
   if(roundoff & is.numeric(label)) label = round(label,2)

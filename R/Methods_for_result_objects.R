@@ -55,7 +55,7 @@ plot.nodiv_result <- function(x, label = nodenumbers(x), zlim = 0:1, ...)
   plot_nodes_phylo(x$GND, tree = x$phylo, label = label, main = "",  zlim = zlim, show.legend = TRUE,...)
 }
 
-plotSOS <- function(nodiv_result, node, col = cm.colors(255), zlim, ...)
+plotSOS <- function(nodiv_result, node, col = cm.colors(64), zlim, ...)
 {
 
   if(!inherits(nodiv_result, "nodiv_result"))
@@ -70,7 +70,7 @@ plotSOS <- function(nodiv_result, node, col = cm.colors(255), zlim, ...)
   
   if(missing(zlim)) 
   {
-    maxabs <- max(abs(SOS))
+    maxabs <- max(abs(SOS), na.rm = T)
     zlim <- c(-maxabs, maxabs)
   }
   

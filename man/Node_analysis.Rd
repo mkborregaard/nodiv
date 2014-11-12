@@ -83,11 +83,11 @@ Michael Krabbe Borregaard
 \code{\link{plotSOS}}
 }
 \examples{
-data(Fluvicolines)
-res <- Node_analysis(Fluvicolines, 15, "rdtable") # would normally be 50 or 100
+data(coquettes)
+res <- Node_analysis(coquettes, 50, "rdtable")
 par(mfrow = c(1,2))
 plot(res)
-plotSOS(res, 140)
+plotSOS(res, 28, shapefill = terrain.colors(64))
 summary(res)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

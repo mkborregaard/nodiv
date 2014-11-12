@@ -55,10 +55,9 @@ Michael Krabbe Borregaard
 \code{\link{Node_analysis}}
 }
 \examples{
-data(Fluvicolines)
-desc1 <- Descendants(basal_node(Fluvicolines), Fluvicolines)[1]
-res <- Nodesig(Fluvicolines, repeats = 50)
-hist(res$SR)
+data(coquettes)
+res <- Nodesig(coquettes, repeats = 50)
+hist(res$rval, xlim = 0:1)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

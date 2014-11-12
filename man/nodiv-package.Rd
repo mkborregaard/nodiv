@@ -30,9 +30,10 @@ Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graha
 \keyword{ package }
 
 \examples{
-data(Fluvicolines)
-res <- Node_analysis(Fluvicolines, 15, "rdtable")
+data(coquettes)
+res <- Node_analysis(coquettes, 50, "rdtable")
 par(mfrow = c(1,2))
 plot(res)
-plotSOS(res, 140)
+plotSOS(res, 28, shapefill = terrain.colors(64))
+summary(res)
 }

@@ -47,8 +47,8 @@ Michael Krabbe Borregaard
 \code{\link{distrib_data}}, ~~~
 }
 \examples{
-data(Fluvicolines)
-new <- subsample(Fluvicolines, sites = which(richness(Fluvicolines) > 3))
+data(coquettes)
+new <- subsample(coquettes, sites = which(richness(coquettes) > 3))
 plot(new, show.tip = FALSE)
 }
 

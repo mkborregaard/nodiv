@@ -24,7 +24,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   nodiv_dat$coords <- dist_dat$coords[match(rownames(nodiv_dat$comm), dist_dat$coords$sites),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm)
   nodiv_dat$hcom[,1] <- as.character(nodiv_dat$hcom[,1])
-  nodiv_dat$hcom[,2] <- as.character(nodiv_dat$hcom[,2])
+  nodiv_dat$hcom[,3] <- as.character(nodiv_dat$hcom[,3])
   
   cat("Calculating which species descend from each node\n")
   nodiv_dat$node_species <- Create_node_by_species_matrix(nodiv_dat$phylo)
