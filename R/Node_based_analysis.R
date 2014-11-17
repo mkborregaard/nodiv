@@ -7,34 +7,6 @@
 ##############INTERNAL FUNCTIONS (NOT TO BE EXPORTED)###############
 
 
-Create_node_by_species_matrix = function(tree)
-{
-  # create a matrix with 0s and 1s indicating which species descend from each node
-  nodespecies <- matrix(0, nrow = Nnode(tree), ncol = Ntip(tree))
-  colnames(nodespecies) <- tree$tip.label
-  rownames(nodespecies) <- 1:Nnode(tree) + Ntip(tree)
-  
-  for ( i in 1:Nnode(tree))
-  {
-    nodespecies[i,which(colnames(nodespecies) %in% Node_spec(nodenumbers(tree)[i], tree))] <- 1
-  }
-  
-  return(nodespecies)
-}
-
-Node_spec <- function(node, tree)
-  # returns a character vector with names of species that descend from a node
-{
-  # node : the internal (ape) number of the node
-  if(!inherits(tree, "phylo"))
-    stop("tree must be an object of type phylo")
-  
-  if(!node %in% nodenumbers(tree))
-    stop("not a valid node number")
-  
-  nodetree <- extract.clade(tree, node)
-  return(nodetree$tip.label)
-}
 
 Node_comm <- function(nodiv_data, node)
 # returns a samplelist of sites occupied by at least one member of the node
