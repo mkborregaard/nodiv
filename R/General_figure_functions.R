@@ -109,7 +109,7 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
 }
 
 
-plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, ...)
+plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, cex = par(cex), ...)
   # plots a tree, where the colors of the nodes reflects the values of variable
 {
   # variable  : the variable that controls the colors of nodes - given for ALL nodes, even though some nodes are not plotted!
@@ -128,7 +128,7 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   
   if(missing(zlim)) zlim <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
   
-  sizes <- par("cex") * 4 * sqrt((plotvar - zlim[1])/zlim[2])
+  sizes <- cex * 4 * sqrt((plotvar - zlim[1])/zlim[2])
   
   if(missing(nodes)) node_index = rep(TRUE, Nnode(tree)) else {
     node_index <- rep(FALSE, Nnode(tree))

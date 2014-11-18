@@ -164,9 +164,13 @@ Create_node_by_species_matrix = function(tree)
   colnames(nodespecies) <- tree$tip.label
   rownames(nodespecies) <- 1:Nnode(tree) + Ntip(tree)
   
+  if(Nnode(tree) > 100)
+    pb <- txtProgressBar(min = 1, max = Nnode(tree), style = 3)
   for ( i in 1:Nnode(tree))
   {
     nodespecies[i,which(colnames(nodespecies) %in% Node_spec(nodenumbers(tree)[i], tree))] <- 1
+    if(Nnode(tree) > 100)
+      setTxtProgressBar(pb, node)
   }
   
   return(nodespecies)
