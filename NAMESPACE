@@ -1,6 +1,6 @@
 export(add_shape, basal_node, Descendants, distrib_data, plot_grid, Node_analysis, Node_occupancy, Node_species, 
        nodenumbers, Nodesig, nodiv_data,  Nsites, Nspecies, Parent, plot_node, plot_points, plot_richness, plotSOS, 
-       plot_nodes_phylo, richness, Sister, subsample)
+       plot_nodes_phylo, plot_sitestat, richness, Sister, SOS, subsample)
 S3method(plot, distrib_data)
 S3method(plot, nodiv_data)
 S3method(plot, nodiv_result)

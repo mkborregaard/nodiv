@@ -109,16 +109,9 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
 }
 
 
-plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, cex = par(cex), ...)
-  # plots a tree, where the colors of the nodes reflects the values of variable
+plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, cex = NULL, ...)
 {
-  # variable  : the variable that controls the colors of nodes - given for ALL nodes, even though some nodes are not plotted!
-  # tree     : the phylogenetic tree
-  # main 		: the title to give the plot
-  # new.window: should the plot be made in a new window?
-  # col		: the color palette to use for making the color plot
-  
-  if(!length(variable) == Nnode(tree))
+    if(!length(variable) == Nnode(tree))
     stop("The length of the variable vector must be the same length as the number of nodes on the tree")
   
   if(is.null(show.tip.label)) show.tip.label <- isTRUE(Ntip(tree) < 50)
@@ -128,6 +121,7 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   
   if(missing(zlim)) zlim <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
   
+  if(is.null(cex)) cex <- par("cex")
   sizes <- cex * 4 * sqrt((plotvar - zlim[1])/zlim[2])
   
   if(missing(nodes)) node_index = rep(TRUE, Nnode(tree)) else {
@@ -161,16 +155,8 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   
   if(show.legend)
   {
-    #     #use this instead of using 'fields' or use 'fields' for all the plotting
-    #     for(i in seq_along(valcols)) segments(0, 0 + i/6, 0.03 * root_tip_length, 0 + i/6, col = valcols[i])
-    #     text(0.035 * root_tip_length, 1, min(vals), adj = c(0,0.5))
-    #     text(0.035 * root_tip_length, length(valcols)/6, round(max(vals),1), adj = c(0,0.5))
-    
-    par <- oldpar
-    #screen(2)
-    
+    par <- oldpar #screen(2)
     add_legend(col = col, zlim = zlim)
-   # image.plot(col = col, legend.only = T, zlim = zlim,smallplot=c(.85,.87, .38,.65))
   }
 }
 

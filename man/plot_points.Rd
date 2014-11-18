@@ -1,12 +1,13 @@
 \name{plot_points}
 \alias{plot_points}
 \alias{plot_grid}
+\alias{plot_sitestat}
 
 \title{
-Plot a variable on spatial points or a spatial grid using a color scale
+Plot a variable on spatial points or a spatial grid using a color scale.
 }
 \description{
-Plots the variable either as colored points or as a colored raster
+Plots a variable either as colored points or as a colored raster. \code{plot_sitestat} is a wrapper function that dispatches the other functions according to the \code{type} of \code{distrib_data}.
 }
 \usage{
 plot_points(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
@@ -15,8 +16,9 @@ plot_points(x, coords, col = rev(terrain.colors(64)), shape = NULL,
 plot_grid(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
   shapefill = "grey",  zlim = NULL, 
   zoom_to_points = FALSE,  ...)
+plot_sitestat(distrib_data, x, ...)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{x}{
 A numerical variable to be plotted using a color scale
@@ -44,6 +46,9 @@ The point character to use for plotting points
 }
   \item{bg}{
 The central color of points when using a pch value between 21 and 25
+}
+  \item{distrib_data}{
+An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result} to use for plotting x.
 }
   \item{\dots}{
 Additional arguments to pass to plot

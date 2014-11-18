@@ -209,5 +209,15 @@ richness <- function(x)
   return(summary(x)$richness$richness)
 }
 
-
+plot_sitestat <- function(distrib_data, x, ...)
+{
+  
+  if(!inherits(distrib_data, "distrib_data"))
+    stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
+  
+  if(is.null(distrib_data$shape)) shape <- NULL else shape <- distrib_data$shape
+  if(distrib_data$type == "grid")
+    plot_grid(x, distrib_data$coords, shape = shape, ...) else
+      plot_points(x, distrib_data$coords, shape = shape, ...)
+}
 

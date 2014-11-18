@@ -57,7 +57,17 @@ plot.nodiv_result <- function(x, label = nodenumbers(x), zlim = 0:1, ...)
 
 plotSOS <- function(nodiv_result, node, col = cm.colors(64), zlim, ...)
 {
+  sos <- SOS(nodiv_result, node)
+  if(missing(zlim)) 
+  {
+    maxabs <- max(abs(sos), na.rm = T)
+    zlim <- c(-maxabs, maxabs)
+  }
+  plot_sitestat(nodiv_result, sos, col = col, zlim = zlim, ...)
+}
 
+SOS <- function(nodiv_result, node)
+{ 
   if(!inherits(nodiv_result, "nodiv_result"))
     stop("nodiv_result must be the result object from running Node_analysis")
   
@@ -67,15 +77,6 @@ plotSOS <- function(nodiv_result, node, col = cm.colors(64), zlim, ...)
     node <- node - Nspecies(nodiv_result)
   
   SOS <- nodiv_result$SOS[,node]
-  
-  if(missing(zlim)) 
-  {
-    maxabs <- max(abs(SOS), na.rm = T)
-    zlim <- c(-maxabs, maxabs)
-  }
-  
-  if(is.null(nodiv_result$shape)) shape <- NULL else shape <- nodiv_result$shape
-  if(nodiv_result$type == "grid")
-    plot_grid(SOS, nodiv_result$coords, col = col, zlim = zlim, shape = shape, ...) else
-    plot_points(SOS, nodiv_result$coords, col = col, zlim = zlim, shape = shape, ...)
+  SOS
 }
+

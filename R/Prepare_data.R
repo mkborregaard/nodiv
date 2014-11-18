@@ -170,7 +170,7 @@ Create_node_by_species_matrix = function(tree)
   {
     nodespecies[i,which(colnames(nodespecies) %in% Node_spec(nodenumbers(tree)[i], tree))] <- 1
     if(Nnode(tree) > 100)
-      setTxtProgressBar(pb, node)
+      setTxtProgressBar(pb, i)
   }
   
   return(nodespecies)
