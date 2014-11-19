@@ -29,7 +29,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   
   cat("Calculating which species descend from each node\n")
   nodiv_dat$node_species <- Create_node_by_species_matrix(nodiv_dat$phylo)
-  ret$species <- colnames(ret$comm)
+  nodiv_dat$species <- colnames(nodiv_dat$comm)
   
   class(nodiv_dat) <- c("nodiv_data","distrib_data")
   return(nodiv_dat)
