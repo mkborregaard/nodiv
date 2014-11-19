@@ -39,10 +39,12 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
   if(!inherits(nodiv_data, "nodiv_data")) stop("This function only works on objects of class nodiv_data")
   method <- match.arg(method)
  
-  if(cores > 1 & requireNamespace("parallel"))
+  paral <- FALSE
+  if(cores > 1)
+    if(requireNamespace("parallel"))
+      paral <- TRUE
+  if(paral)
   {
-    
-  # dedicate the desired number of cores to parallel processing
    cl <- parallel::makeCluster(cores)  
    pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
   
@@ -51,26 +53,19 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
      #setTxtProgressBar(pb, node)
      ret <- nodiv_anal(node, nodiv_data, repeats, method)
      if(log_parallel_progress)
-       save(ret, file = paste(ret,".rda"))
+       save(ret, file = paste(node,".rda", sep = ""))
      ret[,1:2]
    })
-
-#   stopCluster(cl)
-    
-  } else {
-    
+  } else { 
     pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
     results <- lapply(nodenumbers(nodiv_data), function(node)
     {
       setTxtProgressBar(pb, node)
       ret <- nodiv_anal(node, nodiv_data, repeats, method)
       ret[,1:2] #to keep object size down, I am currently only using these two variables for the big analysis
-    })
-    
-  }
-  
+    })   
+  } 
   nodiv_result <- nodiv_res(results, nodiv_data, repeats, method)
-  
   return(nodiv_result)
 }
   

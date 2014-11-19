@@ -34,7 +34,7 @@ The null model algorithm used to simulate random communities
 The number of cores to use in the computation. Note that multi-core processing is yet unimplemented.
 }
   \item{log_parallel_progress}{
-If this is TURE, an '.rda' file with the name of the node currently being computed will be saved to the working directory. Useful for very big computations.
+If this is TRUE, the results from each node will be saved as an '.rda' file in the working directory. Useful for large parallel computations.
 }
   \item{object}{
 The \code{nodiv_result} object
