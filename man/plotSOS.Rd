@@ -31,7 +31,7 @@ Further arguments to pass to the plotting function
 }
 }
 \details{
-The plot will be done as a spatial grid or as colored points, depending on the \code{type} of the \code{nodiv_result} object
+The plot will be done as a spatial grid or as colored points, depending on the \code{type} of the \code{nodiv_result} object. If the \code{nodiv_result} object has a \code{shape} object of type \code{raster}, this will be plotted normally in the background - but resizing the window will cause the plots/pixels and the underlying raster object to lose alignment, due to a bug in the \code{raster} package.
 }
 \value{
 \code{SOS} returns a numerical vector with the SOS values. If \code{nodiv_result} has \code{type raster}, a raster object of the SOS values is returned by \code{plotSOS}. 

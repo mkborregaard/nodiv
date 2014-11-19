@@ -33,26 +33,27 @@ nodiv_anal <- function(node, nodiv_data, repeats, method)
 
 ## EXPORTED FUNCTION
 
-Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1)
+Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), 
+                          cores = 1, log_parallel_progress = FALSE)
 {
   if(!inherits(nodiv_data, "nodiv_data")) stop("This function only works on objects of class nodiv_data")
   method <- match.arg(method)
  
-  if(cores > 1)
+  if(cores > 1 & requireNamespace("parallel"))
   {
-    stop("The parallel interface is currently unimplemented") 
-#TODO 
-
+    
   # dedicate the desired number of cores to parallel processing
-#   cl = makeCluster(cores)  
-#   pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
+   cl <- parallel::makeCluster(cores)  
+   pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
   
-#   results <- parLapply(nodenumbers(nodiv_data), function(node)
-#   {
-#     setTxtProgressBar(pb, node)
-#     ret <- nodiv_anal(node, nodiv_data, repeats, method)
-#     ret[,1:2]
-#   })
+   results <- parallel::parLapply(cl, nodenumbers(nodiv_data), function(node) 
+   {
+     #setTxtProgressBar(pb, node)
+     ret <- nodiv_anal(node, nodiv_data, repeats, method)
+     if(log_parallel_progress)
+       save(ret, file = paste(ret,".rda"))
+     ret[,1:2]
+   })
 
 #   stopCluster(cl)
     

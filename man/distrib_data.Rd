@@ -57,7 +57,9 @@ The color palette used for mapping species richness
 Further arguments to be passed to the plotting function
 }
 }
-
+\details{
+When making an object of type 'grid', the coordinates will be stored as \code{SpatialPixels} from package \code{sp}. This may result in a warning if there are rows or columns in the grid without data. The function removes these. This may affect plotting, but can otherwise be ignored.
+}
 \value{
 The \code{distrib_data} function produces an object of type \code{distrib_data}, which has the following components:
  \item{coords}{A \code{SpatialPointsDataFrame} or \code{SpatialPixelsDataFrame} (from \code{sp}) with spatial coordinates, and one column named \code{sites} containing the site names}

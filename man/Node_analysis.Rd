@@ -14,7 +14,7 @@ Calculate GND and SOS scores for a phylogeny and community data set
 Goes through each node in the phylogeny, and compares the distribution overlap of sister clades to that expected from a null mode that considers node size, species richness and range size.
 }
 \usage{
-Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1)
+Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1, log_parallel_progress = FALSE)
 \method{summary}{nodiv_result}(object, ...)
 \method{print}{nodiv_result}(x, printlen = 4, ...)
 \method{plot}{nodiv_result}(x, label = nodenumbers(x), zlim = 0:1, ...)
@@ -32,6 +32,9 @@ The null model algorithm used to simulate random communities
 }
   \item{cores}{
 The number of cores to use in the computation. Note that multi-core processing is yet unimplemented.
+}
+  \item{log_parallel_progress}{
+If this is TURE, an '.rda' file with the name of the node currently being computed will be saved to the working directory. Useful for very big computations.
 }
   \item{object}{
 The \code{nodiv_result} object
