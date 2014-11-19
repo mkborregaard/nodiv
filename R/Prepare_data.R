@@ -20,6 +20,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   nodiv_dat$phylo <- dat$phy
   nodiv_dat$comm <- dat$comm
   if(!(is.data.frame(nodiv_dat$comm) & nrow(nodiv_dat$comm) > 1)) stop("The tip labels in the phylogeny do not match the names in the community matrix")
+  #nodiv_dat$comm <- nodiv_dat$comm[,match(nodiv_dat$phylo$tip.label, colnames(nodiv_dat$comm))]
   
   nodiv_dat$coords <- dist_dat$coords[match(rownames(nodiv_dat$comm), dist_dat$coords$sites),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm)
@@ -28,6 +29,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   
   cat("Calculating which species descend from each node\n")
   nodiv_dat$node_species <- Create_node_by_species_matrix(nodiv_dat$phylo)
+  ret$species <- colnames(ret$comm)
   
   class(nodiv_dat) <- c("nodiv_data","distrib_data")
   return(nodiv_dat)
