@@ -170,29 +170,13 @@ Create_node_by_species_matrix = function(tree)
     pb <- txtProgressBar(min = 1, max = Nnode(tree), style = 3)
   for ( i in 1:Nnode(tree))
   {
-    nodespecies[i,which(colnames(nodespecies) %in% Node_spec(nodenumbers(tree)[i], tree))] <- 1
+    nodespecies[i,Node_spec(nodenumbers(tree)[i], tree, names = FALSE)] <- 1
     if(Nnode(tree) > 100)
       setTxtProgressBar(pb, i)
   }
   
   return(nodespecies)
 }
-
-
-# Node_spec <- function(node, tree)
-#   # returns a character vector with names of species that descend from a node
-# {
-#   # node : the internal (ape) number of the node
-#   if(!inherits(tree, "phylo"))
-#     stop("tree must be an object of type phylo")
-#   
-#   if(!node %in% nodenumbers(tree))
-#     stop("not a valid node number")
-#   
-#   nodetree <- extract.clade(tree, node)
-#   return(nodetree$tip.label)
-# }
-
 
 Node_spec <- function(tree, node, names = TRUE)
 {
