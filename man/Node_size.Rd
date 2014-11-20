@@ -22,7 +22,7 @@ Node_occupancy(nodiv_data, node = NULL)
 A character or numeric variable specifying one or more nodes in the phylogeny
 }
   \item{nodiv_data}{
-An object of type \code{nodiv_data} or \code{nodiv_result} 
+An object of type \code{nodiv_data} or \code{nodiv_result}. \code{Node_species} also accepts objects of type \code{phylo}
 }
   \item{names}{
 If \code{TRUE}, return a character vector of species names; otherwise return the species index numbers in the community matrix 

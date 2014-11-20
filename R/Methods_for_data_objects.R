@@ -109,7 +109,7 @@ plot_richness <- function(distrib_data, ...)
 
 plot_node <- function(nodiv_data, node = basal_node(nodiv_data), ...)
 {
-  if(!inherits(nodiv_data, "node"))
+  if(!inherits(nodiv_data, "nodiv_data"))
     stop("argument must be an object of type nodiv_data or nodiv_result")
   node <- identify_node(node, nodiv_data)
   plot_richness(subsample(nodiv_data, node = node), ...)
