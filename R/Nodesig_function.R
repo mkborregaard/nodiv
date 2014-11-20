@@ -56,11 +56,12 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show )
 
 Nodesig <- function(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"), show = T)
 {
-  if(is.null(Node_sp)) Node_sp <- Node_species(nodiv_data, Descendants(basal_node(nodiv_data), nodiv_data)[1])
+  if(is.null(Node_sp)) Node_sp <- Node_species(nodiv_data, Descendants(basal_node(nodiv_data), nodiv_data)[1], names = FALSE)
   # a boolean vector indicating which of species descending from the parent node that descend from the focal node
   if(is.character(Node_sp))
     Node_sp <- which(nodiv_data$species %in% Node_sp)  # make a boolean vector
-  if(length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1) return(rep(NA,5)) #if one of the descendant clades is a single species
+  if(length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1) 
+    return(list(SR = rep(NA,length(Node_sp)),  rval = rep(NA,length(Node_sp)), nodeemp = rep(NA,length(Node_sp)), nodemeans = rep(NA,length(Node_sp)), nodesds = rep(NA,length(Node_sp)))) #if one of the descendant clades is a single species
   method = match.arg(method)
   # A global variable to count the number of repeats
 

@@ -14,7 +14,8 @@ Calculate GND and SOS scores for a phylogeny and community data set
 Goes through each node in the phylogeny, and compares the distribution overlap of sister clades to that expected from a null mode that considers node size, species richness and range size.
 }
 \usage{
-Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1, log_parallel_progress = FALSE)
+Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), 
+                cores = 1, log_parallel_progress = FALSE)
 \method{summary}{nodiv_result}(object, ...)
 \method{print}{nodiv_result}(x, printlen = 4, ...)
 \method{plot}{nodiv_result}(x, label = nodenumbers(x), zlim = 0:1, ...)

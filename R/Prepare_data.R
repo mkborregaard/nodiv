@@ -200,7 +200,7 @@ Node_spec <- function(tree, node, names = TRUE)
   {
     if(node < Ntip(tree))
       return(node)
-    ret <- lapply(Descendants(node, tree), Node_spe, tree = tree)
+    ret <- lapply(Descendants(node, tree), .local, tree = tree)
     do.call(c, ret)
   }
   
