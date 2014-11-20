@@ -132,6 +132,30 @@ Node_species <- function(nodiv_data, node)
 }
 
 
+Node_speci <- function(tree, node, names = TRUE)
+{
+  .local <- function(tree, node)
+  {
+    if(node < Ntip(tree))
+      return(node)
+    ret <- lapply(Descendants(node, tree), Node_spe, tree = tree)
+    do.call(c, ret)
+  }
+  
+  if(inherits(tree, "nodiv_data"))
+    tree <- tree$phylo
+  if(!inherits(tree, "phylo"))
+    stop("tree must be an object of type phylo or nodiv_data")
+  
+  node <- identify_node(node, tree)
+  ret <- .local(tree, node)
+  
+  if(names)
+    ret <- tree$tip.label[ret]
+  
+  ret
+}
+
 Node_sites <- function(nodiv_data, node)
 # calculates which sites are occupied by at least one member of the node
 {

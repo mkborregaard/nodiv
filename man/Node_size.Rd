@@ -3,6 +3,7 @@
 \alias{Node_sites}
 \alias{Node_species}
 \alias{Node_occupancy}
+\alias{Node_speci}
 
 \title{
 Attributes of individual clades
@@ -14,6 +15,7 @@ Functions that summarize the species that descend from a node, and their distrib
 Node_size(nodiv_data, node = NULL)
 Node_sites(nodiv_data, node)
 Node_species(nodiv_data, node)
+Node_speci <- function(tree, node, names = TRUE)
 Node_occupancy(nodiv_data, node = NULL)
 }
 
@@ -23,6 +25,9 @@ A character or numeric variable specifying a certain node in the phylogeny
 }
   \item{nodiv_data}{
 An object of type \code{nodiv_data} or \code{nodiv_result} 
+}
+  \item{names}{
+If \code{TRUE}, return a character vector of species names; otherwise return the species index numbers in the community matrix 
 }
 }
 \details{
