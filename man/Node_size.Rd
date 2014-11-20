@@ -3,7 +3,6 @@
 \alias{Node_sites}
 \alias{Node_species}
 \alias{Node_occupancy}
-\alias{Node_speci}
 
 \title{
 Attributes of individual clades
