@@ -14,8 +14,7 @@ Functions that summarize the species that descend from a node, and their distrib
 \usage{
 Node_size(nodiv_data, node = NULL)
 Node_sites(nodiv_data, node)
-Node_species(nodiv_data, node)
-Node_speci <- function(tree, node, names = TRUE)
+Node_species(nodiv_data, node, names = TRUE)
 Node_occupancy(nodiv_data, node = NULL)
 }
 
