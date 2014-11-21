@@ -10,7 +10,7 @@ Create a raster or point plot showing the species richness of an object. Useful 
 }
 \usage{
 plot_richness(distrib_data, ...)
-plot_node(nodiv_data, node = basal_node(nodiv_data), ...)
+plot_node(nodiv_data, node = basal_node(nodiv_data), sites = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +22,9 @@ An object of types \code{nodiv_data} or \code{nodiv_result}
 }
   \item{node}{
 The name or internal number of the node to be plotted
+}
+  \item{sites}{
+If \code{sites = "all"} the plotting region retains all sites (including sites unoccupied by that node)
 }
   \item{\dots}{
 Further arguments to pass to the plotting function

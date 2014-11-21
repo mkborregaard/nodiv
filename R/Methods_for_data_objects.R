@@ -107,12 +107,12 @@ plot_richness <- function(distrib_data, ...)
   plot.distrib_data(distrib_data, ...)
 }
 
-plot_node <- function(nodiv_data, node = basal_node(nodiv_data), ...)
+plot_node <- function(nodiv_data, node = basal_node(nodiv_data), sites = NULL, ...)
 {
   if(!inherits(nodiv_data, "nodiv_data"))
     stop("argument must be an object of type nodiv_data or nodiv_result")
   node <- identify_node(node, nodiv_data)
-  plot_richness(subsample(nodiv_data, node = node), ...)
+  plot_richness(subsample(nodiv_data, node = node, sites = sites), ...)
 }
 
 plot.nodiv_data <- function(x,  col = rev(heat.colors(64)), ...)
@@ -198,6 +198,7 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   ret$node_species <- x$node_species[, colnames(x$node_species) %in% ret$species]
   ret$node_species <- ret$node_species[rowSums(ret$node_species) > 0,]
   ret$node_species <- ret$node_species[as.numeric(rownames(ret$node_species)) %in% as.numeric(new_phylo$node.label),] # and this line are an ugly hack to make sure the node_species matrix does not get perverted
+  if(!is.matrix(ret$node_species)) ret$node_species <- rbind(ret$node_species) #TODO this is a hack for when a node only has tips
   rownames(ret$node_species) <- nodenumbers(ret$phylo)
   return(ret)
 }

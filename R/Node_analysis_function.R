@@ -10,7 +10,7 @@ nodiv_anal <- function(node, nodiv_data, repeats, method)
     # forloop res_list <- append(res_list, NA) else {
     return(data.frame(ses = rep(NA, Nsites(nodiv_data)),  pval = rep(NA, Nsites(nodiv_data)), nodeemp = rep(NA, Nsites(nodiv_data)), nodemeans = rep(NA, Nsites(nodiv_data)), nodesds = rep(NA, Nsites(nodiv_data))))
   
-  parent_data <- subsample(nodiv_data, node = Parent(node, nodiv_data))
+  parent_data <- subsample.distrib_data(nodiv_data, species = Node_species(nodiv_data, Parent(node, nodiv_data)))
   
   parNode_sites <- match(parent_data$coords$sites, nodiv_data$coords$sites)
   # a vector indicating which of all sites are considered for this node
@@ -33,8 +33,7 @@ nodiv_anal <- function(node, nodiv_data, repeats, method)
 
 ## EXPORTED FUNCTION
 
-Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), 
-                          cores = 1, log_parallel_progress = FALSE)
+Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1, log_parallel_progress = FALSE)
 {
   if(!inherits(nodiv_data, "nodiv_data")) stop("This function only works on objects of class nodiv_data")
   method <- match.arg(method)

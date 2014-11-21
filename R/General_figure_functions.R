@@ -9,6 +9,7 @@ create.cols <- function(vec, col , zlim)
 {
   if(missing(col)) 
     if(min(col) < 0) col <- cm.colors(64) else col <- rev(heat.colors(64))
+  if(min(vec, na.rm = TRUE) == 0 & identical(vec, floor(vec))) col <- c("grey", col)
   if(missing(zlim)) zlim <- c(min(vec,na.rm = T),max(vec,na.rm = T))
   vec = vec - zlim[1]
   vec = floor(vec * (length(col)-1)/(zlim[2]- zlim[1]))+1
@@ -25,7 +26,7 @@ plot_grid <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, sh
       {
         if(!isGrid(coords)) stop("this function is only suitable for gridded data")
         coords <- SpatialPoints(coords)
-        rast <- raster(SpatialPixelsDataFrame( coords, as.data.frame(x)))
+        suppressWarnings(rast <- raster(SpatialPixelsDataFrame( coords, as.data.frame(x)))) #TODO NB
       } else {
         if(is.matrix(coords)) 
           coords <- as.data.frame(coords)
@@ -36,12 +37,13 @@ plot_grid <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, sh
           if(!ncol(coords) == 2) stop("coords must have exactly two columns, for the x and y coordinates of data")
           if(!isGrid(coords)) stop("this function is only suitable for gridded data")
           coords <- SpatialPoints(coords)
-          rast <- raster(SpatialPixelsDataFrame(coords, as.data.frame(x)))
+          suppressWarnings(rast <- raster(SpatialPixelsDataFrame(coords, as.data.frame(x)))) #TODO NB
         } else stop("Undefined arguments")
       }
   
   
   if(is.null(zlim)) zlim <- c(min(getValues(rast),na.rm = T),max(getValues(rast),na.rm = T))
+  if(min(zlim) == 0 & identical(getValues(rast), floor(getValues(rast)))) col <- c("grey", col) #TODO an experimental hack
   
   if(is.null(shape)) plot(rast, zlim = zlim, col = col, ...) else
   {
