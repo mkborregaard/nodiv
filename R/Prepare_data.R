@@ -13,7 +13,17 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
     dist_dat <- distrib_data(commatrix, coords, proj4string_in, type, shape)
   } else dist_dat <- commatrix
   
-  nodiv_dat <- dist_dat
+  nodiv_dat <- dist_dat[c("comm", "type", "coords", "species", "hcom")]
+  
+  # TODO It should also be possible to give all of the below as function arguments, and also to the distrib_data functoin and integrate in subsample
+  if(!is.null(dist_dat$shape))
+    nodiv_dat$shape <- dist_dat$shape
+  if(!is.null(dist_dat$sitestats))
+    nodiv_dat$shape <- dist_dat$sitestats
+  if(!is.null(dist_dat$nodestats))
+    nodiv_dat$shape <- dist_dat$nodestats
+  if(!is.null(dist_dat$speciesstats))
+    nodiv_dat$shape <- dist_dat$speciesstats
   
   cat("Comparing taxon names in phylogeny and communities (using picante)\n")
   dat <- match.phylo.comm(phylo, dist_dat$comm)
@@ -48,12 +58,16 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
       warning("specified proj4string overridden by the coords data")
     } 
 
-  if(is.data.frame(commatrix) & ncol(commatrix) == 3 & !is.numeric(commatrix[,3])) commatrix <- sample2matrix(commatrix) #i.e. is the commatrix in phylocom format?
-  
+  if(is.data.frame(commatrix) & ncol(commatrix) == 3 & !is.numeric(commatrix[,3])) #i.e. is the commatrix in phylocom format?
+  {
+    commatrix[,1] <- as.character(commatrix[,1])
+    commatrix[,3] <- as.character(commatrix[,3])
+    commatrix <- sample2matrix(commatrix)   
+  }
   if(is.data.frame(commatrix)) commatrix <- as.matrix(commatrix)
   if(!is.matrix(commatrix)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   if(!is.numeric(commatrix)) stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
-  if(!all.equal(sort(unique(as.numeric(commatrix))), 0:1)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
+  if(!sum(unique(as.numeric(commatrix)) %in% 0:1) == 2) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   
   if(is.matrix(coords)) coords <- as.data.frame(coords)
   if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commatrix, type)
@@ -166,13 +180,10 @@ Create_node_by_species_matrix = function(tree)
   colnames(nodespecies) <- tree$tip.label
   rownames(nodespecies) <- nodenumbers(tree)
   
-  if(Nnode(tree) > 100)
-    pb <- txtProgressBar(min = 1, max = Nnode(tree), style = 3)
+ 
   for ( i in 1:Nnode(tree))
   {
-    nodespecies[i,Node_spec(nodenumbers(tree)[i], tree, names = FALSE)] <- 1
-    if(Nnode(tree) > 100)
-      setTxtProgressBar(pb, i)
+    nodespecies[i,Node_spec(tree, nodenumbers(tree)[i], names = FALSE)] <- 1
   }
   
   return(nodespecies)
