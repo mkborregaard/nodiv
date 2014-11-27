@@ -97,8 +97,11 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
   
   if(is.null(shape)) plot(coords, col = plotcol, pch = pch, bg = bg, ...) else
   {
-    suppressWarnings(if(zoom_to_points)
-      plot(shape, col = shapefill,  xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = FALSE, ...) else  plot(shape, col = shapefill, legend = FALSE, ...))
+    if(inherits(shape, "Raster")) legend <- FALSE else legend <- NULL
+    if(inherits(shape, "SpatialPolygonsDataFrame"))
+      border <- shapefill else border <- NULL
+    if(zoom_to_points)
+      plot(shape, col = shapefill,  xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = legend, border = border, ...) else  plot(shape, col = shapefill, legend = legend, border = border, ...)
     plot(coords, col = plotcol, pch = pch, bg = bg, add = T)
   } 
 
