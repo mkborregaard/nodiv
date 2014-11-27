@@ -120,6 +120,7 @@ plot.nodiv_data <- function(x,  col = rev(heat.colors(64)), ...)
   par(mfrow = c(1,2))
   plot.distrib_data(x, col = col, ...)
   plot(x$phylo, show.tip.label = isTRUE(Nspecies(x) < 40), cex = 0.7) #need to specify explicitly which
+  par(mfrow = c(1,1))
 }
 
 subsample<- function(x, ...) UseMethod("subsample")
