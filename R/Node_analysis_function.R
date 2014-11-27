@@ -59,7 +59,7 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
     pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
     results <- lapply(nodenumbers(nodiv_data), function(node)
     {
-      setTxtProgressBar(pb, node)
+      print(node) #setTxtProgressBar(pb, node)
       ret <- nodiv_anal(node, nodiv_data, repeats, method)
       ret[,1:2] #to keep object size down, I am currently only using these two variables for the big analysis
     })   

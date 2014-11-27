@@ -64,7 +64,7 @@ Nodesig <- function(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtab
   # a boolean vector indicating which of species descending from the parent node that descend from the focal node
   if(is.character(Node_sp))
     Node_sp <- which(nodiv_data$species %in% Node_sp)  # make a boolean vector
-  if(length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1) 
+  if(length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1 | Nsites(nodiv_data) < 2) 
     return(list(SR = rep(NA,Nsites(nodiv_data)),  rval = rep(NA,Nsites(nodiv_data)), nodeemp = rep(NA,Nsites(nodiv_data)), nodemeans = rep(NA,Nsites(nodiv_data)), nodesds = rep(NA,Nsites(nodiv_data)))) #if one of the descendant clades is a single species
   method = match.arg(method)
   # A global variable to count the number of repeats
