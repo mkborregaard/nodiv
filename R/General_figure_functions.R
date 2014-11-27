@@ -107,7 +107,9 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
 
   add_legend(col = col, zlim = zlim)
   #image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
-
+  ret <- data.frame(x)
+  names(ret) <- deparse(substitute(x))
+  invisible(SpatialPointsDataFrame(coords, ret))
 }
 
 

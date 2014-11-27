@@ -3,12 +3,11 @@
 print.nodiv_result <- function(x, printlen = 4, ...)
 {
   cat(paste("Result of nodiv analysis on", x$type,"data\n"))
-  cat(paste("Repeats",x$repeats,"\n"))
-  cat(paste("Null model", x$method,"\n\n"))
-  cat(paste("Species names: (n = ", length(x$species), "):\n", sep = ""))
-cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
-cat(paste("Site names (n = ", nrow(x$coords),"):\n", sep = ""))
-cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
+  cat(paste("Repeats:",x$repeats,"\n"))
+  cat(paste("Null model:", x$method,"\n\n"))
+  cat(paste("Species names (n = ", length(x$species), "):\n", sep = ""))
+  cat(paste("\t", paste(x$species[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
+  cat(paste("Site names (n = ", nrow(x$coords),"):\n", sep = ""))
   cat(paste("\t", paste(x$coords$sites[1:printlen], collapse = ", "),", ...\n\n", sep = ""))
   cat(paste("GND and SOS calculated for", sum(!is.na(x$GND)), "nodes\n"))
 }
@@ -79,4 +78,32 @@ SOS <- function(nodiv_result, node)
   SOS <- nodiv_result$SOS[,node]
   SOS
 }
+
+subsample.nodiv_result <- function(x, node = NULL, ...)
+{
+  ret <- subsample.nodiv_data(x, node = node, ...)
+  if(!is.null(list(...)$sites))
+  {
+    warning("It is only possible to subsample results to certain nodes, as selecting only some sites invalidates GND values. Returning a nodiv_data object with a subsampled dataset. Run Node_analyis again on this.")
+    return(ret)
+  }
+  
+  if(!is.null(list(...)$species))
+  {
+    warning("It is only possible to subsample results to certain nodes, as selecting only some species invalidates the results. Returning a nodiv_data object with a subsampled dataset. Run Node_analyis again on this.")
+    return(ret)
+  }
+  
+  ret$method <- x$method
+  
+  ret$repeats <- x$repeats
+  
+  ret$GND <- x$GND[attr(ret, "old_nodes") - Nspecies(x)]
+  
+  ret$SOS <- x$SOS[which(x$coords$sites %in% ret$coords$sites), attr(ret, "old_nodes") - Nspecies(x)]
+  
+  class(ret) <- c("nodiv_result","nodiv_data", "distrib_data")
+  return(ret)
+}
+
 

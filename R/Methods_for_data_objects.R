@@ -112,7 +112,7 @@ plot_node <- function(nodiv_data, node = basal_node(nodiv_data), sites = NULL, .
   if(!inherits(nodiv_data, "nodiv_data"))
     stop("argument must be an object of type nodiv_data or nodiv_result")
   node <- identify_node(node, nodiv_data)
-  plot_richness(subsample(nodiv_data, node = node, sites = sites), ...)
+  plot_richness(subsample.distrib_data(nodiv_data, species = Node_species(nodiv_data, node), sites = sites), ...)
 }
 
 plot.nodiv_data <- function(x,  col = rev(heat.colors(64)), ...)
@@ -178,7 +178,6 @@ subsample.distrib_data <- function(x, sites = NULL, species = NULL, ...)
 
 subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, ...)
 {
-  
   ret_phylo <- x$phylo
   ret_phylo$node.label <- nodenumbers(x)  #this line
   
@@ -198,18 +197,22 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   ret <- subsample.distrib_data(x, sites, species)
   dat <- match.phylo.comm(ret_phylo, ret$comm)
   new_phylo <- dat$phy
+  old_nodes <- as.numeric(new_phylo$node.label)
   ret$phylo <- drop.tip(x$phylo, which(! x$species %in% new_phylo$tip.label))  #this line
   ret$species <- ret$phylo$tip.label
   
   ret$hcom <- subset(x$hcom, x$hcom$plot %in% ret$coords$sites & x$hcom$id %in% ret$species)
   ret$node_species <- x$node_species[, colnames(x$node_species) %in% ret$species]
   ret$node_species <- ret$node_species[rowSums(ret$node_species) > 0,]
-  ret$node_species <- ret$node_species[as.numeric(rownames(ret$node_species)) %in% as.numeric(new_phylo$node.label),] # and this line are an ugly hack to make sure the node_species matrix does not get perverted
+  ret$node_species <- ret$node_species[as.numeric(rownames(ret$node_species)) %in% old_nodes,] # and this line are an ugly hack to make sure the node_species matrix does not get perverted
   if(!is.matrix(ret$node_species)) ret$node_species <- rbind(ret$node_species) #TODO this is a hack for when a node only has tips
   rownames(ret$node_species) <- nodenumbers(ret$phylo)
   class(ret) <- c("nodiv_data", "distrib_data")
+  attr(ret, "old_nodes") <- old_nodes
   return(ret)
 }
+
+
 
 richness <- function(x)
 {  

@@ -8,7 +8,6 @@
 
 
 parent_representation = function(node_number, rep_matrix, nodiv_data)
-  # takes the representation matrix, and summarizes at the parent node (because sister species in the representation matrix are mirror images)
 {
   desc = Descendants(node_number, nodiv_data)
   if(desc[1] < basal_node(nodiv_data) | desc[2] < basal_node(nodiv_data))
@@ -19,6 +18,13 @@ parent_representation = function(node_number, rep_matrix, nodiv_data)
   return(rowMeans(cbind(rep_matrix[,desc1row], 1-rep_matrix[, desc2row])))
 }
 
+nodenames <- function(nodiv_data)
+{
+  ret <- nodenumbers(nodiv_data)
+  if(!is.null(nodiv_data$phylo$node.label))
+    ret <- paste(ret, nodiv_data$phylo$node.label)
+  ret
+}
 
 nodiv_res <- function(results, nodiv_data, repeats, method)
 {
@@ -29,6 +35,8 @@ nodiv_res <- function(results, nodiv_data, repeats, method)
   
   SR <- sapply(results, "[[", 1)  
   ret$SOS <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, SR, nodiv_data))
+  colnames(ret$SOS) <- nodenames(nodiv_data)
+  rownames(ret$SOS) <- nodiv_data$coords$sites
   
   rval <- sapply(results, "[[", 2)
   par_rval <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, rval, nodiv_data))

@@ -54,6 +54,9 @@ An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result} 
 Additional arguments to pass to plot
 }
 }
+\details{
+Note that if \code{shape} is a \code{raster} object, the points may shift relative to the background when resizing the image. This seems to be due to a bug in the \code{raster} package. 
+}
 
 \author{
 Michael Krabbe Borregaard 
