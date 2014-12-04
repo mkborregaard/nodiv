@@ -2,6 +2,7 @@
 \alias{plot_points}
 \alias{plot_grid}
 \alias{plot_sitestat}
+\alias{plot_species}
 
 \title{
 Plot a variable on spatial points or a spatial grid using a color scale.
@@ -17,6 +18,7 @@ plot_grid(x, coords, col = rev(terrain.colors(64)), shape = NULL,
   shapefill = "grey",  zlim = NULL, 
   zoom_to_points = FALSE,  ...)
 plot_sitestat(distrib_data, x, ...)
+plot_species(distrib_data, species, col = c("white", "red"), ...)
 }
 
 \arguments{
@@ -49,6 +51,9 @@ The central color of points when using a pch value between 21 and 25
 }
   \item{distrib_data}{
 An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result} to use for plotting x.
+}
+  \item{species}{
+The number or name of the species to be plotted
 }
   \item{\dots}{
 Additional arguments to pass to plot
