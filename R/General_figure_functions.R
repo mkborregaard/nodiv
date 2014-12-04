@@ -95,7 +95,8 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
     bg <- plotcol
     plotcol <- 1
   }
-    
+  coords <- coords[order(x),]
+  plotcol <- plotcol[order(x)]  
   
   if(is.null(shape)) plot(coords, col = plotcol, pch = pch, bg = bg, ...) else
   {

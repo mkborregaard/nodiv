@@ -241,14 +241,15 @@ plot_sitestat <- function(distrib_data, x, ...)
       plot_points(x, distrib_data$coords, shape = shape, ...)
 }
 
-plot_species <- function(distrib_data, species, col = c("white", "red"), ...)
+plot_species <- function(distrib_data, species, col = c("white", "red"), main = NULL, ...)
 {
   species <- identify_species(species, distrib_data)
   if (length(species) > 1)
   {
     warning("species had length > 1; only the first species is plotted")
   }
-  plot_sitestat(distrib_data, distrib_data$comm[,species], col = col, ...)
+  if(is.null(main)) main = distrib_data$species[species]
+  plot_sitestat(distrib_data, distrib_data$comm[,species], col = col, main = main, ...)
 }
 
 
