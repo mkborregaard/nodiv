@@ -37,7 +37,7 @@ The plot will be done as a spatial grid or as colored points, depending on the \
 \code{SOS} returns a numerical vector with the SOS values. If \code{nodiv_result} has \code{type raster}, a raster object of the SOS values is returned by \code{plotSOS}. 
 }
 \references{
-Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution. DOI: 10.1111/2041-210X.12283
+Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution 5(11): 1225-1235. DOI: 10.1111/2041-210X.12283
 }
 \author{
 Michael Krabbe Borregaard

@@ -30,9 +30,8 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   nodiv_dat$phylo <- dat$phy
   nodiv_dat$comm <- dat$comm
   if(!(is.data.frame(nodiv_dat$comm) & nrow(nodiv_dat$comm) > 1)) stop("The tip labels in the phylogeny do not match the names in the community matrix")
-  #nodiv_dat$comm <- nodiv_dat$comm[,match(nodiv_dat$phylo$tip.label, colnames(nodiv_dat$comm))]
   
-  nodiv_dat$coords <- dist_dat$coords[match(rownames(nodiv_dat$comm), dist_dat$coords$sites),]
+  nodiv_dat$coords <- dist_dat$coords[na.omit(match(rownames(nodiv_dat$comm), dist_dat$coords$sites)),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm)
   nodiv_dat$hcom[,1] <- as.character(nodiv_dat$hcom[,1])
   nodiv_dat$hcom[,3] <- as.character(nodiv_dat$hcom[,3])
@@ -79,6 +78,10 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
   
   commatrix <- match_commat_coords(commatrix, coords$sites)  
   
+  coords <- coords[rowSums(commatrix) > 0, ]
+  commatrix <- commatrix[rowSums(commatrix) > 0, colSums(commatrix) > 0]
+  
+  
   ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
   ret$species <- colnames(ret$comm)
   
@@ -106,6 +109,8 @@ match_commat_coords <- function(commatrix, sitenames)
       rownames(commatrix) <- sitenames else stop("The number of sites in coords and the data matrix do not fit and there are no rownames in the community matrix to use for matching")  
       
   if(sum(sitenames %in% rownames(commatrix)) < 2)
+    if(nrow(commatrix) == length(sitenames)) 
+      rownames(commatrix) <- sitenames else
         stop("the coordinate names and the rownammes of the community matrix do not match")
       
   sitenames <- sitenames[sitenames %in% rownames(commatrix)]

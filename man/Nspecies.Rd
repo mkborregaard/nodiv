@@ -2,6 +2,7 @@
 \alias{Nspecies}
 \alias{Nsites}
 \alias{richness}
+\alias{occupancy}
 
 \title{
 Basic attributes of \code{distrib_data} objects
@@ -10,13 +11,14 @@ Basic attributes of \code{distrib_data} objects
 Calculates the species richness and site occupancy of a \code{distrib_data} object
 }
 \usage{
-Nspecies(x)
-Nsites(x)
-richness(x)
+Nspecies(distrib_data)
+Nsites(distrib_data)
+richness(distrib_data)
+occupancy(distrib_data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
+  \item{distrib_data}{
 An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 }
 }

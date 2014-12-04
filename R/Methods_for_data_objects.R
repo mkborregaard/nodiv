@@ -1,17 +1,17 @@
 
 
-Nspecies <- function(x)
+Nspecies <- function(distrib_data)
 {
-  if (!inherits(x, "distrib_data")) 
+  if (!inherits(distrib_data, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")
-  length(x$species)
+  length(distrib_data$species)
 }
 
-Nsites<- function(x)
+Nsites<- function(distrib_data)
 {
-  if (!inherits(x, "distrib_data")) 
+  if (!inherits(distrib_data, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")
-  length(x$coords)
+  length(distrib_data$coords)
 }
 
 print.distrib_data <- function(x, printlen = 4, ...)
@@ -35,7 +35,7 @@ print.nodiv_data <- function(x, printlen = 4, ...)
 summary.distrib_data <- function(object, ...)
 {
   richness <- if(object$type == "grid")
-    SpatialPixelsDataFrame(SpatialPoints(object$coords), data.frame(richness = rowSums(object$comm))) else
+    suppressWarnings(SpatialPixelsDataFrame(SpatialPoints(object$coords), data.frame(richness = rowSums(object$comm)))) else
     SpatialPointsDataFrame(SpatialPoints(object$coords), data.frame(richness = rowSums(object$comm))) 
       
   occupancy <- colSums(object$comm)
@@ -215,11 +215,18 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
 
 
 
-richness <- function(x)
+richness <- function(distrib_data)
 {  
-  if(!inherits(x, "distrib_data"))
-    stop("x must be an object of type distrib_data")
-  return(summary(x)$richness$richness)
+  if(!inherits(distrib_data, "distrib_data"))
+    stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
+  return(summary(distrib_data)$richness$richness)
+}
+
+occupancy <- function(distrib_data)
+{  
+  if(!inherits(distrib_data, "distrib_data"))
+    stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
+  return(summary(distrib_data)$occupancy)
 }
 
 plot_sitestat <- function(distrib_data, x, ...)
