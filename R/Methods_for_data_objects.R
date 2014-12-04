@@ -248,7 +248,7 @@ plot_species <- function(distrib_data, species, col = c("white", "red"), ...)
   {
     warning("species had length > 1; only the first species is plotted")
   }
-  plot_sitestat(distrib_data, species, col = col, ...)
+  plot_sitestat(distrib_data, distrib_data$comm[,species], col = col, ...)
 }
 
 
