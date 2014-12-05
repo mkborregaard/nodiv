@@ -81,18 +81,22 @@ distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA
   not.occurring.species <- which(colSums(commatrix) == 0)
   not.occupied.sites <- which(rowSums(commatrix) == 0)
   
-  if(length(not.occurring.species) > 0)
-  {
-    message(paste(length(not.occurring.species), "species where dropped because of 0 occurrences in the dataset:\n", paste(colnames(commatrix)[not.occurring.species], sep = "\t")))
-  }
-  
   if(length(not.occupied.sites) > 0)
   {
     message(paste(length(not.occupied.sites), "sites where dropped because no species occupied them:\n", paste(coords$sites[not.occupied.sites], sep = "\t")))
+    coords <- coords[ - not.occupied.sites, ]
+    commatrix <- commatrix[ - not.occupied.sites,  ]
   }
   
-  coords <- coords[ - not.occupied.sites, ]
-  commatrix <- commatrix[ - not.occupied.sites,  - not.occurring.species]
+  if(length(not.occurring.species) > 0)
+  {
+    message(paste(length(not.occurring.species), "species where dropped because of 0 occurrences in the dataset:\n", paste(colnames(commatrix)[not.occurring.species], sep = "\t")))
+    commatrix <- commatrix[, - not.occurring.species]
+  }
+  
+
+  
+
   
   
   ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
