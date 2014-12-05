@@ -1,16 +1,18 @@
 \name{SOS}
 \alias{SOS}
 \alias{plotSOS}
+\alias{GND}
 
 \title{
 Gives the SOS values for a given node.
 }
 \description{
-\code{SOS} gives the SOS value for the node, used in the interpretation of node-based analysis of species distributions after running \code{Node_analysis}.  \code{plotSOS} plots the values on a map
+\code{SOS} gives the SOS value for the node, used in the interpretation of node-based analysis of species distributions after running \code{Node_analysis}.  \code{plotSOS} plots the values on a map. \code{GND} gives the GND values.
 }
 \usage{
 SOS(nodiv_result, node)
 plotSOS(nodiv_result, node, col = cm.colors(64), zlim, ...)
+GND(nodiv_result, node = NULL)
 }
 
 \arguments{
@@ -18,7 +20,7 @@ plotSOS(nodiv_result, node, col = cm.colors(64), zlim, ...)
 The result of running \code{Node_analysis}
 }
   \item{node}{
-The node label or node number specifying the node to plot
+The node label or node number specifying the node to plot. Optional for \code{GND}
 }
   \item{col}{
 The color palette to use for illustrating SOS values

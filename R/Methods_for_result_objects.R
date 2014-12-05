@@ -1,4 +1,11 @@
 
+GND <- function(nodiv_result, node = NULL)
+{
+  if(!inherits(nodiv_result, "nodiv_result"))
+    stop("object must be of type nodiv_result")
+  if(is.null(node)) node <- TRUE
+  return(nodiv_result$GND[node])
+}
 
 print.nodiv_result <- function(x, printlen = 4, ...)
 {

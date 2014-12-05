@@ -8,14 +8,15 @@
 
 
 
-Node_comm <- function(nodiv_data, node)
+Node_comm <- function(nodiv_data, node, names = TRUE)
 # returns a samplelist of sites occupied by at least one member of the node
 {
   # node : the internal (ape) number of the node
   if (node < Ntip(nodiv_data$phylo)) #if it is in fact a tip
-    nodespecs = nodiv_data$species[node] else nodespecs <- Node_species(nodiv_data, node)
+    nodespecs = node else nodespecs <- Node_species(nodiv_data, node, names = FALSE)
   
-  nodecom <- subset(nodiv_data$hcom, nodiv_data$hcom$id %in% nodespecs)
+  nodecom <- which(rowSums(nodiv_data$comm[,nodespecs]) > 0)
+  if(names) nodecom <- nodiv_data$coords[nodecom,]
   return(nodecom)
 }
 
@@ -140,16 +141,20 @@ Node_species <- function(nodiv_data, node, names = TRUE)
 }
 
 
-Node_sites <- function(nodiv_data, node)
+Node_sites <- function(nodiv_data, node, names = TRUE)
 {
 	if(!inherits(nodiv_data, "nodiv_data"))
     stop("nodiv_data must be an object of type nodiv_data or nodiv_result")
   node <- identify_node(node, nodiv_data)
-	nodecom <- Node_comm(nodiv_data, node)
-	return(unique(nodecom$plot))
+
+	if (node < Ntip(nodiv_data$phylo)) 
+	  nodespecs = node else nodespecs <- Node_species(nodiv_data, node, names = FALSE)
+	
+	nodecom <- which(rowSums(nodiv_data$comm[,nodespecs], na.rm = T) > 0)
+	if(names) nodecom <- nodiv_data$coords[nodecom,]
+  return(nodecom)
 }
 	
-
 
 Node_occupancy <- function(nodiv_data, node = NULL)
 {
