@@ -3,8 +3,8 @@ GND <- function(nodiv_result, node = NULL)
 {
   if(!inherits(nodiv_result, "nodiv_result"))
     stop("object must be of type nodiv_result")
-  if(is.null(node)) node <- TRUE
-  return(nodiv_result$GND[node])
+  if(is.null(node)) node <- TRUE else node <- identify_node(node, nodiv_result)
+  return(nodiv_result$GND[node - Nspecies(nodiv_result)])
 }
 
 print.nodiv_result <- function(x, printlen = 4, ...)
