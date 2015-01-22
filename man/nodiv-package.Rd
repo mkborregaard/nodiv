@@ -12,7 +12,7 @@ The package implements Borregaard et al. (2014) method for identifying nodes in 
 \tabular{ll}{
 Package: \tab nodiv\cr
 Type: \tab Package\cr
-Version: \tab 1.0.0\cr
+Version: \tab 1.0.1\cr
 Date: \tab 2014-11-13\cr
 License: \tab GPL-2\cr
 }
