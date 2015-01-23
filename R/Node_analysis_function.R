@@ -33,14 +33,11 @@ nodiv_anal <- function(node, nodiv_data, repeats, method)
 
 ## EXPORTED FUNCTION
 
-Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1, log_parallel_progress = FALSE, nodes = NULL)
+Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1, log_parallel_progress = FALSE)
 {
   if(!inherits(nodiv_data, "nodiv_data")) stop("This function only works on objects of class nodiv_data")
   method <- match.arg(method)
  
-  if(is.null(nodes))
-    nodes <- nodenumbers(nodiv_data)
-  
   paral <- FALSE
   if(cores > 1)
     if(requireNamespace("parallel"))
@@ -50,7 +47,7 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
    cl <- parallel::makeCluster(cores)  
    pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
   
-   results <- parallel::parLapply(cl, nodes, function(node) 
+   results <- parallel::parLapply(cl, nodenumbers(nodiv_data), function(node) 
    {
      #setTxtProgressBar(pb, node)
      ret <- nodiv_anal(node, nodiv_data, repeats, method)
@@ -60,7 +57,7 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
    })
   } else { 
     pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
-    results <- lapply(nodes, function(node)
+    results <- lapply(nodenumbers(nodiv_data), function(node)
     {
       setTxtProgressBar(pb, node)
       ret <- nodiv_anal(node, nodiv_data, repeats, method)

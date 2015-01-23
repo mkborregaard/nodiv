@@ -15,7 +15,7 @@ Goes through each node in the phylogeny, and compares the distribution overlap o
 }
 \usage{
 Node_analysis(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), 
-                cores = 1, log_parallel_progress = FALSE, nodes = NULL)
+                cores = 1, log_parallel_progress = FALSE)
 \method{summary}{nodiv_result}(object, ...)
 \method{print}{nodiv_result}(x, printlen = 4, ...)
 \method{plot}{nodiv_result}(x, label = nodenumbers(x), zlim = 0:1, ...)
@@ -36,9 +36,6 @@ The number of cores to use in the computation. Note that multi-core processing i
 }
   \item{log_parallel_progress}{
 If this is TRUE, the results from each node will be saved as an '.rda' file in the working directory. Useful for large parallel computations.
-}
-  \item{nodes}{
-If this is specified, the analysis will only be run for the specified nodes. Default is to run the analysis for all nodes
 }
   \item{object}{
 The \code{nodiv_result} object
