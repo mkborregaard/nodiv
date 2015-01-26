@@ -36,11 +36,15 @@ identify_node <- function(node, tree)
   {
     if(is.null(tree$node.label))
       stop("node could not be matched, as the phylogeny does not have node labels")
-    node <- match(node, tree$node.label)
+    node <- match(node, tree$node.label) + Ntip(tree)
     if(is.na(node))
       stop("the node could not be matched to the node labels")
   }
   
+  if(node %in% 1:Ntip(tree)){
+    node <- node + Ntip(tree)  #It is an open question whether this should be here, or whether it may just lead to errors.
+    warning(paste("The node number",node,"did not exist. Adding Ntip(tree) to create a usable number"))
+  }
   if(!node %in% nodenumbers(tree))
     stop("Undefined node")
 

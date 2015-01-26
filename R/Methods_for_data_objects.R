@@ -184,13 +184,7 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   
   if(!is.null(node))
   {
-    node <- node[1]
-    if(is.character(node))
-    {
-      if(node %in% x$phylo$node.label)
-        node <- which(x$phylo$node.label == node) else stop("no nodelabels in phylo corresponds to that node")
-    } 
-
+    node <- identify_node(node, x)
     ret_phylo <- extract.clade(ret_phylo, node)
     species <- ret_phylo$tip.label
   } 
