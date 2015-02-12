@@ -81,6 +81,7 @@ Descendants <- function(node, tree)
     tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")
+  node <- identify_node(node, nodiv_data)
   return(tree$edge[ tree$edge[,1] == node , 2])
 }
   
@@ -91,9 +92,12 @@ Parent <- function(node, tree)
     tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")  
-  if (node == Ntip(tree) +1 )   # If the node is the basal node it does not have a parent node
+  suppressWarnings(node_local <- identify_species(node, tree))
+  if(is.na(node_local)) 
+    node_local <- identify_node(node, tree)
+  if (node_local == basal_node(tree))   # If the node is the basal node it does not have a parent node
     return (NA)
-  return(tree$edge[ tree$edge[,2] == node , 1])
+  return(tree$edge[ tree$edge[,2] == node_local , 1])
 }
 
 Sister <- function(node, tree) 
@@ -102,7 +106,10 @@ Sister <- function(node, tree)
     tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")
-  if (node == Ntip(tree) +1 )   # If the node is the basal node it does not have a sister node
+  suppressWarnings(node <- identify_species(node, tree))
+  if(is.na(node)) 
+    node <- identify_node(node, tree)
+  if (node == basal_node(tree) )   # If the node is the basal node it does not have a sister node
     return (NA)
   sisters = Descendants(Parent(node, tree), tree)
   return(sisters[! sisters == node])
