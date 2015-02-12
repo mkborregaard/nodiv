@@ -81,9 +81,13 @@ Descendants <- function(node, tree)
     tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")
+<<<<<<< HEAD
   print(node)
   node <- identify_node(node, tree)
   print("out")
+=======
+  node <- identify_node(node, nodiv_data)
+>>>>>>> FETCH_HEAD
   return(tree$edge[ tree$edge[,1] == node , 2])
 }
   
@@ -94,10 +98,17 @@ Parent <- function(node, tree)
     tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")  
+<<<<<<< HEAD
   suppressWarnings(node_local <- identify_species(node, tree))
   if(is.na(node_local)) 
     node_local <- identify_node(node, tree)
   if (node_local == basal_node(tree))   # If the node is the basal node it does not have a parent node
+=======
+  suppressWarnings(node <- identify_species(node, tree))
+  if(is.na(node)) 
+    node <- identify_node(node, tree)
+  if (node == basal_node(tree))   # If the node is the basal node it does not have a parent node
+>>>>>>> FETCH_HEAD
     return (NA)
   return(tree$edge[ tree$edge[,2] == node_local , 1])
 }

@@ -269,11 +269,18 @@ identify_species <- function(species, distrib_data, as.name = FALSE)
       warning("Species not found in the dataset") 
       return(NA)
     }
+<<<<<<< HEAD
     if(length(omits) > 0){
       warning(paste("These species were excluded as they were not found:", paste(species[omits], sep = "\t")))
     }
   } else specs <- species
 
+=======
+    if(length(omits) > 0)
+      warning(paste("These species were excluded as they were not found:", paste(species[omits], sep = "\t")))
+  } else specs <- species
+    
+>>>>>>> FETCH_HEAD
   diagnost <- which(specs > speciesnumber | specs < 0)
   if(length(diagnost) > 0)
     warning(paste("numbers", paste(diagnost, sep = ", "), "are too high and did not match the community matrix"))
