@@ -249,28 +249,36 @@ plot_species <- function(distrib_data, species, col = c("white", "red"), ...)
 
 identify_species <- function(species, distrib_data, as.name = FALSE)
 {
-  if(!inherits(distrib_data, "distrib_data"))
-    stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
+  if(inherits(distrib_data, "distrib_data")){
+    specieslist <- distrib_data$species
+    speciesnumber <- Nspecies(distrib_data)
+  } else if(inherits(distrib_data, "phylo")){
+    specieslist <- distrib_data$tip.label
+    speciesnumber <- Ntip(distrib_data)
+  } else stop("distrib_data must be an object of type ape:::phylo, distrib_data, nodiv_data or nodiv_result")
   
   if(!is.vector(species)) 
     stop("node must be either numeric or character")
   
   if(is.character(species))
   {
-    specs <- match(species, distrib_data$species)
+    specs <- match(species, specieslist)
     omits <- which(is.na(specs))
     specs <- specs[!is.na(specs)]
-    if(length(specs) == 0)
-      stop("Species not found in the dataset") else
-        warning(paste("These species were excluded as they were not found:", paste(species[omits], sep = "\t")))
+    if(length(specs) == 0){
+      warning("Species not found in the dataset") 
+      return(NA)
+    }
+    if(length(omits) > 0)
+      warning(paste("These species were excluded as they were not found:", paste(species[omits], sep = "\t")))
   } else specs <- species
     
-  diagnost <- which(specs > Nspecies(distrib_data) | specs < 0)
+  diagnost <- which(specs > speciesnumber | specs < 0)
   if(length(diagnost) > 0)
     stop(paste("numbers", paste(diagnost, sep = ", "), "are too high and did not match the community matrix"))
   
   if(as.name)
-    specs <- distrib_data$species[specs]
+    specs <- specieslist[specs]
   
   specs
 }
