@@ -15,7 +15,7 @@ Data objects for node-based analysis
 Functions to collect and display data with matching species distributions and phylogenies
 }
 \usage{
-distrib_data(commatrix, coords, proj4string_in = CRS(as.character(NA)), 
+distrib_data(commatrix, coords = NULL, proj4string_in = CRS(as.character(NA)), 
   type = c("auto", "grid", "points"), shape = NULL)
 nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)), 
   type = c("auto", "grid", "points"), shape = NULL)

@@ -45,9 +45,21 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
 }
 
 
-distrib_data <- function(commatrix, coords, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
+distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 {
   type = match.arg(type)
+  if(inherits(commatrix, "distrib_data")){
+    ret <- list()
+    ret$comm <- commatrix$comm
+    ret$coords <- commatrix$coords
+    ret$type <- commatrix$type
+    ret$shape <- commatrix$shape
+    class(ret) <- "distrib_data"
+    return(ret)
+  }
+  if(is.null(coords))
+    stop("If not commatrix is already of type distrib_data or nodiv_data, coords must be specified")
+  
   cat("Checking input data\n")
   ## Testing that input objects are all right
   if(class(coords) == "SpatialPointsDataFrame" | class(coords) == "SpatialPixelsDataFrame")
