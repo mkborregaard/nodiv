@@ -54,6 +54,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     ret$coords <- commatrix$coords
     ret$type <- commatrix$type
     ret$shape <- commatrix$shape
+    ret$species <- commatrix$species
     class(ret) <- "distrib_data"
     return(ret)
   }
