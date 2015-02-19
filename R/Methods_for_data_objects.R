@@ -277,13 +277,16 @@ identify_species <- function(species, distrib_data, as.name = FALSE)
 
 
   diagnost <- which(specs > speciesnumber | specs < 0)
-  if(length(diagnost) > 0)
-    warning(paste("numbers", paste(diagnost, sep = ", "), "are too high and did not match the community matrix"))
   if(length(diagnost) == length(specs))
     return(NA)
+  if(length(diagnost) > 0){
+    warning(paste("numbers", paste(diagnost, sep = ", "), "are too high and did not match the community matrix"))
+    specs <- specs[-diagnost]
+  }
+
   if(as.name)
     specs <- specieslist[specs]
   
-  specs[!diagnost]
+  specs
 }
 
