@@ -32,7 +32,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   if(!(is.data.frame(nodiv_dat$comm) & nrow(nodiv_dat$comm) > 1)) stop("The tip labels in the phylogeny do not match the names in the community matrix")
   
   nodiv_dat$coords <- dist_dat$coords[na.omit(match(rownames(nodiv_dat$comm), dist_dat$coords$sites)),]
-  nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm)
+  nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm) # do I actually need this for anything?
   nodiv_dat$hcom[,1] <- as.character(nodiv_dat$hcom[,1])
   nodiv_dat$hcom[,3] <- as.character(nodiv_dat$hcom[,3])
   
@@ -143,6 +143,9 @@ match_commat_coords <- function(commatrix, sitenames)
       rownames(commatrix) <- sitenames else
         stop("the coordinate names and the rownammes of the community matrix do not match")
       
+  if(sum(sitenames %in% rownames(commatrix)) < length(rownames(commatrix)))
+    cat(paste(length(rownames(commatrix)) - sum(sitenames %in% rownames(commatrix)), " sites removed from the dataset because the rownames of the data matrix did not match the site names. Make sure the rownames are correct"))
+  
   sitenames <- sitenames[sitenames %in% rownames(commatrix)]
 
     
@@ -228,7 +231,7 @@ Node_spec <- function(tree, node, names = TRUE)
 {
   .local <- function(tree, node)
   {
-    if(node < Ntip(tree))
+    if(node <= Ntip(tree))
       return(node)
     ret <- lapply(Descendants(node, tree), .local, tree = tree)
     do.call(c, ret)

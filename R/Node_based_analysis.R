@@ -81,9 +81,7 @@ Descendants <- function(node, tree)
     tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")
-  print(node)
   node <- identify_node(node, tree)
-  print("out")
   return(tree$edge[ tree$edge[,1] == node , 2])
 }
   
