@@ -26,10 +26,16 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
     nodiv_dat$shape <- dist_dat$speciesstats
   
   cat("Comparing taxon names in phylogeny and communities (using picante)\n")
-  dat <- match.phylo.comm(phylo, dist_dat$comm)
+  temp <- capture.output(dat <- match.phylo.comm(phylo, dist_dat$comm))
   nodiv_dat$phylo <- dat$phy
   nodiv_dat$comm <- dat$comm
   if(!(is.data.frame(nodiv_dat$comm) & nrow(nodiv_dat$comm) > 1)) stop("The tip labels in the phylogeny do not match the names in the community matrix")
+  phylodropped <- Ntip(phylo) - Ntip(nodiv_dat$phylo)
+  commdropped <- ncol(dist_dat$comm) - ncol(nodiv_dat$comm)
+  if(phylodropped > 0)
+    cat(paste("  - removed ", phylodropped, " species from phylo that are not found in commatrix\n"))
+  if(commdropped > 0)
+    cat(paste("  - removed ", commdropped, " species from commatrix not found in phylo\n"))
   
   nodiv_dat$coords <- dist_dat$coords[na.omit(match(rownames(nodiv_dat$comm), dist_dat$coords$sites)),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm) # do I actually need this for anything?
@@ -142,9 +148,15 @@ match_commat_coords <- function(commatrix, sitenames)
     if(nrow(commatrix) == length(sitenames)) 
       rownames(commatrix) <- sitenames else
         stop("the coordinate names and the rownammes of the community matrix do not match")
-      
+  
+  if(sum(rownames(commatrix) %in% sitenames) < length(sitenames)*0.8)
+    if(nrow(commatrix) == length(sitenames)) {
+      rownames(commatrix) <- sitenames
+      cat("Rownames of the matrix ignored because not a sufficient match to sitenames\n")
+    } else stop("The number of sites in coords and the data matrix do not fit and the sitenames did not match the matrix names sufficiently well for matching")  
+  
   if(sum(sitenames %in% rownames(commatrix)) < length(rownames(commatrix)))
-    cat(paste(length(rownames(commatrix)) - sum(sitenames %in% rownames(commatrix)), " sites removed from the dataset because the rownames of the data matrix did not match the site names. Make sure the rownames are correct"))
+    cat(paste(length(rownames(commatrix)) - sum(sitenames %in% rownames(commatrix)), " sites removed from the dataset because the rownames of the data matrix did not match the site names. Make sure the rownames are correct\n"))
   
   sitenames <- sitenames[sitenames %in% rownames(commatrix)]
 

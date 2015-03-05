@@ -190,7 +190,8 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   } 
   
   ret <- subsample.distrib_data(x, sites, species)
-  dat <- match.phylo.comm(ret_phylo, ret$comm)
+  temp <- capture.output(dat <- match.phylo.comm(ret_phylo, ret$comm))
+  
   new_phylo <- dat$phy
   old_nodes <- as.numeric(new_phylo$node.label)
   ret$phylo <- drop.tip(x$phylo, which(! x$species %in% new_phylo$tip.label))  #this line
