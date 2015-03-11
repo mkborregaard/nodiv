@@ -1,7 +1,6 @@
 \name{plot_points}
 \alias{plot_points}
 \alias{plot_grid}
-\alias{plot_sitestat}
 \alias{plot_species}
 
 \title{
@@ -11,14 +10,13 @@ Plot a variable on spatial points or a spatial grid using a color scale.
 Plots a variable either as colored points or as a colored raster. \code{plot_sitestat} is a wrapper function that dispatches the other functions according to the \code{type} of \code{distrib_data}.
 }
 \usage{
-plot_points(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
+plot_points(x, coords, col, shape = NULL, 
   shapefill = "grey",  zlim= NULL,  zoom_to_points = FALSE, 
   pch = 16, bg = par("bg"), ...)
-plot_grid(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
+plot_grid(x, coords, col, shape = NULL, 
   shapefill = "grey",  zlim = NULL, 
   zoom_to_points = FALSE,  ...)
-plot_sitestat(distrib_data, x, ...)
-plot_species(distrib_data, species, col = c("white", "red"), ...)
+plot_species(distrib_data, species, col = c("darkgreen", "red"), ...)
 }
 
 \arguments{

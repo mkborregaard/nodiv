@@ -9,7 +9,7 @@ A wrapper for the plot.phylo function defined in package \code{ape}, which is us
 }
 \usage{
 plot_nodes_phylo(variable, tree, label = variable, main = deparse(substitute(variable)),
-  zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, 
+  zlim = NULL, col, show.legend = TRUE, sig.cutoff, nodes, 
   roundoff = TRUE, show.tip.label = NULL, cex = NULL, ...)
 }
 

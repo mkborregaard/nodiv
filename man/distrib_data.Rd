@@ -22,7 +22,7 @@ nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)),
 \method{summary}{distrib_data}(object, ...)
 \method{summary}{nodiv_data}(object, ...)
 \method{plot}{distrib_data}(x, ...)
-\method{plot}{nodiv_data}(x, col = rev(heat.colors(64)), ...)
+\method{plot}{nodiv_data}(x,  ...)
 }
 
 \arguments{
@@ -49,9 +49,6 @@ An object of type distrib_data or nodiv_data
 }
  \item{x}{
 An object of type distrib_data or nodiv_data
-}
- \item{col}{
-The color palette used for mapping species richness
 }
  \item{\dots}{
 Further arguments to be passed to the plotting function

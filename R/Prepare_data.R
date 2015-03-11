@@ -18,8 +18,6 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   # TODO It should also be possible to give all of the below as function arguments, and also to the distrib_data functoin and integrate in subsample
   if(!is.null(dist_dat$shape))
     nodiv_dat$shape <- dist_dat$shape
-  if(!is.null(dist_dat$sitestats))
-    nodiv_dat$shape <- dist_dat$sitestats
   if(!is.null(dist_dat$nodestats))
     nodiv_dat$shape <- dist_dat$nodestats
   if(!is.null(dist_dat$speciesstats))
@@ -192,7 +190,7 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
       
     ret <- SpatialPoints(ret, proj4string)
     
-    if (ncol(coords)==3 & !(xcol + ycol == 0)) sitenames <- coords[,-c(xcol, ycol)] else 
+    if (ncol(coords)==3 & !(xcol + ycol == 0) & isTRUE(all.equal(coords[,-c(xcol, ycol)], unique(coords[,-c(xcol, ycol)])))) sitenames <- coords[,-c(xcol, ycol)] else 
       if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix))) sitenames <- rownames(commatrix) else
         if(!is.null(rownames(coords))) sitenames <- rownames(coords) else 
           stop("There must be valid site names in the rownames of commatrix or in the coords data")

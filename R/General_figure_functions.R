@@ -5,19 +5,103 @@
 ##########################################################
 # Here comes a list of functions to use for the analysis. These definitions should all be loaded into R
 
-create.cols <- function(vec, col , zlim)
+choose.colors <- function(vec, zlim = NULL, type = c("auto", "ramp", "monochrome", "divergent", "individual"))
 {
+
+  type = match.arg(type)
+
+  if(is.null(zlim)){
+    zlim <- range(vec, na.rm = TRUE)
+    
+    if(zlim[1] * zlim[2] < 0)
+      zlim <- c(-max(abs(vec), na.rm = TRUE), max(abs(vec), na.rm = TRUE))
+  }
+  if(is.character(vec))
+    vec <- as.factor(vec)
+  if(type == "auto"){
+    if(is.factor(vec))
+      type <- "individual" else {
+   
+      if(zlim[1] * zlim[2] < 0){
+        if(sum(zlim) == 0){
+         type <- "divergent" 
+        } else {
+          warning("ramp color scheme chosen - if you want divergent colors use zlims symmetric around 0")
+          type <- "ramp"
+        }
+         
+      } else type <- "ramp" 
+    }
+  }
+  
+  if(type == "individual"){
+    n <- length(unique(vec))
+    if(requireNamespace("RColorBrewer")){
+      if(n <= 9)
+        ret <- RColorBrewer::brewer.pal(n, "Set1") else
+          if(n <= 12)
+            ret <- RColorBrewer::brewer.pal(n, "Set3") else
+              if(n <= 21)
+                ret <- c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(12, "Set3"))[1:n] else 
+                  ret <- rainbow(n)
+    } else {
+      if(n <= 8)
+        ret <- palette()[1:n] else
+          ret <- rainbow(n)
+    }
+  }
+  
+  if(type == "ramp"){
+    if(requireNamespace("fields"))
+      ret <- fields::tim.colors(64) else
+        ret <- rev(terrain.colors(64))
+  }
+  
+  if(type == "divergent"){
+    if(requireNamespace("RColorBrewer"))
+      ret <- RColorBrewer::brewer.pal(11, "RdBu") else
+        ret <- cm.colors(64)
+  }
+  
+  if(type == "monochrome"){
+    if(requireNamespace("RColorBrewer"))
+      ret <- RColorBrewer::brewer.pal(9, "YlOrRd") else
+        ret <- rev(heat.colors(64))
+  }
+  
+  if(length(unique(na.omit(vec))) == 2)
+    ret <- c("darkgrey", "red")
+  
+  attr(ret, "zlim") <- zlim
+  
+  return(ret)
+}
+
+create.cols <- function(vec, col, zlim, type = c("auto", "ramp", "monochrome", "divergent", "individual"))
+{
+  type = match.arg(type)
+  
+  if(missing(zlim)){
+    zlim <- range(vec, na.rm = TRUE)
+    if(zlim[1] * zlim[2] < 0)
+      zlim <- c(-max(abs(vec), na.rm = TRUE), max(abs(vec), na.rm = TRUE))
+  }
+  
   if(missing(col)) 
-    if(min(col) < 0) col <- cm.colors(64) else col <- rev(heat.colors(64))
-  if(min(vec, na.rm = TRUE) == 0 & identical(vec, floor(vec))) col <- c("grey", col)
-  if(missing(zlim)) zlim <- c(min(vec,na.rm = T),max(vec,na.rm = T))
+    col <- choose.colors(vec, zlim, type)
+  
+  if(length(col) == length(unique(vec)))
+    return(col[match(vec, sort(unique(vec)))])
+    
+  if(min(vec, na.rm = TRUE) == 0 & identical(vec, floor(vec)) & length(col) > 3) col <- c("grey", col)
+
   vec = vec - zlim[1]
   vec = floor(vec * (length(col)-1)/(zlim[2]- zlim[1]))+1
   return(col[vec])
 }
 
 
-plot_grid <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, shapefill = "grey", zlim = NULL, zoom_to_points = FALSE, ...)
+plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", zlim = NULL, zoom_to_points = FALSE, ...)
 {
   if(inherits(x, "SpatialPixelsDataFrame"))
     rast <- raster(x) else
@@ -41,9 +125,18 @@ plot_grid <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, sh
         } else stop("Undefined arguments")
       }
   
+  if(missing(col)){
+    if(is.character(x)) x <- as.factor(x)
+    if(is.factor(x))
+      type <- "individual" else type <- "auto"      
+    col <- choose.colors(getValues(rast), zlim, type = type)
+    zlim <- attr(col, "zlim")
+  }
   
   if(is.null(zlim)) zlim <- c(min(getValues(rast),na.rm = T),max(getValues(rast),na.rm = T))
   if(min(zlim) == 0 & identical(getValues(rast), floor(getValues(rast)))) col <- c("grey", col) #TODO an experimental hack
+  
+
   
   if(is.null(shape)) plot(rast, zlim = zlim, col = col, ...) else
   {
@@ -57,7 +150,7 @@ plot_grid <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, sh
 }
 
 
-plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, shapefill = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
+plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
 {  
   if(inherits(x, "SpatialPointsDataFrame"))
   {
@@ -80,8 +173,14 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
     }
   }
 
+  if(missing(col)){
+    col <- choose.colors(x, zlim)
+    zlim <- attr(col, "zlim")
+  }
   
   if(is.null(zlim)) zlim <- c(min(x,na.rm = T),max(x,na.rm = T))
+  
+  
   coords <- SpatialPoints(coords)
 
   #split.screen( rbind(c(0, .8,0,1), c(.8,1,0,1)))
@@ -120,7 +219,7 @@ plot_points <- function(x, coords, col = rev(terrain.colors(64)), shape = NULL, 
 }
 
 
-plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim, col = rev(heat.colors(64)), show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, cex = NULL, ...)
+plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim = NULL, col , show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, cex = NULL, ...)
 {
     if(!length(variable) == Nnode(tree))
     stop("The length of the variable vector must be the same length as the number of nodes on the tree")
@@ -130,7 +229,13 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   plotvar <- variable
   if(roundoff & is.numeric(label)) label = round(label,2)
   
-  if(missing(zlim)) zlim <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
+
+  if(missing(col)){
+    col <- choose.colors(plotvar, zlim)
+    zlim <- attr(col, "zlim")
+  }
+  
+  if(is.null(zlim)) zlim <- c(min(plotvar, na.rm = T), max(plotvar, na.rm = T))
   
   if(is.null(cex)) cex <- par("cex")
   sizes <- cex * 4 * sqrt((plotvar - zlim[1])/zlim[2])

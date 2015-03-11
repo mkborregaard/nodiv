@@ -3,6 +3,7 @@
 \alias{Nsites}
 \alias{richness}
 \alias{occupancy}
+\alias{sites}
 
 \title{
 Basic attributes of \code{distrib_data} objects
@@ -15,6 +16,7 @@ Nspecies(distrib_data)
 Nsites(distrib_data)
 richness(distrib_data)
 occupancy(distrib_data)
+sites(distrib_data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,7 +26,10 @@ An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 }
 
 \value{
-\code{Nspecies} gives the number of species in the dataset, and \code{Nsites} the number of sites. \code{richness} gives a numeric vector with the species richness of all sites.
+\code{Nspecies} gives the number of species in the dataset, and \code{Nsites} the number of sites. 
+\code{richness} gives a numeric vector with the species richness of all sites.
+\code{occupancy} gives the number of sites occupied by all species.
+\code{sites} gives a list of site names in the object. 
 }
 
 \author{
