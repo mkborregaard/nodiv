@@ -11,7 +11,7 @@ Adds, plots or reads site statistics from objects in the \code{nodiv} package
 \usage{
 add_sitestat(distrib_data, sitestat, site = NULL)
 plot_sitestat(distrib_data, x, ...)
-sitestat(distrib_data, statname = NULL)
+sitestat(distrib_data, statname = NULL, site = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -25,7 +25,7 @@ object. The function looks for vector names, rownames, or variables in the data.
 If sitenames are absent and the number of sitestats match, the sitestat is assumed to be in the correct order. 
 }
   \item{site}{
-A character or numeric variable specifying the sites for which sitestat is specified
+A character or numeric variable specifying the sites in which to enter or read sitestat
 }
   \item{statname}{
 The name of a sitestatistic in the \code{distrib_data} object. If statname is not given, a list of
@@ -56,9 +56,7 @@ Michael Krabbe Borregaard
 \seealso{
 \code{\link{distrib_data}}
 }
-\examples{
-## usage: data <- add_shape(data, shapefile)
-}
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ ~kwd1 }

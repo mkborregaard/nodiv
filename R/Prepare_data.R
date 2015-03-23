@@ -13,15 +13,16 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
     dist_dat <- distrib_data(commatrix, coords, proj4string_in, type, shape)
   } else dist_dat <- commatrix
   
-  nodiv_dat <- dist_dat[c("comm", "type", "coords", "species", "hcom")]
+  if(is.null(dist_dat$species_stats))
+    stop("The distrib_data object is from an earlier version of nodiv. Please run update_object on the object before proceeding")
+  
+  nodiv_dat <- dist_dat[c("comm", "type", "coords", "species_stats", "hcom")]
   
   # TODO It should also be possible to give all of the below as function arguments, and also to the distrib_data functoin and integrate in subsample
   if(!is.null(dist_dat$shape))
     nodiv_dat$shape <- dist_dat$shape
-  if(!is.null(dist_dat$nodestats))
-    nodiv_dat$shape <- dist_dat$nodestats
-  if(!is.null(dist_dat$speciesstats))
-    nodiv_dat$shape <- dist_dat$speciesstats
+  if(!is.null(dist_dat$node_stats))
+    nodiv_dat$node_stats <- dist_dat$nodestats
   
   cat("Comparing taxon names in phylogeny and communities (using picante)\n")
   temp <- capture.output(dat <- match.phylo.comm(phylo, dist_dat$comm))
@@ -35,6 +36,9 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   if(commdropped > 0)
     cat(paste("  - removed ", commdropped, " species from commatrix not found in phylo\n"))
   
+  md <- match(colnames(nodiv_dat$comm), nodiv_dat$species_stats$species)
+  nodiv_dat$species_stats <- subrow_data.frame(nodiv_dat$species_stats, md)
+    
   nodiv_dat$coords <- dist_dat$coords[na.omit(match(rownames(nodiv_dat$comm), dist_dat$coords$sites)),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm) # do I actually need this for anything?
   nodiv_dat$hcom[,1] <- as.character(nodiv_dat$hcom[,1])
@@ -42,8 +46,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   
   cat("Calculating which species descend from each node\n")
   nodiv_dat$node_species <- Create_node_by_species_matrix(nodiv_dat$phylo)
-  nodiv_dat$species <- colnames(nodiv_dat$comm)
-  
+    
   class(nodiv_dat) <- c("nodiv_data","distrib_data")
   return(nodiv_dat)
 }
@@ -53,12 +56,15 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
 {
   type = match.arg(type)
   if(inherits(commatrix, "distrib_data")){
+    if(is.null(commatrix$species_stats))
+      stop("The distrib_data object is from an earlier version of nodiv. Please run update_object on the object before proceeding")
+    
     ret <- list()
     ret$comm <- commatrix$comm
     ret$coords <- commatrix$coords
     ret$type <- commatrix$type
     ret$shape <- commatrix$shape
-    ret$species <- commatrix$species
+    ret$species_stats <- commatrix$species_stats
     class(ret) <- "distrib_data"
     return(ret)
   }
@@ -111,13 +117,8 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     commatrix <- commatrix[, - not.occurring.species]
   }
   
-
-  
-
-  
-  
   ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
-  ret$species <- colnames(ret$comm)
+  ret$species_stats <- data.frame(species = colnames(ret$comm), stringsAsFactors = FALSE)
   
   if(!is.null(shape)) ret$shape <- shape
   

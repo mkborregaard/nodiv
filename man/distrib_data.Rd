@@ -6,6 +6,7 @@
 \alias{print.distrib_data}
 \alias{print.nodiv_data}
 \alias{summary.distrib_data}
+\alias{identify.distrib_data}
 \alias{summary.nodiv_data}
 
 \title{
@@ -23,6 +24,7 @@ nodiv_data(phylo, commatrix, coords, proj4string_in = CRS(as.character(NA)),
 \method{summary}{nodiv_data}(object, ...)
 \method{plot}{distrib_data}(x, ...)
 \method{plot}{nodiv_data}(x,  ...)
+\method{identify}{distrib_data}(x,  ...)
 }
 
 \arguments{
