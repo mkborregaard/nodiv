@@ -11,7 +11,7 @@ Gives the SOS values for a given node.
 }
 \usage{
 SOS(nodiv_result, node)
-plotSOS(nodiv_result, node, col = cm.colors(64), zlim, ...)
+plotSOS(nodiv_result, node, zlim, ...)
 GND(nodiv_result, node = NULL)
 }
 
@@ -22,9 +22,7 @@ The result of running \code{Node_analysis}
   \item{node}{
 The node label or node number specifying the node to plot. Optional for \code{GND}
 }
-  \item{col}{
-The color palette to use for illustrating SOS values
-}
+
   \item{zlim}{
 The values to use for the extremes of the color palette
 }

@@ -9,8 +9,8 @@ Access functions to the community matrix of \code{distrib_data} objects
 Gives the species in a site, or the sites occupied by a species, in a \code{distrib_data} object
 }
 \usage{
-occurrences(distrib_data, species, value = c("01", "logical", "index"))
-assemblage(distrib_data, site, value = c("01", "logical", "index"))
+occurrences(distrib_data, species, value = c("index", "names", "logical", "raw"))
+assemblage(distrib_data, site, value = c("index", "names", "logical", "raw"))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

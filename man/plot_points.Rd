@@ -27,7 +27,9 @@ A numerical variable to be plotted using a color scale
 A matrix or \code{data.frame} with two columns, or an object inheriting from \code{SpatialPoints}, of the same length as \code{x}
 }
   \item{col}{
-The color palette to use for the color scale
+The color palette to use for the color scale. Can be given as color names, a vector of hex colors from a call to a color palette (e.g., \code{terrain.colors(64)}), 
+or as the name of one of nodiv's internal palettes. Possibillities are \code{"parula", "jet", "blackbody", "HMblueyellow", "HMrainbow", 
+"HMlinear_optimal", "HMoptimal_scale", "cube1", "cubeyf1"}.
 }
   \item{shape}{
 A shape file giving a map to use as a background for the plot
