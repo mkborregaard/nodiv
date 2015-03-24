@@ -33,8 +33,8 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", zlim = N
   if(missing(col)){
     if(is.character(x)) x <- as.factor(x)
     if(is.factor(x))
-      type <- "individual" else type <- "auto"      
-    col <- choose.colors(getValues(rast), zlim, type = type)
+      coltype <- "individual" else coltype <- "auto"      
+    col <- choose.colors(getValues(rast), zlim, coltype = coltype)
     zlim <- attr(col, "zlim")
   }
   

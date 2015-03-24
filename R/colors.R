@@ -23,10 +23,10 @@ int.color <- function(col, n, alpha){
 }
 
 
-choose.colors <- function(vec, zlim = NULL, type = c("auto", "ramp", "monochrome", "divergent", "individual"))
+choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochrome", "divergent", "individual"))
 {
   
-  type = match.arg(type)
+  coltype = match.arg(coltype)
   
   if(is.null(zlim)){
     zlim <- range(vec, na.rm = TRUE)
@@ -36,23 +36,23 @@ choose.colors <- function(vec, zlim = NULL, type = c("auto", "ramp", "monochrome
   }
   if(is.character(vec))
     vec <- as.factor(vec)
-  if(type == "auto"){
+  if(coltype == "auto"){
     if(is.factor(vec))
-      type <- "individual" else {
+      coltype <- "individual" else {
         
         if(zlim[1] * zlim[2] < 0){
           if(sum(zlim) == 0){
-            type <- "divergent" 
+            coltype <- "divergent" 
           } else {
             warning("ramp color scheme chosen - if you want divergent colors use zlims symmetric around 0")
-            type <- "ramp"
+            coltype <- "ramp"
           }
           
-        } else type <- "ramp" 
+        } else coltype <- "ramp" 
       }
   }
   
-  if(type == "individual"){
+  if(coltype == "individual"){
     n <- length(unique(vec))
     if(requireNamespace("RColorBrewer")){
       if(n <= 9)
@@ -61,40 +61,44 @@ choose.colors <- function(vec, zlim = NULL, type = c("auto", "ramp", "monochrome
             ret <- RColorBrewer::brewer.pal(n, "Set3") else
               if(n <= 21)
                 ret <- c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(12, "Set3"))[1:n] else 
-                  ret <- rainbow(n)
+                  if(requireNamespace("colorspace"))
+                    ret <- colorspace::rainbow_hcl(n) else
+                      ret <- rainbow(n)
     } else {
       if(n <= 8)
         ret <- palette()[1:n] else
         {
           if(requireNamespace("colorspace"))
-            ret <- colorspace::diverge_hcl(64) else 
+            ret <- colorspace::rainbow_hcl(n) else 
               ret <- rainbow(n)
         }
       
     }
   }
   
-  if(type == "ramp"){
-    ret <- parula()
+  if(coltype == "ramp"){
+    ret <- parula() 
+  # ret <- HMrainbow 
     #if(requireNamespace("fields"))
     #  ret <- fields::tim.colors(64) else
     #    ret <- rev(terrain.colors(64))
   }
   
-  if(type == "divergent"){
-    if(requireNamespace("RColorBrewer"))
-      ret <- RColorBrewer::brewer.pal(11, "RdBu") else
-        if(requireNamespace("colorspace"))
-          ret <- colorspace::diverge_hcl(64) else
-            ret <- cm.colors(64)
+  if(coltype == "divergent"){
+    #if(requireNamespace("RColorBrewer"))
+      #ret <- RColorBrewer::brewer.pal(11, "RdBu") else
+        #if(requireNamespace("colorspace"))
+          #ret <- colorspace::diverge_hcl(64) else
+            ret <- redblue(64)
   }
   
-  if(type == "monochrome"){
-    if(requireNamespace("RColorBrewer"))
-      ret <- RColorBrewer::brewer.pal(9, "YlOrRd") else
-        if(requireNamespace("colorspace"))
-          ret <- colorspace::sequential_hcl(64) else
-            ret <- rev(heat.colors(64))
+  if(coltype == "monochrome"){
+    ret <- blackbodycol()
+    #if(requireNamespace("RColorBrewer"))
+    #  ret <- RColorBrewer::brewer.pal(9, "YlOrRd") else
+    #    if(requireNamespace("colorspace"))
+    #      ret <- colorspace::sequential_hcl(64) else
+    #        ret <- rev(heat.colors(64))
   }
   
   if(length(unique(na.omit(vec))) == 2)
@@ -107,11 +111,13 @@ choose.colors <- function(vec, zlim = NULL, type = c("auto", "ramp", "monochrome
 
 custom_palette <- function(colname = c("parula", "jet", "blackbody", "HMblueyellow", 
                                        "HMrainbow", "HMlinear_optimal", "HMoptimal_scale", 
-                                       "cube1", "cubeyf1"), n = NULL, alpha = 1){
+                                       "cube1", "cubeyf1", "redblue"), n = NULL, alpha = 1){
   colname <- match.arg(colname)
   if(is.null(n)){
     if(colname %in% c("parula", "jet"))
-      n <- 64 else n <- 256
+      n <- 64 else 
+        if(colname %in% c("RedBlue")) n <- 12 else 
+          n <- 256
   }
   switch(colname,
          parula = parula(n, alpha),
@@ -122,13 +128,14 @@ custom_palette <- function(colname = c("parula", "jet", "blackbody", "HMblueyell
          HMlinear_optimal = Lin_optimcol(n, alpha),
          HMoptimal_scale = optim_scalecol(n, alpha),
          cube1 = cube1col(n, alpha),
-         cubeyf1 = cubeyf1col(n, alpha)
+         cubeyf1 = cubeyf1col(n, alpha),
+         redblue = redblue(n, alpha) 
          )
 }
 
-create.cols <- function(vec, col, zlim, type = c("auto", "ramp", "monochrome", "divergent", "individual"))
+create.cols <- function(vec, col, zlim, coltype = c("auto", "ramp", "monochrome", "divergent", "individual"))
 {
-  type = match.arg(type)
+  coltype = match.arg(coltype)
   
   if(missing(zlim)){
     zlim <- range(vec, na.rm = TRUE)
@@ -137,7 +144,7 @@ create.cols <- function(vec, col, zlim, type = c("auto", "ramp", "monochrome", "
   }
   
   if(missing(col)) 
-    col <- choose.colors(vec, zlim, type)
+    col <- choose.colors(vec, zlim, coltype)
   
   if(length(col) == length(unique(vec)))
     return(col[match(vec, sort(unique(vec)))])
@@ -149,6 +156,12 @@ create.cols <- function(vec, col, zlim, type = c("auto", "ramp", "monochrome", "
   return(col[vec])
 }
 
+redblue <- function(n = 12, alpha = 1){
+  orig <- c("#67001f", "#b2182b", "#d6604d", "#f4a582", "#fddbc7", 
+            "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac", 
+            "#053061")
+  int.color(rev(orig), n, alpha)
+}
 
 parula <- function(n = 64, alpha = 1){
   orig <- c("#352A87", "#363093", "#3637A0", "#353DAD", "#3243BA", 
