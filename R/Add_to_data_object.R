@@ -1,3 +1,4 @@
+# I made some major changes here and to infer_sites, that also need to be done for species!
 add_sitestat <- function(distrib_data, sitestat, site = NULL){
   if(!inherits(distrib_data, "distrib_data"))
     stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
@@ -11,7 +12,6 @@ add_sitestat <- function(distrib_data, sitestat, site = NULL){
     names(sitestat) <- nam
   } 
 
-  
   if(is.null(site))
   {
     temp <- infer_sites(distrib_data, sitestat)
@@ -20,8 +20,9 @@ add_sitestat <- function(distrib_data, sitestat, site = NULL){
   }
   
   site <- identify_sites(site, distrib_data)
+  
   if(length(site) < Nsites(distrib_data))
-    cat(paste(Nsites(distrib_data)- length(sites), "sites were not found in", deparse(substitute(distrib_data)), "\n"))
+    cat(paste(Nsites(distrib_data)- length(site), "sites were not found in", deparse(substitute(distrib_data)), "\n"))
   
   mergeframe <- as.data.frame(sapply(sitestat, function(column) {
     ret <- rep(NA, Nsites(distrib_data))
@@ -32,8 +33,8 @@ add_sitestat <- function(distrib_data, sitestat, site = NULL){
   if(sum(names(mergeframe) %in% names(distrib_data$coords@data)) > 0){
     matches <- which(names(distrib_data$coords@data) %in% names(mergeframe))
     deleted <- names(distrib_data$coords@data)[matches]
-    distrib_data$coords@data[,matches] <- NULL
-    warning(paste("Some data in the original distrib_data overwritten:\n"), paste(deleted, sep = "\t"))
+    distrib_data$coords <- distrib_data$coords[, -matches]
+    warning(paste("Some data in the original distrib_data overwritten:\n"), paste(deleted, collapse = "\t"))
   }
   
   
@@ -157,9 +158,17 @@ infer_sites <- function(distrib_data, sitestat) # a non-exported convenience fun
   if(!name == "rownames")
     sitestat[[name]] <- NULL
   
+  ##### We need a matching function here to do the actual matching!
+  
   sitestat <- subrow_data.frame(sitestat, which(!is.na(site)))
   site <- site[!is.na(site)]
   
+  suppressWarnings(sitenames <- identify_sites(site, distrib_data, as.name = TRUE))
+  matchsite <- match(site, sitenames)
+  
+  sitestat <- subrow_data.frame(sitestat, which(!is.na(matchsite)))
+  site <- site[!is.na(matchsite)]
+
   cat(paste("Matching sites by", name, "\n"))
     
   return(list(site = site, sitestat = sitestat))
@@ -187,18 +196,26 @@ infer_species <- function(distrib_data, species_stat) # a non-exported convenien
     name <- names(species_stat)[res]
     spec <- species(distrib_data)[match_speciesnames(species(distrib_data), species_stat[[res]])]
 
-  if(temp[res] < 0.8)
-    stop("Sites could not be matched automatically, please supply the site argument explicitly")
+  if(temp[res] < 0.5 & sum(spec %in% species(distrib_data)) < 0.5 * Nspecies(distrib_data))
+    stop("Species could not be matched automatically, please supply the species argument explicitly")
   
   if(!name == "rownames")
     species_stat[[name]] <- NULL
   
   species_stat$rownames <- NULL
   
-  cat(paste("Matching species by", name, "\n"))
-  
+
   species_stat <- subrow_data.frame(species_stat, which(!is.na(spec)))
   spec <- spec[!is.na(spec)]
+  
+  
+  suppressWarnings(specnames <- identify_species(spec, distrib_data, as.name = TRUE))
+  matchspec <- match(spec, specnames)
+  
+  species_stat <- subrow_data.frame(species_stat, which(!is.na(matchspec)))
+  spec <- spec[!is.na(matchspec)]
+  
+  cat(paste("Matching species by", name, "\n"))
   
   return(list(species = spec, species_stat = species_stat))
 }

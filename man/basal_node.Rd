@@ -1,6 +1,7 @@
 \name{basal_node}
 \alias{basal_node}
 \alias{nodenumbers}
+\alias{nodes}
 \alias{Parent}
 \alias{Descendants}
 \alias{Sister}
@@ -14,6 +15,7 @@ Returns the internal (\code{ape}) node numbers corresponding to certain nodes in
 \usage{
 basal_node(tree)
 nodenumbers(tree)
+nodes(tree, all = FALSE)
 Descendants(node, tree)
 Parent(node, tree)
 Sister(node, tree)
@@ -25,6 +27,9 @@ An object of type \code{phylo}, or alternatively an object of type \code{nodiv_d
 }
   \item{node}{
 The internal node number of a focal node in the phylogeny
+}
+  \item{all}{
+Give all node labels in order of occurrence. If FALSE, only non-empty node labels will be shown in alphabetical order
 }
 }
 \details{

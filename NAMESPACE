@@ -1,10 +1,13 @@
 export(add_shape, add_sitestat, add_species_stat, assemblage, basal_node, Descendants, distrib_data, GND, Node_analysis, Node_occupancy, Node_size, Node_species,
-       nodenumbers, Nodesig, nodiv_data,  Nsites, Nspecies, occupancy, occurrences, Parent, plot_grid, plot_node, plot_points, plot_richness, plotSOS, 
+       nodenumbers, nodes, Nodesig, nodiv_data,  Nsites, Nspecies, occupancy, occurrences, Parent, plot_grid, plot_node, plot_points, plot_richness, plotSOS, 
        plot_nodes_phylo, plot_sitestat, plot_species, richness, Sister, sites, sitestat, SOS, species, species_stat, subsample, update_object)
 S3method(identify, distrib_data)
 S3method(plot, distrib_data)
 S3method(plot, nodiv_data)
 S3method(plot, nodiv_result)
+S3method(head, distrib_data)
+S3method(head, nodiv_data)
+S3method(head, nodiv_result)
 S3method(print, distrib_data)
 S3method(print, nodiv_data)
 S3method(print, nodiv_result)
@@ -17,6 +20,7 @@ S3method(print, summary_nodiv_result)
 S3method(subsample, distrib_data)
 S3method(subsample, nodiv_data)
 S3method(subsample, nodiv_result)
+importFrom("utils", head)
 importFrom("ape", Ntip)
 importFrom("ape", Nnode)
 importFrom("ape", plot.phylo)

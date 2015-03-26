@@ -111,13 +111,14 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
 
 custom_palette <- function(colname = c("parula", "jet", "blackbody", "HMblueyellow", 
                                        "HMrainbow", "HMlinear_optimal", "HMoptimal_scale", 
-                                       "cube1", "cubeyf1", "redblue"), n = NULL, alpha = 1){
+                                       "cube1", "cubeyf1", "redblue", "moreland"), n = NULL, alpha = 1){
   colname <- match.arg(colname)
   if(is.null(n)){
     if(colname %in% c("parula", "jet"))
       n <- 64 else 
         if(colname %in% c("RedBlue")) n <- 12 else 
-          n <- 256
+          if(colname %in% c("moreland")) n <- 33 else 
+            n <- 256
   }
   switch(colname,
          parula = parula(n, alpha),
@@ -129,7 +130,8 @@ custom_palette <- function(colname = c("parula", "jet", "blackbody", "HMblueyell
          HMoptimal_scale = optim_scalecol(n, alpha),
          cube1 = cube1col(n, alpha),
          cubeyf1 = cubeyf1col(n, alpha),
-         redblue = redblue(n, alpha) 
+         redblue = redblue(n, alpha),
+         moreland = moreland(n, alpha)
          )
 }
 
@@ -161,6 +163,17 @@ redblue <- function(n = 12, alpha = 1){
             "#f7f7f7", "#d1e5f0", "#92c5de", "#4393c3", "#2166ac", 
             "#053061")
   int.color(rev(orig), n, alpha)
+}
+
+moreland <- function(n = 33, alpha = 1){
+  orig <- c("#3B4CC0", "#445ACC", "#4D68D7", "#5775E1", "#6282EA", 
+            "#6C8EF1", "#779AF7", "#82A5FB", "#8DB0FE", "#98B9FF", 
+            "#A3C2FF", "#AEC9FD", "#B8D0F9", "#C2D5F4", "#CCD9EE", 
+            "#D5DBE6", "#DDDDDD", "#E5D8D1", "#ECD3C5", "#F1CCB9", 
+            "#F5C4AD", "#F7BBA0", "#F7B194", "#F7A687", "#F49A7B", 
+            "#F18D6F", "#EC7F63", "#E57058", "#DE604D", "#D55042", 
+            "#CB3E38", "#C0282F", "#B40426")
+  int.color(orig, n, alpha)
 }
 
 parula <- function(n = 64, alpha = 1){

@@ -33,6 +33,7 @@ An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 \code{occupancy} gives the number of sites occupied by all species.
 \code{sites} gives a list of site names in the object. 
 \code{species} gives a list of species names in the object. 
+\code{nodes} gives a node labels or node numbers 
 }
 
 \author{
