@@ -15,8 +15,8 @@ Calculates the species richness and site occupancy of a \code{distrib_data} obje
 \usage{
 Nspecies(distrib_data)
 Nsites(distrib_data)
-richness(distrib_data)
-occupancy(distrib_data)
+richness(distrib_data, sites = NULL)
+occupancy(distrib_data, species = NULL)
 sites(distrib_data)
 species(distrib_data)
 }
@@ -24,6 +24,12 @@ species(distrib_data)
 \arguments{
   \item{distrib_data}{
 An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
+}
+  \item{sites}{
+The site for which to return the richness
+}
+  \item{species}{
+The species for which to return the occupancy
 }
 }
 

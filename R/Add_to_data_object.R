@@ -22,10 +22,12 @@ add_sitestat <- function(distrib_data, sitestat, site = NULL){
   site <- identify_sites(site, distrib_data)
   
   if(length(site) < Nsites(distrib_data))
-    cat(paste(Nsites(distrib_data)- length(site), "sites were not found in", deparse(substitute(distrib_data)), "\n"))
+    cat(paste(Nsites(distrib_data)- length(site), "sites from sitestat were not found in", deparse(substitute(distrib_data)), "\n"))
   
-  mergeframe <- as.data.frame(sapply(sitestat, function(column) {
-    ret <- rep(NA, Nsites(distrib_data))
+  mergeframe <- as.data.frame(lapply(sitestat, function(column) {
+    ret <- vector(mode = typeof(column), length = Nsites(distrib_data))
+    ret[] <- NA
+    #ret <- rep(NA, Nsites(distrib_data))
     ret[site] <- column
     ret
   }), stringsAsFactors = FALSE)
@@ -80,7 +82,7 @@ add_species_stat <- function(distrib_data, species_stat, specs = NULL){
   if(length(specs) < Nspecies(distrib_data))
     cat(paste(num - length(specs), "species were not found in", deparse(substitute(distrib_data)), "\n"))
   
-  mergeframe <- as.data.frame(sapply(species_stat, function(column) {
+  mergeframe <- as.data.frame(lapply(species_stat, function(column) {
     ret <- rep(NA, Nspecies(distrib_data))
     if(is.factor(column)) ret <- factor(ret, levels = levels(column))
     ret[specs] <- column

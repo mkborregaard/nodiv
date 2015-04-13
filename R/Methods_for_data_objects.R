@@ -1,4 +1,5 @@
 
+## TODO only generate the node_species object in the Node_analysis function, and remove it from the summary functions (if feasible - check for calls)
 
 head.distrib_data <- function(x, ...) print.distrib_data(x, ...)
 head.nodiv_data <- function(x, ...) print.nodiv_data(x, ...)
@@ -76,10 +77,10 @@ identify.distrib_data <- function(x, ...)
 summary.distrib_data <- function(object, ...)
 {
   if(object$type == "grid")
-    richness <- suppressWarnings(SpatialPixelsDataFrame(SpatialPoints(object$coords), data.frame(richness = apply(object$comm, 1, function(site) sum(site > 0))))) else
-      richness <- SpatialPointsDataFrame(SpatialPoints(object$coords), data.frame(richness = apply(object$comm, 1, function(site) sum(site > 0)))) 
+    richness <- suppressWarnings(SpatialPixelsDataFrame(SpatialPoints(object$coords), data.frame(richness = richness(object)))) else
+      richness <- SpatialPointsDataFrame(SpatialPoints(object$coords), data.frame(richness = richness(object))) #Is it really necessary to make this a spatial data frame? 
       
-  occupancy <- apply(object$comm, 2, function(site) sum(site > 0))
+  occupancy <- occupancy(object) 
   ret <- list(species = species(object), coords = object$coords, richness = richness, occupancy = occupancy, type = object$type)
   class(ret) <- "summary_distrib_data"
   ret
@@ -273,18 +274,34 @@ species <- function(distrib_data){
   return(distrib_data$species_stats$species)
 }
 
-richness <- function(distrib_data)
+richness <- function(distrib_data, sites = NULL)
 {  
   if(!inherits(distrib_data, "distrib_data"))
     stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
-  return(summary(distrib_data)$richness$richness)
+  
+  if(!is.null(sites)){
+    sites <- identify_sites(sites, distrib_data)
+  } else sites <- 1:Nsites(distrib_data)
+
+  if(length(sites) == 1)
+    return(sum(distrib_data$comm[sites, ] > 0, na.rm = T))
+  
+  return(rowSums(distrib_data$comm[sites, ] > 0, na.rm = T))
 }
 
-occupancy <- function(distrib_data)
+occupancy <- function(distrib_data, species = NULL)
 {  
   if(!inherits(distrib_data, "distrib_data"))
     stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
-  return(summary(distrib_data)$occupancy)
+  
+  if(!is.null(species)){
+    species <- identify_species(species, distrib_data)
+  } else species <- 1:Nspecies(distrib_data)
+  
+  if(length(species) == 1)
+    return(sum(distrib_data$comm[, species] > 0, na.rm = T))
+  
+  return(colSums(distrib_data$comm[, species] > 0, na.rm = T))
 }
 
 plot_sitestat <- function(distrib_data, x, ...)
