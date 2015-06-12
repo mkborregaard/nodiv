@@ -53,8 +53,14 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", zlim = N
   {
     if(inherits(shape, "SpatialPolygonsDataFrame"))
       border <- shapefill else border <- NULL
-    if(zoom_to_points)
-      plot(shape, col = shapefill, border = border, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...) else plot(shape, col = shapefill, border = border, ...)
+    if(zoom_to_points){
+      if(inherits(shape, "Raster"))
+        plot(shape, col = shapefill, border = border, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = FALSE, ...) else 
+          plot(shape, col = shapefill, border = border, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...)
+    } else {
+      if(inherits(shape, "Raster"))
+        plot(shape, col = shapefill, border = border, legend = FALSE, ...) else plot(shape, col = shapefill, border = border, ...)
+    }
     plot(rast, add = T, zlim = zlim, col = col)
   }
   invisible(rast)
