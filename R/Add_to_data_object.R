@@ -83,7 +83,8 @@ add_species_stat <- function(distrib_data, species_stat, specs = NULL){
     cat(paste(num - length(specs), "species were not found in", deparse(substitute(distrib_data)), "\n"))
   
   mergeframe <- as.data.frame(lapply(species_stat, function(column) {
-    ret <- rep(NA, Nspecies(distrib_data))
+    ret <- vector(mode = typeof(column), length = Nspecies(distrib_data))
+    ret[] <- NA
     if(is.factor(column)) ret <- factor(ret, levels = levels(column))
     ret[specs] <- column
     ret

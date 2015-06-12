@@ -4,7 +4,9 @@ GND <- function(nodiv_result, node = NULL)
   if(!inherits(nodiv_result, "nodiv_result"))
     stop("object must be of type nodiv_result")
   if(is.null(node)) node <- TRUE else node <- identify_node(node, nodiv_result)
-  return(nodiv_result$GND[node - Nspecies(nodiv_result)])
+  ret <- nodiv_result$GND[node - Nspecies(nodiv_result)]
+  names(ret) <- nodenumbers(nodiv_result)
+  return()
 }
 
 print.nodiv_result <- function(x, printlen = 4, ...)

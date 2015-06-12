@@ -106,14 +106,14 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   
   if(length(not.occupied.sites) > 0)
   {
-    message(paste(length(not.occupied.sites), "sites where dropped because no species occupied them:\n", paste(coords$sites[not.occupied.sites], sep = "\t")))
+    message(paste(length(not.occupied.sites), "sites where dropped because no species occupied them:\n", paste(coords$sites[not.occupied.sites], collapse = "\t")))
     coords <- coords[ - not.occupied.sites, ]
     commatrix <- commatrix[ - not.occupied.sites,  ]
   }
   
   if(length(not.occurring.species) > 0)
   {
-    message(paste(length(not.occurring.species), "species where dropped because of 0 occurrences in the dataset:\n", paste(colnames(commatrix)[not.occurring.species], sep = "\t")))
+    message(paste(length(not.occurring.species), "species where dropped because of 0 occurrences in the areas defined by coords:\n", paste(colnames(commatrix)[not.occurring.species], collapse = "\t")))
     commatrix <- commatrix[, - not.occurring.species]
   }
   

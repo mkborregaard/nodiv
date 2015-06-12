@@ -217,7 +217,7 @@ subsample.distrib_data <- function(x, sites = NULL, species = NULL, ...)
 
   ret$comm <- ret$comm[sites_keep, species_keep]
   
-  ret$species_stats <- subrow_data.frame(ret$species_stats, species_keep)
+  ret$species_stats <- subrow_data.frame(ret$species_stats, species[species_keep])
   ret$coords <- ret$coords[ret$coords$sites %in% rownames(ret$comm),]
   
   
