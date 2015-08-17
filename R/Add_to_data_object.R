@@ -177,14 +177,17 @@ infer_sites <- function(distrib_data, sitestat) # a non-exported convenience fun
   return(list(site = site, sitestat = sitestat))
 }
 
-match_speciesnames <- function(reference_name, new_name){
+match_speciesnames <- function(reference_name, new_name, do_not_match = FALSE){
   chars <- c(" ", "[.]", "_")
   ref_ll <- sapply(chars, function(x) length(grep(x, reference_name)))
   ref_char <- chars[which(ref_ll == max(ref_ll))[1]]
   new_ll <- sapply(chars, function(x) length(grep(x, new_name)))
   new_char <- chars[which(new_ll == max(new_ll))[1]]  
+  new_name <- gsub(new_char, ref_char, new_name)
+  if(do_not_match)
+    return(new_name)
   
-  ret <- match(gsub(new_char, ref_char, new_name), reference_name)
+  ret <- match(new_name, reference_name)
   ret
 }
 

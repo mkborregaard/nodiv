@@ -9,8 +9,9 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   
   if(!inherits(commatrix, "distrib_data"))
   {
-    if(missing(coords)) stop("if commatrix is not an object of type distrib_data, coords must be specified")
-    dist_dat <- distrib_data(commatrix, coords, proj4string_in, type, shape)
+    if(missing(coords)) 
+      dist_dat <- distrib_data(commatrix, proj4string_in = proj4string_in, type = type, shape = shape) else
+        dist_dat <- distrib_data(commatrix, coords, proj4string_in, type, shape)
   } else dist_dat <- commatrix
   
   if(is.null(dist_dat$species_stats))
@@ -25,6 +26,8 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
     nodiv_dat$node_stats <- dist_dat$nodestats
   
   cat("Comparing taxon names in phylogeny and communities (using picante)\n")
+  
+  colnames(dist_dat$comm) <- match_speciesnames(phylo$tip.label, colnames(dist_dat$comm), do_not_match = TRUE)
   temp <- capture.output(dat <- match.phylo.comm(phylo, dist_dat$comm))
   nodiv_dat$phylo <- dat$phy
   nodiv_dat$comm <- dat$comm
@@ -68,8 +71,16 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     class(ret) <- "distrib_data"
     return(ret)
   }
-  if(is.null(coords))
-    stop("If not commatrix is already of type distrib_data or nodiv_data, coords must be specified")
+  if(is.null(coords)){
+    if(isWorldmapData(commatrix)){
+      coords <- data.frame(site = paste(commatrix[, 4], commatrix[, 5], sep = '_'), Long = commatrix[, 4], Lat = commatrix[, 5])
+      commatrix <- data.frame(site = coords$site, abu = rep(1, nrow(commatrix)), species = commatrix[, 1])
+      coords <- coords[!duplicated(coords$site), ]
+      if(identical(proj4string_in, CRS(as.character(NA))))
+        proj4string_in <- CRS("+proj=longlat +ellps=WGS84")
+    } else stop("If not commatrix is already of type distrib_data or nodiv_data, coords must be specified")   
+  }
+    
   
   cat("Checking input data\n")
   ## Testing that input objects are all right
@@ -262,4 +273,17 @@ Node_spec <- function(tree, node, names = TRUE)
   ret
 }
 
+isWorldmapData <- function(dat){
+  if(is.data.frame(dat)){
+    if(is.factor(dat[, 1]))
+      dat[, 1] <- as.character(dat[, 1])
+    if(is.character(dat[, 1]))
+      if(is.numeric(dat[, 4]))
+        if(is.numeric(dat[, 5]))
+          if(min(dat[, 4], na.rm = T) > -181 & max(dat[, 4], na.rm = T) < 181)
+            if(min(dat[, 5], na.rm = T) > -91 & max(dat[, 5], na.rm = T) < 91)
+              return(TRUE)
+  }
+  return(FALSE)
+}
 
