@@ -28,6 +28,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   cat("Comparing taxon names in phylogeny and communities (using picante)\n")
   
   colnames(dist_dat$comm) <- match_speciesnames(phylo$tip.label, colnames(dist_dat$comm), do_not_match = TRUE)
+  nodiv_dat$species_stats$species <- colnames(dist_dat$comm)
   temp <- capture.output(dat <- match.phylo.comm(phylo, dist_dat$comm))
   nodiv_dat$phylo <- dat$phy
   nodiv_dat$comm <- dat$comm
