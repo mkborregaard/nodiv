@@ -22,6 +22,44 @@ occurrences <- function(distrib_data, species, value = c("index", "names", "logi
   ret  
 }
 
+gridData <- function(dist_data, cellsize_x = 1, cellsize_y = cellsize_x, xll_corner, yll_corner){
+  if (!inherits(dist_data, "distrib_data")) 
+    stop("object is not of class \"distrib_data\"")
+  if(missing(xll_corner))
+    xll_corner <- cellsize_x * floor(min(coordinates(dist_data$coords)[, 1], na.rm = TRUE) / cellsize_x)
+  if(missing(yll_corner))
+    yll_corner <- cellsize_y * floor(min(coordinates(dist_data$coords)[, 2], na.rm = TRUE) / cellsize_y)
+  if(dist_data$type == "grid"){
+    cat('dist_data is already of type grid - resampling instead\n')
+    dist_data$grid <- summary(dist_data$coords)$grid
+    diffs <- c(cellsize_x/dist_data$grid$cellsize[1], cellsize_y/dist_data$grid$cellsize[2]) 
+    if(min(diffs < 1))
+      stop(paste('cannot resample grid to a finer scale - original cellsize is', paste(dist_data$grid$cellsize, collapse = ','), 'target cellsize is', paste(c(cellsize_x), collapse = ',' )))
+       
+     if(!identical(diffs, floor(diffs)))
+       stop(paste('ratio between cellsizes must be an integer - original cellsize is', paste(dist_data$grid$cellsize, collapse = ','), 'target cellsize is', paste(c(cellsize_x), collapse = ',' )))
+  }
+
+  newx <- cellsize_x * floor((coordinates(dist_data$coords)[, 1] - xll_corner) / cellsize_x) + 0.5 * cellsize_x + xll_corner
+  newy <- cellsize_y * floor((coordinates(dist_data$coords)[, 2] - yll_corner) / cellsize_y) + 0.5 * cellsize_y + yll_corner
+  newsites <- paste(newx, newy, sep = '_')
+  newcoords <- data.frame(site = newsites, X = newx, Y = newy)
+  newcoords <- newcoords[!duplicated(newcoords$site), ]
+  newhcom <- matrix2sample(dist_data$comm)
+  newhcom$plot <- newsites[match(newhcom$plot, dist_data$coords$sites)]
+  newcomm <- as.data.frame.matrix(table(newhcom$plot, newhcom$id))
+
+  if(max(dist_data$comm) == 1)
+    newcomm[newcomm > 0] <- 1
+
+  newdist_data <- distrib_data(commatrix = newcomm, coords = newcoords, proj4string_in = CRS(proj4string(dist_data$coords)), type = "grid")
+
+  dist_data$comm <- newdist_data$comm
+  dist_data$coords <- newdist_data$coords
+  dist_data$type <- "grid"
+  dist_data
+}
+
 assemblage <- function(distrib_data, site, value = c("index", "names", "logical", "raw")){
   value = match.arg(value)
   if (!inherits(distrib_data, "distrib_data")) 

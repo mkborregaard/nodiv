@@ -98,6 +98,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     commatrix[,3] <- as.character(commatrix[,3])
     commatrix <- sample2matrix(commatrix)   
   }
+
   if(is.data.frame(commatrix)) commatrix <- as.matrix(commatrix)
   if(!is.matrix(commatrix)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   if(!is.numeric(commatrix)) stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
@@ -108,6 +109,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
 
   if(class(coords) == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords) == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
   
+
   ## making sure that the points and the commatrix fit
   
   
@@ -130,6 +132,9 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   }
   
   ret <- list(comm = as.data.frame(commatrix), type = type, coords = coords)
+  if(type == "grid")
+    ret$grid <- summary(ret$coords)$grid 
+  
   ret$species_stats <- data.frame(species = colnames(ret$comm), stringsAsFactors = FALSE)
   
   if(!is.null(shape)) ret$shape <- shape
