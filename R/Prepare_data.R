@@ -239,18 +239,25 @@ isGridVar <- function(gridVar)
   #if all differences are a multiplum of the smallest, and the smallest distance is the most common, it is probably a grid
 }
 
+
 Create_node_by_species_matrix = function(tree)
 {
   # create a matrix with 0s and 1s indicating which species descend from each node
   nodespecies <- matrix(0, nrow = Nnode(tree), ncol = Ntip(tree))
   colnames(nodespecies) <- tree$tip.label
   rownames(nodespecies) <- nodenumbers(tree)
-  
  
-  for ( i in 1:Nnode(tree))
+  ntip <- Ntip(tree)
+  .local <- function(tree, node)
   {
-    nodespecies[i,Node_spec(tree, nodenumbers(tree)[i], names = FALSE)] <- 1
+    if(node <= Ntip(tree))
+      return(node)
+    ret <- lapply(Descendants(node, tree), .local, tree = tree)
+    ret <- do.call(c, ret)
+    nodespecies[node - ntip, ret] <<- 1
+    ret
   }
+  .local(tree, basal_node(tree))
   
   return(nodespecies)
 }
