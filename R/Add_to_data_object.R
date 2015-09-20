@@ -155,7 +155,7 @@ infer_sites <- function(distrib_data, sitestat) # a non-exported convenience fun
     site <- sitestat[[res]]
   }
     
-  if(temp[res] < 0.8)
+  if(temp[res] < 0.4)
     stop("Sites could not be matched automatically, please supply the site argument explicitly")
   
   if(!name == "rownames")

@@ -265,8 +265,6 @@ Node_spec <- function(tree, node, names = TRUE)
     do.call(c, ret)
   }
   
-  if(inherits(tree, "nodiv_data"))
-    tree <- tree$phylo
   if(!inherits(tree, "phylo"))
     stop("tree must be an object of type phylo or nodiv_data")
   
