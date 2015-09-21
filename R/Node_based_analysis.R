@@ -44,8 +44,8 @@ identify_node <- function(node, tree)
   }
   
   if(node %in% 1:Ntip(tree)){
-    node <- node + Ntip(tree)  #It is an open question whether this should be here, or whether it may just lead to errors.
     warning(paste("The node number",node,"did not exist. Adding Ntip(tree) to create a usable number"))
+    node <- node + Ntip(tree)  #It is an open question whether this should be here, or whether it may just lead to errors.
   }
   if(!node %in% nodenumbers(tree))
     stop("Undefined node")

@@ -13,7 +13,7 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", zlim = N
     if(missing(coords)) stop("coords must be defined if x is not a SpatialPixelsDataFrame") else
       if(inherits(coords, "SpatialPoints"))
       {
-        #if(!isGrid(coords)) stop("this function is only suitable for gridded data")
+        if(!isGrid(coords)) stop("this function is only suitable for gridded data")
         coords <- SpatialPoints(coords)
         suppressWarnings(rast <- raster(SpatialPixelsDataFrame( coords, as.data.frame(x)))) #TODO NB
       } else {
