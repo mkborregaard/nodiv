@@ -22,6 +22,23 @@ occurrences <- function(distrib_data, species, value = c("index", "names", "logi
   ret  
 }
 
+binData <- function(dist_data, type = c("env", "trait"), binsizes = NA) {
+  if (type == "env") stats <- dist_data$coords@data[, -1]      
+  if (type == "trait") stats <- dist_data$species_stats[, -1]
+  newstats <- stats
+  for (i in 1:length(binsizes)){
+    breaks <- seq(round(min(stats[, i]) - binsizes[i]), 
+                  round(max(stats[, i]) + binsizes[i]), 
+                  by = binsizes[i])
+    binned <- as.factor(cut(stats[, i], breaks = breaks, labels = FALSE))
+    levels(binned) <- sort(breaks[unique(as.numeric(as.character(binned)))])                
+    newstats[, i] <- as.numeric(as.character(binned))
+  }
+  newstats$sites <- apply(newstats, 1, paste, collapse = "_")
+  newstats <- newstats[, c(ncol(newstats), 1:ncol(newstats) - 1)]
+  return(newstats)
+}
+
 gridData <- function(dist_data, cellsize_x = 1, cellsize_y = cellsize_x, xll_corner, yll_corner){
   if (!inherits(dist_data, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")
