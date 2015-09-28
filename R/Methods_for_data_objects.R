@@ -152,7 +152,7 @@ Nsites<- function(distrib_data)
 {
   if (!inherits(distrib_data, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")
-  length(distrib_data$coords)
+  nrow(distrib_data$coords)
 }
 
 print.distrib_data <- function(x, printlen = 4, ...)
