@@ -39,24 +39,30 @@ binData <- function(dist_data, type = c("env", "trait"), binsizes = NA) {
   return(newstats)
 }
 
-gridData <- function(dist_data, cellsize_x = 1, cellsize_y = cellsize_x, xll_corner, yll_corner){
-  if (!inherits(dist_data, "distrib_data")) 
-    stop("object is not of class \"distrib_data\"")
-  if(missing(xll_corner))
-    xll_corner <- cellsize_x * floor(min(coordinates(dist_data$coords)[, 1], na.rm = TRUE) / cellsize_x)
-  if(missing(yll_corner))
-    yll_corner <- cellsize_y * floor(min(coordinates(dist_data$coords)[, 2], na.rm = TRUE) / cellsize_y)
-  if(dist_data$type == "grid"){
-    cat('dist_data is already of type grid - resampling instead\n')
-    dist_data$grid <- summary(dist_data$coords)$grid
-    diffs <- c(cellsize_x/dist_data$grid$cellsize[1], cellsize_y/dist_data$grid$cellsize[2]) 
-    if(min(diffs < 1))
-      stop(paste('cannot resample grid to a finer scale - original cellsize is', paste(dist_data$grid$cellsize, collapse = ','), 'target cellsize is', paste(c(cellsize_x), collapse = ',' )))
-       
-     if(!identical(diffs, floor(diffs)))
-       stop(paste('ratio between cellsizes must be an integer - original cellsize is', paste(dist_data$grid$cellsize, collapse = ','), 'target cellsize is', paste(c(cellsize_x), collapse = ',' )))
+gridData <- function(dist_data, 
+                     type = c("geo", "env", "trait"),
+                     cellsize_x = 1, 
+                     cellsize_y = cellsize_x, 
+                     xll_corner, 
+                     yll_corner,
+                     env_binsizes,
+                     trait_binsizes){
+  if (type == "geo"){  
+    if (!inherits(dist_data, "distrib_data")) 
+      stop("object is not of class \"distrib_data\"")
+    if(missing(xll_corner))
+      xll_corner <- cellsize_x * floor(min(coordinates(dist_data$coords)[, 1], na.rm = TRUE) / cellsize_x)
+    if(missing(yll_corner))
+      yll_corner <- cellsize_y * floor(min(coordinates(dist_data$coords)[, 2], na.rm = TRUE) / cellsize_y)
+    if(dist_data$type == "grid"){
+      cat('dist_data is already of type grid - resampling instead\n')
+      dist_data$grid <- summary(dist_data$coords)$grid
+      diffs <- c(cellsize_x/dist_data$grid$cellsize[1], cellsize_y/dist_data$grid$cellsize[2]) 
+      if(min(diffs < 1))
+        stop(paste('cannot resample grid to a finer scale - original cellsize is', paste(dist_data$grid$cellsize, collapse = ','), 'target cellsize is', paste(c(cellsize_x), collapse = ',' )))       
+      if(!identical(diffs, floor(diffs)))
+        stop(paste('ratio between cellsizes must be an integer - original cellsize is', paste(dist_data$grid$cellsize, collapse = ','), 'target cellsize is', paste(c(cellsize_x), collapse = ',' )))
   }
-
   newx <- cellsize_x * floor((coordinates(dist_data$coords)[, 1] - xll_corner) / cellsize_x) + 0.5 * cellsize_x + xll_corner
   newy <- cellsize_y * floor((coordinates(dist_data$coords)[, 2] - yll_corner) / cellsize_y) + 0.5 * cellsize_y + yll_corner
   newsites <- paste(newx, newy, sep = '_')
@@ -65,15 +71,56 @@ gridData <- function(dist_data, cellsize_x = 1, cellsize_y = cellsize_x, xll_cor
   newhcom <- matrix2sample(dist_data$comm)
   newhcom$plot <- newsites[match(newhcom$plot, dist_data$coords$sites)]
   newcomm <- as.data.frame.matrix(table(newhcom$plot, newhcom$id))
-
   if(max(dist_data$comm) == 1)
     newcomm[newcomm > 0] <- 1
-
   newdist_data <- distrib_data(commatrix = newcomm, coords = newcoords, proj4string_in = CRS(proj4string(dist_data$coords)), type = "grid")
-
   dist_data$comm <- newdist_data$comm
   dist_data$coords <- newdist_data$coords
   dist_data$type <- "grid"
+  }
+  if (type == "env"){
+    if (!inherits(dist_data, "distrib_data")) 
+      stop("object is not of class \"distrib_data\"")
+    newstats <- binData(dist_data, type = "env", binsizes = env_binsizes)
+    newhcom <- matrix2sample(dist_data$comm)
+    newhcom$plot <- newstats$sites[match(newhcom$plot, dist_data$coords$sites)]
+    newcomm <- as.data.frame.matrix(table(newhcom$plot, newhcom$id))
+    newcomm <- newcomm[match(unique(newstats$sites), row.names(newcomm)), ]
+    if(max(dist_data$comm) == 1) newcomm[newcomm > 0] <- 1
+    newsites <- unique(newstats)
+    vars <- newsites[, -1]
+    varpairs <- combn(names(vars), 2)
+    varlist <- vector("list", ncol(varpairs))
+    for (i in 1:ncol(varpairs)){
+      ret <- SpatialPoints(cbind(vars[, varpairs[1, i]], vars[, varpairs[2, i]]))
+      ret <- SpatialPixelsDataFrame(ret, data.frame(sites = newsites$sites, stringsAsFactors = F))
+      varlist[[i]] <- ret
+    }
+    dist_data$comm <- newcomm
+    dist_data$coords <- newsites
+    dist_data$vars <- varlist
+    dist_data$type <- "env_grid"        
+  }
+  
+  if (type == "trait"){
+    if (!inherits(dist_data, "distrib_data")) 
+      stop("object is not of class \"distrib_data\"")
+    newstats <- binData(dist_data, type = "trait", binsizes = trait_binsizes)
+    newcomm <- as.data.frame.matrix(table(newstats$sites, dist_data$species_stats$species))               
+    newcomm <- newcomm[match(unique(newstats$sites), row.names(newcomm)), ]
+    if(max(dist_data$comm) == 1) newcomm[newcomm > 0] <- 1
+    newsites <- unique(newstats)
+    vars <- newsites[, -1]
+    varpairs <- combn(names(vars), 2)
+    varlist <- vector("list", ncol(varpairs))
+    for (i in 1:ncol(varpairs)){
+      varlist[[i]] <- cbind(vars[, varpairs[1, i]], vars[, varpairs[2, i]])
+    }
+    dist_data$comm <- newcomm
+    dist_data$coords <- newsites
+    dist_data$vars <- varlist
+    dist_data$type <- "trait_grid"
+  }                       
   dist_data
 }
 
@@ -544,4 +591,3 @@ identify_sites <- function(site, distrib_data, as.name = FALSE)
   
   site
 }
-
