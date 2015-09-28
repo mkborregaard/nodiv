@@ -141,6 +141,21 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
   invisible(SpatialPointsDataFrame(coords, ret))
 }
 
+plot_space <- function(x, variable, ...){
+  require(fields)
+  varlist <- lapply(x$vars, SpatialPoints)
+  varlist <- lapply(varlist, function(y) SpatialPixelsDataFrame(y, as.data.frame(variable)))
+  varlist <- lapply(varlist, raster)
+  mat <- matrix(1:length(varlist), length(varlist), 1)
+  layout(mat)
+  for (i in seq(along = varlist)) {
+    image.plot(varlist[[i]],
+               zlim = c(summary(varlist[[i]])[1], summary(varlist[[i]])[5]),
+               bigplot = c(.05, .8, .1, .9),
+               col = colorRampPalette(c(grey(0.85), "tomato"))(10))
+  }
+  par(mfrow=c(1,1))
+}
 
 plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(substitute(variable)), zlim = NULL, col , show.legend = TRUE, sig.cutoff, nodes, roundoff= TRUE, show.tip.label = NULL, cex = NULL, ...)
 {

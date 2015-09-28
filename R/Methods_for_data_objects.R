@@ -239,10 +239,13 @@ add_shape <- function(distrib_data, shape)
 plot.distrib_data <- function(x, ...)
 {
   if(is.null(x$shape)) shape <- NULL else shape <- x$shape
+  if(x$type == "points")
+    plot_points(richness(x), x$coords, shape = shape, ...)      
   if(x$type == "grid")
-    plot_grid(richness(x), x$coords, shape = shape, ...) else
-    plot_points(richness(x), x$coords, shape = shape, ...)
-}  
+    plot_grid(richness(x), x$coords, shape = shape, ...)                 
+  if(x$type == "env_grid" | x$type == "trait_grid")
+    suppressWarnings(plot_space(x, richness(x), ...) )
+}
 
 plot_richness <- function(distrib_data, ...)
 {
@@ -420,9 +423,12 @@ plot_sitestat <- function(distrib_data, x, ...)
   }
 
   if(is.null(distrib_data$shape)) shape <- NULL else shape <- distrib_data$shape
+  if(distrib_data$type == "points")
+    plot_points(x, distrib_data$coords, shape = shape, ...)      
   if(distrib_data$type == "grid")
-    plot_grid(x, distrib_data$coords, shape = shape, ...) else
-      plot_points(x, distrib_data$coords, shape = shape, ...)
+    plot_grid(x, distrib_data$coords, shape = shape, ...)                 
+  if(distrib_data$type == "env_grid" | distrib_data$type == "trait_grid")
+    suppressWarnings(plot_space(distrib_data, x, ...))
 }
 
 sitestat <- function(distrib_data, statname = NULL, site = NULL)
