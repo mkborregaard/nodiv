@@ -141,7 +141,7 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
   invisible(SpatialPointsDataFrame(coords, ret))
 }
 
-plot_space <- function(x, variable, ...){
+plot_space <- function(x, variable, col, ...){
   require(fields)
   varlist <- lapply(x$vars, SpatialPoints)
   varlist <- lapply(varlist, function(y) SpatialPixelsDataFrame(y, as.data.frame(variable)))
@@ -152,7 +152,7 @@ plot_space <- function(x, variable, ...){
     image.plot(varlist[[i]],
                zlim = c(summary(varlist[[i]])[1], summary(varlist[[i]])[5]),
                bigplot = c(.05, .8, .1, .9),
-               col = colorRampPalette(c(grey(0.85), "tomato"))(10))
+               col = col)
   }
   par(mfrow=c(1,1))
 }

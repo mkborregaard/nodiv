@@ -244,7 +244,7 @@ plot.distrib_data <- function(x, ...)
   if(x$type == "grid")
     plot_grid(richness(x), x$coords, shape = shape, ...)                 
   if(x$type == "env_grid" | x$type == "trait_grid")
-    suppressWarnings(plot_space(x, richness(x), ...) )
+    suppressWarnings(plot_space(x, richness(x), colorRampPalette(c(grey(0.85), "tomato"))(10), ...) )
 }
 
 plot_richness <- function(distrib_data, ...)
@@ -428,7 +428,7 @@ plot_sitestat <- function(distrib_data, x, ...)
   if(distrib_data$type == "grid")
     plot_grid(x, distrib_data$coords, shape = shape, ...)                 
   if(distrib_data$type == "env_grid" | distrib_data$type == "trait_grid")
-    suppressWarnings(plot_space(distrib_data, x, ...))
+    suppressWarnings(plot_space(distrib_data, x, colorRampPalette(c("tomato", grey(0.85), "mediumblue"))(10), ...))
 }
 
 sitestat <- function(distrib_data, statname = NULL, site = NULL)
