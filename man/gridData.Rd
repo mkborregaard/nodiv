@@ -21,10 +21,10 @@ The size of the bins along the X (longitudinal) axis, in units of the spatial co
   \item{cellsize_y}{
 The size of the bins along the Y (latitudinal) axis, in units of the spatial coordinates of the original points
 }
-  \item{xllcorner}{
+  \item{xll_corner}{
 The x coordinate of the lower left corner of the lower left grid cell of the intended grid. The corner must be left of all points in the data set
 }
-  \item{yllcorner}{
+  \item{yll_corner}{
 The y coordinate of the lower left corner of the lower left grid cell of the intended grid. The corner must be below all points in the data set
 }
 }

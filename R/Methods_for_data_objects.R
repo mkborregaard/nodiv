@@ -9,15 +9,26 @@ occurrences <- function(distrib_data, species, value = c("index", "names", "logi
   value = match.arg(value)
   if (!inherits(distrib_data, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")
-  species <- identify_species(species, distrib_data)
+  specs <- identify_species(species, distrib_data)
   
-  ret <- distrib_data$comm[,species]
+  ret <- distrib_data$comm[,specs]
   if(value == "logical")
     ret <- (ret > 0)
-  if(value == "index" | value == "names")
-    ret <- which(ret > 0)
-  if(value == "names")
-    ret <- sites(distrib_data)[ret]
+  
+  if(is.null(dim(ret))){  #if it is just a vector
+    if(value == "index" | value == "names")
+      ret <- which(ret > 0)
+    if(value == "names")
+      ret <- sites(distrib_data)[ret]    
+  } else {
+    if(value == "index" | value == "names"){
+      ret <- lapply(1:ncol(ret), function(x) which(ret[,x] > 0))
+      names(ret) <- species
+    }
+    if(value == "names")
+      ret <- lapply(ret, function(x) sites(distrib_data)[x])
+  }
+
   
   ret  
 }
