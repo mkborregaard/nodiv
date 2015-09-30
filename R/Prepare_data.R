@@ -194,30 +194,38 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
     {
       xcol <- which(colnames(ret) == 'x')
       ycol <- which(colnames(ret) == 'y')
-      ret <- ret[,c(xcol, ycol)]
       
     } else if('lon' %in% substr(colnames(ret),1,3) & 'lat' %in% substr(colnames(ret), 1, 3)) {
       
       colnames(ret) <- substr(colnames(ret), 1, 3)
       xcol <- which(colnames(ret) == 'lon')[1]
       ycol <- which(colnames(ret) == 'lat')[1]
-      ret <- ret[,c( xcol, ycol)]
     }
-    
-    if(!ncol(ret) == 2) stop("ret should be a data.frame or spatial data.frame with 2 columns, giving the x/longitude, and y/latitude of all sites")
-      
-    ret <- SpatialPoints(ret, proj4string)
+
     
     if (ncol(coords)==3 & !(xcol + ycol == 0) & isTRUE(all.equal(coords[,-c(xcol, ycol)], unique(coords[,-c(xcol, ycol)])))) sitenames <- coords[,-c(xcol, ycol)] else 
-      if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix))) sitenames <- rownames(commatrix) else
-        if(!is.null(rownames(coords))) sitenames <- rownames(coords) else 
+      if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix)) & ncol(coords) == 2){
+        if(is.null(rownames(coords)))
+          sitenames <- rownames(commatrix) else if (!identical(rownames(commatrix), rownames(coords))) stop("Because the rownames of commatrix and coords differ, sitenames cannot be established unless they are included explicitly as a third column of coords")
+      }  else {
+        if(is.null(rownames(commatrix))){
           stop("There must be valid site names in the rownames of commatrix or in the coords data")
+        } else {
+          temp <- infer_sites_intern(rownames(commatrix), ret)
+          sitenames <- as.character(temp$site)
+          ret <- temp$sitestat
+        }
+      }
     
+    ret <- ret[,c(xcol, ycol)]    
+    if(!ncol(ret) == 2) stop("coords should be a data.frame or spatial data.frame with 2 columns, giving the x/longitude, and y/latitude of all sites")
+    
+    ret <- SpatialPoints(ret, proj4string)
     type_auto <- ifelse(isGrid(ret), "grid", "points")
     
     if(type == "auto") type <- type_auto else 
       if(!type == type_auto)
-        warning("The specified type of data (points or grid) seems to conflict with the automatic setting. This may cause problems")
+        warning(paste("The specified type of data (", type, ") seems to conflict with the automatic setting. This may cause problems", sep = ""))
     
     
     if(type == "grid") ret <- SpatialPixelsDataFrame(ret, data.frame(sites = sitenames, stringsAsFactors = F)) else

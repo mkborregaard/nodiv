@@ -1,0 +1,5 @@
+load("/Users/michael/Documents/Projects/Current Projects/Maintained R packages/nodiv/data/coquettes.rda")
+ecuador <- coquettes(shape)
+ecuador <- coquettes$shape
+save(ecuador, "ecuador.rda")
+save(ecuador, file = "ecuador.rda")
