@@ -266,10 +266,14 @@ infer_sites_intern <- function(sites, sitestat) # a non-exported convenience fun
   
   cat(paste("Matching sites by", name, "\n"))
   
-  if(!name == "rownames")
-    sitestat_ret[[name]] <- NULL
+  if(name == "rownames")
+    sitestat_ret$sites <- as.character(site)
   
-  return(list(site = site, sitestat = sitestat_ret))
+  index <- which(sapply(sitestat_ret, function(x) identical(x, sitestat_ret[[name]])))[1]
+  
+  names(sitestat_ret)[index] <- "sites"
+  
+  return(sitestat_ret)
 }
 
 
@@ -277,11 +281,12 @@ infer_sites <- function(distrib_data, sitestat) # a non-exported convenience fun
 {
   ret <- infer_sites_intern(sites(distrib_data, sitestat))
   
-  suppressWarnings(sitenames <- identify_sites(ret$site, distrib_data, as.name = TRUE))
-  matchsite <- match(site, sitenames)
+  suppressWarnings(sitenames <- identify_sites(ret$sites, distrib_data, as.name = TRUE))
+  matchsite <- match(ret$sites, sitenames)
   
-  sitestat <- subrow_data.frame(ret$sitestat, which(!is.na(matchsite)))
-  site <- ret$site[!is.na(matchsite)]
+  sitestat <- subrow_data.frame(ret, which(!is.na(matchsite)))
+  site <- sitestat$sites
+  sitestat$sites <- NULL
   
   return(list(site = site, sitestat = sitestat))
 }
