@@ -1,7 +1,7 @@
 Package: nodiv
 Type: Package
 Title: Compares the Distribution of Sister Clades Through a Phylogeny
-Version: 1.1.0
+Version: 1.1.1
 Date: 2015-06-14
 Author: Michael Krabbe Borregaard
 Maintainer: Michael Krabbe Borregaard <mkborregaard@snm.ku.dk>

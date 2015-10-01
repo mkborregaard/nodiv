@@ -217,7 +217,10 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
         }
       }
     
+    if(sum(names(coords) == "sites") > 1)
+      stop(paste("Could not match on the variable called sites, please rename"))
     
+    coords$sites <- as.character(coords$sites)
     ids <- c(which(names(coords) == "myX"), which(names(coords) == "myY") )
     xy <- coords[, ids]    
     if(!ncol(xy) == 2) stop("coords should be a data.frame or spatial data.frame with 2 columns, giving the x/longitude, and y/latitude of all sites")
@@ -229,7 +232,9 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
       if(!type == type_auto)
         warning(paste("The specified type of data (", type, ") seems to conflict with the automatic setting. This may cause problems", sep = ""))
     
-    ret <- data.frame(coords[, -ids], stringsAsFactors = FALSE)
+    if(ncol(coords) == 3)
+      ret <- data.frame(sites = coords[, - ids], stringsAsFactors = FALSE) else
+        ret <- data.frame(coords[, -ids], stringsAsFactors = FALSE)
     if(type == "grid") ret <- SpatialPixelsDataFrame(xy, ret) else
       ret <- SpatialPointsDataFrame(xy, ret)
     

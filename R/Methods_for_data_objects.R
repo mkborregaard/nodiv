@@ -28,8 +28,7 @@ occurrences <- function(distrib_data, species, value = c("index", "names", "logi
     if(value == "names")
       ret <- lapply(ret, function(x) sites(distrib_data)[x])
   }
-
-  
+ 
   ret  
 }
 
