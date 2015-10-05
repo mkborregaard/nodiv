@@ -184,6 +184,25 @@ match_commat_coords <- function(commatrix, sitenames)
 
 toSpatialPoints <- function(coords, proj4string, commatrix, type)
 {
+    firstnumeric <- min(which(sapply(commatrix, is.numeric)))
+    if(firstnumeric > 1){
+      if(firstnumeric == 2){
+        rownames(commatrix) <- commatrix[, 1]
+        warning("Row names of commatrix replaced by first column - these will be used for matching")
+      } else warning(paste("The", firstnumeric - 1, "first columns of commatrix removed, as they were not numeric"))
+      commatrix <- commatrix[, -(1:firstnumeric)]
+    }
+    floats <- 0
+    for(i in 1:ncol(commatrix)){
+      temp <- as.integer(commatrix[, i])
+      if(!sum(temp == commatrix[, i]) == nrow(commatrix))
+        floats <- floats + 1
+      commatrix[, i] <- temp
+    }
+    
+    if(floats > 0)
+      stop("commatrix had non-integer entries, please revise")
+  
     xcol <- 0
     ycol <- 0
     
