@@ -55,6 +55,19 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   return(nodiv_dat)
 }
 
+is01line <- function(vec){
+  num <- unique(as.numeric(vec))
+  return(!sum(!num %in% 0:1))
+}
+
+BenHoltMatrix <- function(commatrix){
+  last <- sapply(max(1, ncol(commatrix) - 3):ncol(commatrix), function(line) is01line(commatrix[, line]))
+  if(!sum(last) == length(last))
+    return(false)
+  first01 <- sapply(1:min(ncol(commatrix), 30), function(line) is01line(commatrix[, line]))  
+  first01 <- min(which(first01))
+  return(first01)
+}
 
 distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 {
@@ -81,7 +94,14 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
       coords <- coords[!duplicated(coords$site), ]
       if(identical(proj4string_in, CRS(as.character(NA))))
         proj4string_in <- CRS("+proj=longlat +ellps=WGS84")
-    } else stop("If not commatrix is already of type distrib_data or nodiv_data, coords must be specified")   
+    } else {
+      if((firstnumeric <- BenHoltMatrix(commatrix)) > 1){
+        # this first bit should be moved up under isworldmapmatrix and be used to check for the Ben type of matrix perhaps
+        cat(paste("Commatrix assumed to be a concatenation of coordinates (", firstnumeric - 1," columns) and community matrix\n", sep = ""))
+        coords <- commatrix[, 1:(firstnumeric-1)]
+        commatrix <- commatrix[, -(1:firstnumeric-1)]
+      } else stop("If not commatrix is already of type distrib_data or nodiv_data, a worldmap matrix, or a concatenation of coords and community matrix, coords must be specified")       
+    }     
   }
     
   
@@ -105,7 +125,11 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   if(is.data.frame(commatrix)) commatrix <- as.matrix(commatrix)
   if(!is.matrix(commatrix)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   if(!is.numeric(commatrix)) stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
-  if(!sum(unique(as.numeric(commatrix)) %in% 0:1) == 2) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
+  if(!sum(!unique(as.numeric(commatrix)) %in% 0:1) == 0) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
+  
+  temp <- floor(commatrix) #this is currently not necessary, due to the previous line
+  if(sum(commatrix-temp) > 0)
+    stop("commatrix had non-integer entries, please revise")
   
   if(is.matrix(coords)) coords <- as.data.frame(coords)
   cat("Transforming coords to spatial points\n")
@@ -188,29 +212,6 @@ match_commat_coords <- function(commatrix, sitenames)
 
 toSpatialPoints <- function(coords, proj4string, commatrix, type)
 {
-  # this first bit should be moved up under isworldmapmatrix and be used to check for the Ben type of matrix perhaps
-    firstnumeric <- min(which(sapply(commatrix[, 1:min(ncol(commatrix), 6)], is.numeric)))
-    if(firstnumeric > 1){
-      if(firstnumeric == 2){
-        rownames(commatrix) <- commatrix[, 1]
-        warning("Row names of commatrix replaced by first column - these will be used for matching")
-      } else warning(paste("The", firstnumeric - 1, "first columns of commatrix removed, as they were not numeric"))
-      commatrix <- commatrix[, -(1:firstnumeric)]
-    }
-   # floats <- 0
-   # for(i in 1:ncol(commatrix)){
-    #  temp <- as.integer(commatrix[, i])
-     # if(!sum(temp == commatrix[, i]) == nrow(commatrix))
-      #  floats <- floats + 1
-      #commatrix[, i] <- temp
-  #  }
-    
-   # if(floats > 0)
-    #  stop("commatrix had non-integer entries, please revise")
-  
-    temp <- floor(commatrix)
-    if(sum(commatrix-temp) > 0)
-      stop("commatrix had non-integer entries, please revise")
   
     xcol <- 0
     ycol <- 0
@@ -333,12 +334,13 @@ isWorldmapData <- function(dat){
   if(is.data.frame(dat)){
     if(is.factor(dat[, 1]))
       dat[, 1] <- as.character(dat[, 1])
-    if(is.character(dat[, 1]))
-      if(is.numeric(dat[, 4]))
-        if(is.numeric(dat[, 5]))
-          if(min(dat[, 4], na.rm = T) > -181 & max(dat[, 4], na.rm = T) < 181)
-            if(min(dat[, 5], na.rm = T) > -91 & max(dat[, 5], na.rm = T) < 91)
-              return(TRUE)
+    if(ncol(dat) == 5)
+      if(is.character(dat[, 1]))
+        if(is.numeric(dat[, 4]))
+          if(is.numeric(dat[, 5]))
+            if(min(dat[, 4], na.rm = T) > -181 & max(dat[, 4], na.rm = T) < 181)
+              if(min(dat[, 5], na.rm = T) > -91 & max(dat[, 5], na.rm = T) < 91)
+                return(TRUE)
   }
   return(FALSE)
 }
