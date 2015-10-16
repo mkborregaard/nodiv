@@ -63,7 +63,7 @@ is01line <- function(vec){
 BenHoltMatrix <- function(commatrix){
   last <- sapply(max(1, ncol(commatrix) - 3):ncol(commatrix), function(line) is01line(commatrix[, line]))
   if(!sum(last) == length(last))
-    return(false)
+    return(FALSE)
   first01 <- sapply(1:min(ncol(commatrix), 30), function(line) is01line(commatrix[, line]))  
   first01 <- min(which(first01))
   return(first01)
