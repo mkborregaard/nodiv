@@ -1,30 +1,32 @@
 # I made some major changes here and to infer_sites, that also need to be done for species!
-add_sitestat <- function(distrib_data, sitestat, site = NULL){
+add_sitestat <- function(distrib_data, site_stat, site = NULL){
   if(!inherits(distrib_data, "distrib_data"))
     stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
 
-  if(is.matrix(sitestat))
-    sitestat <- as.data.frame(sitestat, stringsAsFactors = FALSE)
+  if(is.matrix(site_stat))
+    site_stat <- as.data.frame(site_stat, stringsAsFactors = FALSE)
   
-  if(is.vector(sitestat)){
-    nam <- deparse(substitute(sitestat))
-    sitestat <- as.data.frame(sitestat, stringsAsFactors = FALSE)
-    names(sitestat) <- nam
+  if(is.vector(site_stat)){
+    nam <- deparse(substitute(site_stat))
+    rownam <- names(site_stat)
+    site_stat <- as.data.frame(site_stat, stringsAsFactors = FALSE)
+    names(site_stat) <- nam
+    rownames(site_stat) <- rownam
   } 
 
   if(is.null(site))
   {
-    temp <- infer_sites(distrib_data, sitestat)
+    temp <- infer_sites(distrib_data, site_stat)
     site <- temp$site
-    sitestat <- temp$sitestat
+    site_stat <- temp$site_stat
   }
   
   site <- identify_sites(site, distrib_data)
   
   if(length(site) < Nsites(distrib_data))
-    cat(paste(Nsites(distrib_data)- length(site), "sites from sitestat were not found in", deparse(substitute(distrib_data)), "\n"))
+    cat(paste(Nsites(distrib_data)- length(site), "sites from site_stat were not found in", deparse(substitute(distrib_data)), "\n"))
   
-  mergeframe <- as.data.frame(lapply(sitestat, function(column) {
+  mergeframe <- as.data.frame(lapply(site_stat, function(column) {
     ret <- vector(mode = typeof(column), length = Nsites(distrib_data))
     ret[] <- NA
     #ret <- rep(NA, Nsites(distrib_data))
@@ -104,54 +106,54 @@ add_species_stat <- function(distrib_data, species_stat, specs = NULL){
 
 
 
-infer_sites_intern <- function(sites, sitestat) # a non-exported convenience function
+infer_sites_intern <- function(sites, site_stat) # a non-exported convenience function
 {
 #   suppressWarnings(numsites <- as.numeric(sites)) #I removed this as it caused trouble
 #   if(sum(is.na(numsites)) < 0.2*length(sites)){
 #     if(all.equal(numsites, floor(numsites))) {      # if site names are just integers, matching is not attempted
-#       if(nrow(sitestat) == length(sites))
-#         return(list(site = sites, sitestat = sitestat)) else 
+#       if(nrow(site_stat) == length(sites))
+#         return(list(site = sites, site_stat = site_stat)) else 
 #           warning("Site matching was done based on name matching, which is tricky when site names are integer values")
 #     }
 #   }
 #   
   potentials <- list()
-  if(!is.null(sitestat$sites))
-    potentials$sites <- sitestat$sites
+  if(!is.null(site_stat$sites))
+    potentials$sites <- site_stat$sites
   
-  if(!is.null(sitestat$site))
-    potentials$site <- sitestat$site
+  if(!is.null(site_stat$site))
+    potentials$site <- site_stat$site
   
-  if(!is.null(sitestat$plot))
-    potentials$plot <- sitestat$plot
+  if(!is.null(site_stat$plot))
+    potentials$plot <- site_stat$plot
   
-  if(!is.null(sitestat$Plot))
-    potentials$Plot <- sitestat$Plot
+  if(!is.null(site_stat$Plot))
+    potentials$Plot <- site_stat$Plot
   
-  if(!is.null(sitestat$cell))
-    potentials$cell <- sitestat$cell
+  if(!is.null(site_stat$cell))
+    potentials$cell <- site_stat$cell
   
-  if(!is.null(sitestat$Cell))
-    potentials$Cell <- sitestat$Cell
+  if(!is.null(site_stat$Cell))
+    potentials$Cell <- site_stat$Cell
   
-  if(!is.null(sitestat$ID))
-    potentials$ID <- sitestat$ID
+  if(!is.null(site_stat$ID))
+    potentials$ID <- site_stat$ID
   
-  if(!is.null(sitestat$Sites))
-    potentials$sites <- sitestat$sites
+  if(!is.null(site_stat$Sites))
+    potentials$sites <- site_stat$sites
   
-  if(!is.null(sitestat$Site))
-    potentials$site <- sitestat$site
+  if(!is.null(site_stat$Site))
+    potentials$site <- site_stat$site
   
-  if(!is.null(sitestat$id))
-    potentials$id <- sitestat$id
+  if(!is.null(site_stat$id))
+    potentials$id <- site_stat$id
   
-  if(!is.null(rownames(sitestat)))
-    potentials$rownames <- rownames(sitestat)
+  if(!is.null(rownames(site_stat)))
+    potentials$rownames <- rownames(site_stat)
   
   temp <- sapply(1:length(potentials), function(index){
     matches <- sum(potentials[[index]] %in% sites)
-    return(matches/nrow(sitestat))
+    return(matches/nrow(site_stat))
   })
   
   res <- which(temp == max(temp))
@@ -163,13 +165,13 @@ infer_sites_intern <- function(sites, sitestat) # a non-exported convenience fun
   site <- potentials[[res]]
   
   if(temp[res] < 0.8){
-    temp <- sapply(1:length(sitestat), function(index){
-      matches <- sum(sitestat[[index]] %in% sites)
-      return(matches/nrow(sitestat))
+    temp <- sapply(1:length(site_stat), function(index){
+      matches <- sum(site_stat[[index]] %in% sites)
+      return(matches/nrow(site_stat))
     })
     res <- which(temp == max(temp))[1]
-    name <- names(sitestat)[res]
-    site <- sitestat[[res]]
+    name <- names(site_stat)[res]
+    site <- site_stat[[res]]
   }
   
   if(temp[res] < 0.4)
@@ -178,41 +180,44 @@ infer_sites_intern <- function(sites, sitestat) # a non-exported convenience fun
 
   ##### We need a matching function here to do the actual matching!
   
-  sitestat <- subrow_data.frame(sitestat, which(!is.na(site)))
+  site_stat <- subrow_data.frame(site_stat, which(!is.na(site)))
   site <- site[!is.na(site)]
   
-  sitestat_ret <- sitestat[match(sites, as.character(site)), ]
+  site_stat_ret <- subrow_data.frame(site_stat,match(sites, as.character(site)))
   
   cat(paste("Matching sites by", name, "\n"))
   
-  if(name == "rownames")
-    sitestat_ret$sites <- as.character(site)
+  if(name == "rownames"){
+    site_stat_ret$sites <- as.character(site)[match(sites, as.character(site))]
+    name <- "sites"
+  }
+    
   
-  index <- which(sapply(sitestat_ret, function(x) identical(x, sitestat_ret[[name]])))[1]
+  index <- which(sapply(site_stat_ret, function(x) identical(x, site_stat_ret[[name]])))[1]
   
-  names(sitestat_ret)[index] <- "sites"
+  names(site_stat_ret)[index] <- "sites"
   
-  if(sum(names(sitestat_ret) == "sites") > 1)
+  if(sum(names(site_stat_ret) == "sites") > 1)
     stop(paste("Could not match on the variable called sites, as", name, "had a greater correspondence. Please rename"))
   
-  sitestat_ret$sites <- as.character(sitestat_ret$sites)
+  site_stat_ret$sites <- as.character(site_stat_ret$sites)
   
-  return(sitestat_ret)
+  return(site_stat_ret)
 }
 
 
-infer_sites <- function(distrib_data, sitestat) # a non-exported convenience function
+infer_sites <- function(distrib_data, site_stat) # a non-exported convenience function
 {
-  ret <- infer_sites_intern(sites(distrib_data), sitestat)
+  ret <- infer_sites_intern(sites(distrib_data), site_stat)
   
   suppressWarnings(sitenames <- identify_sites(ret$sites, distrib_data, as.name = TRUE))
   matchsite <- match(ret$sites, sitenames)
   
-  sitestat <- subrow_data.frame(ret, which(!is.na(matchsite)))
-  site <- sitestat$sites
-  sitestat$sites <- NULL
+  site_stat <- subrow_data.frame(ret, which(!is.na(matchsite)))
+  site <- site_stat$sites
+  site_stat$sites <- NULL
   
-  return(list(site = site, sitestat = sitestat))
+  return(list(site = site, site_stat = site_stat))
 }
 
 

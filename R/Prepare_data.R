@@ -237,7 +237,7 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
     
     if (ncol(coords)==3 & !(xcol + ycol == 0) & isTRUE(all.equal(coords[,-c(xcol, ycol)], unique(coords[,-c(xcol, ycol)])))) names(coords)[!names(coords) %in% c("myX", "myY")] <- "sites" else 
       if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix)) & ncol(coords) == 2){
-        if(is.null(rownames(coords)))
+        if(is.null(rownames(coords)) || identical(rownames(coords), as.character(1:nrow(coords))))
           coords = data.frame(sites = rownames(commatrix)) else 
             if (!identical(rownames(commatrix), rownames(coords))) stop("Because the rownames of commatrix and coords differ, sitenames cannot be established unless they are included explicitly as a third column of coords")
       }  else {

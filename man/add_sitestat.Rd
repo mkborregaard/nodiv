@@ -9,7 +9,7 @@ Site statistics of \code{nodiv} data objects
 Adds, plots or reads site statistics from objects in the \code{nodiv} package
 }
 \usage{
-add_sitestat(distrib_data, sitestat, site = NULL)
+add_sitestat(distrib_data, site_stat, site = NULL)
 plot_sitestat(distrib_data, x, ...)
 sitestat(distrib_data, statname = NULL, site = NULL)
 }
@@ -18,9 +18,9 @@ sitestat(distrib_data, statname = NULL, site = NULL)
   \item{distrib_data}{
 An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result}
 }
-  \item{sitestat}{
+  \item{site_stat}{
 A site statistic, such as species richness or mean temperature. This can be a vector or a data.frame. If 
-\code{site} is not specified, the function tries to match \code{sitestat} to the site names of the \code{distrib_data} 
+\code{site} is not specified, the function tries to match \code{site_stat} to the site names of the \code{distrib_data} 
 object. The function looks for vector names, rownames, or variables in the data.frame that match the site names. 
 If sitenames are absent and the number of sitestats match, the sitestat is assumed to be in the correct order. 
 }
