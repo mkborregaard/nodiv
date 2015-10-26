@@ -12,8 +12,8 @@ The package implements Borregaard et al. (2014) method for identifying nodes in 
 \tabular{ll}{
 Package: \tab nodiv\cr
 Type: \tab Package\cr
-Version: \tab 1.1.0\cr
-Date: \tab 2015-06-14\cr
+Version: \tab 1.1.2\cr
+Date: \tab 2015-10-26\cr
 License: \tab GPL-3\cr
 }
 The workflow starts by creating a \code{nodiv_data} data object, which makes sure that the phylogeny, the species distributions and the spatial coordinates of sites are matched correctly. The function takes a number of data types. There are several functions for exploratory data analysis, including \code{plot}, \code{summary}, \code{richness}, \code{Node_occupancy}, \code{Node_size} etc. The core of the package are the functions \code{Nodesig}, which compares the distributions of the two clades descending from a node, and \code{Node_analysis}, which applies this function to all nodes in the phylogeny and summarizes the results as a \code{nodiv_result} object. There is a set of functions for interpretation of the results, including \code{plot}, \code{plotSOS}, and \code{summary}. The package also provides basic functions for plotting and manipulating data sets that combine spatial distributions with phylogenies, e.g. \code{subsample}, \code{plot_grid} and \code{plot_points}.  
