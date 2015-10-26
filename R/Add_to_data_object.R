@@ -8,6 +8,12 @@ add_sitestat <- function(distrib_data, site_stat, site = NULL){
   
   if(is.vector(site_stat)){
     nam <- deparse(substitute(site_stat))
+    if(is.null(names(site_stat)) && length(site_stat) == Nsites(distrib_data)){
+      if(nam %in% names(distrib_data$coords@data))
+        warning(paste("Overwriting the contents of", nam))
+      distrib_data$coords@data[[nam]] <- site_stat
+      return(distrib_data)
+    }
     rownam <- names(site_stat)
     site_stat <- as.data.frame(site_stat, stringsAsFactors = FALSE)
     names(site_stat) <- nam
