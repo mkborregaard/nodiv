@@ -5,6 +5,7 @@
 \alias{occupancy}
 \alias{sites}
 \alias{species}
+\alias{coords}
 
 \title{
 Basic attributes of \code{distrib_data} objects
@@ -19,6 +20,7 @@ richness(distrib_data, sites = NULL)
 occupancy(distrib_data, species = NULL)
 sites(distrib_data)
 species(distrib_data)
+coords(distrib_data)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +42,7 @@ The species for which to return the occupancy
 \code{sites} gives a list of site names in the object. 
 \code{species} gives a list of species names in the object. 
 \code{nodes} gives a node labels or node numbers 
+\code{coords} returns the spatial coordinates of points or grid cell centers 
 }
 
 \author{

@@ -5,6 +5,12 @@ head.distrib_data <- function(x, ...) print.distrib_data(x, ...)
 head.nodiv_data <- function(x, ...) print.nodiv_data(x, ...)
 head.nodiv_result <- function(x, ...) print.nodiv_result(x, ...)
 
+coords <- function(distrib_data){
+  if(!inherits(distrib_data, "distrib_data"))
+    stop("object must be of class distrib_data")
+  coordinates(distrib_data$coords)
+}
+
 occurrences <- function(distrib_data, species, value = c("index", "names", "logical", "raw")){
   value = match.arg(value)
   if (!inherits(distrib_data, "distrib_data")) 
