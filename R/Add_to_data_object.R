@@ -174,10 +174,14 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
     name <- names(site_stat)[res]
     site <- site_stat[[res]]
   }
+<<<<<<< Updated upstream
   
   #if(temp[res] < 0.4)
    # stop("Sites could not be matched automatically, please supply the site argument explicitly")
   
+=======
+
+>>>>>>> Stashed changes
 
   ##### We need a matching function here to do the actual matching!
   
@@ -187,6 +191,8 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
   site_stat_ret <- subrow_data.frame(site_stat,match(sites, as.character(site)))
   
   cat(paste("Matching sites by", name, "\n"))
+  hits = sum(site %in% sites)
+  cat(paste(hits, " sites were matched:\n\t", floor(hits/length(site) * 100), "% of ", length(site), " sites in site_stat\n\t", floor(hits/length(sites) * 100), "% of ", length(sites), " sites in distrib_data\n", sep = ""))
   
   if(name == "rownames"){
     site_stat_ret$sites <- as.character(site)[match(sites, as.character(site))]
