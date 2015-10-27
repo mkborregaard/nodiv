@@ -29,13 +29,14 @@ add_sitestat <- function(distrib_data, site_stat, site = NULL){
   
   site <- identify_sites(site, distrib_data)
   
-  if(length(site) < Nsites(distrib_data))
-    cat(paste(Nsites(distrib_data)- length(site), "sites from site_stat were not found in", deparse(substitute(distrib_data)), "\n"))
+ # if(length(site) < Nsites(distrib_data))
+  #  cat(paste(Nsites(distrib_data)- length(site), "sites from site_stat were not found in", deparse(substitute(distrib_data)), "\n"))
   
   mergeframe <- as.data.frame(lapply(site_stat, function(column) {
     ret <- vector(mode = typeof(column), length = Nsites(distrib_data))
     ret[] <- NA
-    #ret <- rep(NA, Nsites(distrib_data))
+    if(is.factor(column))
+      ret <- factor(ret, levels = levels(column))
     ret[site] <- column
     ret
   }), stringsAsFactors = FALSE)
@@ -69,13 +70,7 @@ add_species_stat <- function(distrib_data, species_stat, specs = NULL){
     species_stat <- as.data.frame(species_stat, stringsAsFactors = FALSE)
     names(species_stat) <- nam
   } 
-  
-  if(is.factor(species_stat)){
-    nam <- deparse(substitute(species_stat))
-    species_stat <- as.data.frame(species_stat)
-    names(species_stat) <- nam
-  } 
-  
+
   num <- nrow(species_stat)
   
   if(is.null(specs))
@@ -180,8 +175,8 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
     site <- site_stat[[res]]
   }
   
-  if(temp[res] < 0.4)
-    stop("Sites could not be matched automatically, please supply the site argument explicitly")
+  #if(temp[res] < 0.4)
+   # stop("Sites could not be matched automatically, please supply the site argument explicitly")
   
 
   ##### We need a matching function here to do the actual matching!
