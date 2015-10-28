@@ -8,7 +8,7 @@ add_sitestat <- function(distrib_data, site_stat, site = NULL){
 
   if(is.vector(site_stat)){
     nam <- deparse(substitute(site_stat))
-    if(is.null(names(site_stat)) && length(site_stat) == Nsites(distrib_data)){
+    if(is.null(names(site_stat)) & length(site_stat) == Nsites(distrib_data)){
       if(nam %in% names(distrib_data$coords@data))
         warning(paste("Overwriting the contents of", nam))
       distrib_data$coords@data[[nam]] <- site_stat
@@ -185,7 +185,9 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
 
   cat(paste("Matching sites by", name, "\n"))
   hits = sum(site %in% sites)
-  cat(paste(hits, " sites were matched:\n\t", floor(hits/length(site) * 100), "% of ", length(site), " sites in site_stat\n\t", floor(hits/length(sites) * 100), "% of ", length(sites), " sites in distrib_data\n", sep = ""))
+  if(hits == length(site) & hits == length(site))
+    cat("All sites matched\n") else
+    cat(paste(hits, " sites were matched:\n\t", floor(hits/length(site) * 100), "% of ", length(site), " sites in site_stat\n\t", floor(hits/length(sites) * 100), "% of ", length(sites), " sites in distrib_data\n", sep = ""))
 
   if(name == "rownames"){
     site_stat_ret$sites <- as.character(site)[match(sites, as.character(site))]

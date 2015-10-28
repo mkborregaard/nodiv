@@ -402,7 +402,7 @@ sitestat <- function(distrib_data, statname = NULL, site = NULL)
     warning(paste("Dropping sitestats:", paste(statname[-fitnames], collapse = ", ") , "not found in distrib_data"))
   
   ret <- distrib_data$coord@data[,sitestatnames %in% statname]
-  if(is.vector(ret) || is.factor(ret)) {
+  if(is.vector(ret) | is.factor(ret)) {
     names(ret) <- sites(distrib_data)
     ret <- ret[site]
   } else ret <- ret[site,]
