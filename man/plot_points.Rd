@@ -15,7 +15,7 @@ plot_points(x, coords, col, shape = NULL,
   pch = 16, bg = par("bg"), ...)
 plot_grid(x, coords, col, shape = NULL, 
   shapefill = "grey",  zlim = NULL, 
-  zoom_to_points = FALSE,  ...)
+  zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, gridsites, overlay_shape = FALSE, ...)
 plot_species(distrib_data, species, col = c("darkgreen", "red"), ...)
 }
 
@@ -52,8 +52,23 @@ The central color of points when using a pch value between 21 and 25
   \item{distrib_data}{
 An object of type \code{distrib_data}, \code{nodiv_data} or \code{nodiv_result} to use for plotting x.
 }
+  \item{legend}{
+Whether to plot a color legend
+}
   \item{species}{
 The number or name of the species to be plotted
+}
+  \item{gridcol}{
+If specified, plots the sampling grid cell borders in this color
+}
+  \item{gridlwd}{
+If specified, set the line width of overlaid grid cell borders
+}
+  \item{gridlwd}{
+If specified, which grid cells to create borders around
+}
+  \item{overlay_shape}{
+Whether to overlay the shape file border on top of the points - only works if shape is a vector shapefile
 }
   \item{\dots}{
 Additional arguments to pass to plot

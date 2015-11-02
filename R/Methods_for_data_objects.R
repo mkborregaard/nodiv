@@ -38,6 +38,8 @@ occurrences <- function(distrib_data, species, value = c("index", "names", "logi
   ret  
 }
 
+
+#This function presently throws out the site statistics - instead it should be aggregating them!
 gridData <- function(dist_data, cellsize_x = 1, cellsize_y = cellsize_x, xll_corner, yll_corner){
   if (!inherits(dist_data, "distrib_data")) 
     stop("object is not of class \"distrib_data\"")

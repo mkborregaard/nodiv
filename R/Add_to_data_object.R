@@ -166,13 +166,17 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
   site <- potentials[[res]]
 
   if(temp[res] < 0.8){
-    temp <- sapply(1:length(site_stat), function(index){
+    temp2 <- sapply(1:length(site_stat), function(index){
       matches <- sum(site_stat[[index]] %in% sites)
       return(matches/nrow(site_stat))
     })
-    res <- which(temp == max(temp))[1]
-    name <- names(site_stat)[res]
-    site <- site_stat[[res]]
+    
+    if(max(temp2) > max(temp)){
+      temp <- temp2
+      res <- which(temp == max(temp))[1]
+      name <- names(site_stat)[res]
+      site <- site_stat[[res]]      
+    }
   }
 
 

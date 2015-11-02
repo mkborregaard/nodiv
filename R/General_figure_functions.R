@@ -6,7 +6,7 @@
 # Here comes a list of functions to use for the analysis. These definitions should all be loaded into R
 
 
-plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", zlim = NULL, zoom_to_points = FALSE, ...)
+plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapeborder = NA, zlim = NULL, zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, gridsites, overlay_shape = FALSE, ...)
 {
   if(inherits(x, "SpatialPixelsDataFrame"))
     rast <- raster(x) else
@@ -49,20 +49,42 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", zlim = N
   
 
   
-  if(is.null(shape)) plot(rast, zlim = zlim, col = col, ...) else
+  if(is.null(shape)) plot(rast, zlim = zlim, col = col, legend = legend, ...) else
   {
-    if(inherits(shape, "SpatialPolygonsDataFrame"))
-      border <- shapefill else border <- NULL
+    if(!inherits(shape, "SpatialPolygonsDataFrame"))
+      shapeborder <- NULL
     if(zoom_to_points){
       if(inherits(shape, "Raster"))
-        plot(shape, col = shapefill, border = border, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = FALSE, ...) else 
-          plot(shape, col = shapefill, border = border, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...)
+        plot(shape, col = shapefill, border = shapeborder, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = FALSE, ...) else 
+          plot(shape, col = shapefill, border = shapeborder, xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], ...)
     } else {
       if(inherits(shape, "Raster"))
-        plot(shape, col = shapefill, border = border, legend = FALSE, ...) else plot(shape, col = shapefill, border = border, ...)
+        plot(shape, col = shapefill, border = shapeborder, legend = FALSE, ...) else plot(shape, col = shapefill, border = shapeborder, ...)
     }
-    plot(rast, add = T, zlim = zlim, col = col)
+    plot(rast, add = T, zlim = zlim, col = col, legend = legend)
   }
+  
+  if(!missing(gridcol) || !missing(gridlwd) || !missing(gridsites)){
+    if(missing(gridcol))
+      gridcol <- "lightgrey"
+    if(missing(gridlwd))
+      gridlwd <- 0.4
+    if(missing(gridsites))
+      gridsites <- 1:length(x)
+    add_grid(coords, sites = gridsites, border = gridcol, lwd = gridlwd)
+  }
+  
+  if(overlay_shape){
+    if(is.null(shape))
+      stop("No shape to overlay in the data set")
+    if(!inherits(shape, "SpatialPolygonsDataFrame"))
+      stop("Can only overlay objects of type SpatialPolygonsDataFrame")
+    if(is.na(shapeborder))
+      shapeborder = "white"
+    plot(shape, border = shapeborder, add = TRUE, lwd = 0.15, ...) 
+  }
+    
+  
   invisible(rast)
 }
 
@@ -102,6 +124,7 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
 
   #split.screen( rbind(c(0, .8,0,1), c(.8,1,0,1)))
   #screen(1)
+  
   oldpar <- par()
   #par(plt = c(0,0.8,0,1))
   par(mar = c(5,4,4,6) + 0.1)
@@ -133,6 +156,7 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
 
   #screen(2)
   par <- oldpar
+
 
   add_legend(col = col, zlim = zlim)
   #image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
@@ -232,4 +256,17 @@ add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col)
   par(new = FALSE, pty = old.par$pty, plt = old.par$plt, err = old.par$err)
   invisible()
 }
+
+add_grid <- function(coords, sites = 1:nrow(coords), border = "lightgrey", lwd = 0.4, ...){
+  if(inherits(coords, "SpatialPoints"))
+    coords <- coordinates(coords)
+  lon <- coords[,1]
+  lat <- coords[,2]	
+  cellsize_x <- min(abs(diff(unique(lon))))/2
+  cellsize_y <- min(abs(diff(unique(lat))))/2
+  lon <- lon[sites]
+  lat <- lat[sites]
+  rect(lon - cellsize_x, lat - cellsize_y, lon + cellsize_x, lat + cellsize_y, col = NA, border = border, lwd = lwd, ...)
+}
+
 
