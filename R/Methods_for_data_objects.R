@@ -360,23 +360,54 @@ occupancy <- function(distrib_data, species = NULL)
   return(colSums(distrib_data$comm[, species] > 0, na.rm = T))
 }
 
-plot_sitestat <- function(distrib_data, x, ...)
+plot_sitestat <- function(distrib_data, x, shape = NULL, type = c("auto", "points","grid"), ...)
 {
-  if(!inherits(distrib_data, "distrib_data"))
-    stop("distrib_data must be an object of type distrib_data, nodiv_data or nodiv_result")
+  coords = NULL
+  type = match.arg(type)
+  if(inherits(distrib_data, "distrib_data"))
+  {
+    coords = distrib_data$coords
+    if(!is.null(distrib_data$shape)) {
+      if(is.null(shape))
+        shape <- distrib_data$shape else
+        warning("overriding the shape file associated with distrib_data")
+    }
+    
+    if(is.character(x))
+      if(length(x) == 1)
+        x <- sitestat(distrib_data, x) 
+      
+    if(type == "auto")
+      type <- distrib_data$type
+    if(!type == distrib_data$type)
+      warning(paste("Argument type has value",type,"but distrib_data is of type", distrib_data$type,"; this can cause problems or crashes"))
+    nsit = Nsites(distrib_data)
+  } 
   
-  if(is.character(x)){
-    if(length(x) == 1)
-      x <- sitestat(distrib_data, x) else
-        if(!length(x) == Nsites(distrib_data))
-          stop(paste("x must be a numeric vector of length", Nsites(distrib_data), "or the name of a site variable in distrib_data"))
-
+  if(inherits(distrib_data, "SpatialPoints")){
+    coords <- distrib_data
+    nsit <- nrow(coordinates(coords))
   }
 
-  if(is.null(distrib_data$shape)) shape <- NULL else shape <- distrib_data$shape
-  if(distrib_data$type == "grid")
-    plot_grid(x, distrib_data$coords, shape = shape, ...) else
-      plot_points(x, distrib_data$coords, shape = shape, ...)
+  if(is.matrix(distrib_data))
+    distrib_data <- data.frame(distrib_data)
+  if(is.data.frame(distrib_data))
+    if(ncol(distrib_data) == 2){
+      coords <- distrib_data
+      nsit <- nrow(coords)
+    }
+
+  if(is.null(coords))
+    stop("Wrong argument type for distrib_data - should be a distrib_data objects, spatial points or a two-column matrix of x and y values")
+  
+  if(type == "auto") type <- ifelse(isGrid(coords), "grid", "points")
+
+  if(!length(x) == nsit)
+    stop(paste("x must be a numeric vector of length", nsit, "or the name of a site variable in distrib_data"))
+
+  if(type == "grid")
+    plot_grid(x, coords, shape = shape, ...) else
+      plot_points(x, coords, shape = shape, ...)
 }
 
 sitestat <- function(distrib_data, statname = NULL, site = NULL)

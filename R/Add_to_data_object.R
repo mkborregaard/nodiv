@@ -148,6 +148,9 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
 
   if(!is.null(site_stat$id))
     potentials$id <- site_stat$id
+  
+  if(!is.null(site_stat$centroid))
+    potentials$id <- site_stat$centroid
 
   if(!is.null(rownames(site_stat)))
     potentials$rownames <- rownames(site_stat)

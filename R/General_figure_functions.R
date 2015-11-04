@@ -89,7 +89,7 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
 }
 
 
-plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), ...)
+plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim= NULL,  zoom_to_points = FALSE, pch = 16, bg = par("bg"), legend = TRUE, ...)
 {  
   if(inherits(x, "SpatialPointsDataFrame"))
   {
@@ -158,7 +158,7 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
   par <- oldpar
 
 
-  add_legend(col = col, zlim = zlim)
+  if(legend)  add_legend(col = col, zlim = zlim)
   #image.plot( zlim = zlim,legend.only=TRUE, smallplot=c(.85,.87, .38,.65), col=col)
   ret <- data.frame(x)
   names(ret) <- deparse(substitute(x))
