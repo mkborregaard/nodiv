@@ -12,10 +12,11 @@ Plots a variable either as colored points or as a colored raster. \code{plot_sit
 \usage{
 plot_points(x, coords, col, shape = NULL, 
   shapefill = "grey",  zlim= NULL,  zoom_to_points = FALSE, 
-  pch = 16, bg = par("bg"), ...)
+  pch = 16, bg = par("bg"), legend = TRUE, ...)
 plot_grid(x, coords, col, shape = NULL, 
-  shapefill = "grey",  zlim = NULL, 
-  zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, gridsites, overlay_shape = FALSE, ...)
+  shapefill = "grey",  shapeborder = NA, zlim = NULL, 
+  zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, 
+  gridsites, overlay_shape = FALSE, ...)
 plot_species(distrib_data, species, col = c("darkgreen", "red"), ...)
 }
 
@@ -29,7 +30,7 @@ A matrix or \code{data.frame} with two columns, or an object inheriting from \co
   \item{col}{
 The color palette to use for the color scale. Can be given as color names, a vector of hex colors from a call to a color palette (e.g., \code{terrain.colors(64)}), 
 or as the name of one of nodiv's internal palettes. Possibillities are \code{"parula", "jet", "blackbody", "HMblueyellow", "HMrainbow", 
-"HMlinear_optimal", "HMoptimal_scale", "cube1", "cubeyf1"}.
+"HMlinear_optimal", "HMoptimal_scale", "cube1", "cubeyf1"}. Alternatively \code{col} can be one of \code{"auto", "ramp", "monochrome", "divergent" or "individual"}, allowing \code{nodiv} to choose a palette of the given type
 }
   \item{shape}{
 A shape file giving a map to use as a background for the plot
@@ -63,9 +64,6 @@ If specified, plots the sampling grid cell borders in this color
 }
   \item{gridlwd}{
 If specified, set the line width of overlaid grid cell borders
-}
-  \item{gridlwd}{
-If specified, which grid cells to create borders around
 }
   \item{overlay_shape}{
 Whether to overlay the shape file border on top of the points - only works if shape is a vector shapefile

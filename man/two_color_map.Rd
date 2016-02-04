@@ -8,7 +8,8 @@ Plot the relative amounts of two variables using a purple-green color scheme
 Plots site statistics from objects in the \code{nodiv} package
 }
 \usage{
-two_color_map(distrib_data, vec1, vec2, res = 10, showlegend = T, legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), ...)
+two_color_map(distrib_data, vec1, vec2, res = 10, showlegend = T, 
+legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -28,7 +29,7 @@ The resolution of colors on the color legend
   \item{showlegend}{
 A boolean specifying whether to show the legend
 }
-  \item{legendcoords}{
+  \item{legend_coords}{
 A vector x1, x2, y1, y2 specifying the location and extent of the color legend
 }
   \item{type}{
@@ -53,6 +54,7 @@ Michael Krabbe Borregaard
 
 \seealso{
 \code{\link{distrib_data}}
+\code{\link{plot_points}}
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

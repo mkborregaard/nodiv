@@ -28,14 +28,19 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
   
   coltype = match.arg(coltype)
   
+  if(is.character(vec))
+    vec <- as.factor(vec)
+  
+  if(is.factor(vec))
+    zlim = c(1,length(levels(vec)))
+  
   if(is.null(zlim)){
     zlim <- range(vec, na.rm = TRUE)
     
     if(zlim[1] * zlim[2] < 0)
       zlim <- c(-max(abs(vec), na.rm = TRUE), max(abs(vec), na.rm = TRUE))
   }
-  if(is.character(vec))
-    vec <- as.factor(vec)
+  
   if(coltype == "auto"){
     if(is.factor(vec))
       coltype <- "individual" else {

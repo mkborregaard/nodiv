@@ -38,7 +38,17 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
     zlim <- attr(col, "zlim")
   }
   
-  if(is.character(col))
+  if(is.character(col) & length(col) == 1){
+    if(col %in% c("auto", "ramp", "monochrome", "divergent", "individual")){
+      val <- getValues(rast)
+      if(col == "individual")
+        val <- as.factor(as.character(val))
+      col <- choose.colors(val, zlim, coltype = col)
+      zlim <- attr(col, "zlim")
+    }
+  }
+  
+    if(is.character(col))
     if(length(col) == 1)
       if(!substr(col, 1, 1) == "#")
         if(!col %in% colors())

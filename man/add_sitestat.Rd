@@ -10,7 +10,8 @@ Adds, plots or reads site statistics from objects in the \code{nodiv} package
 }
 \usage{
 add_sitestat(distrib_data, site_stat, site = NULL)
-plot_sitestat(distrib_data, x, ...)
+plot_sitestat(distrib_data, x, shape = NULL, type = c("auto",
+                 "points", "grid"), ...)
 sitestat(distrib_data, statname = NULL, site = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -35,6 +36,10 @@ names of sitestatistics is given
 A variable to plot on sites, can either be a numeric variable, or the name of a 
 sitestatistic in the \code{distrib_data} object
 }
+  \item{shape}{
+A shape file giving a map to use as a background for the plot
+}
+ \item{type}{A character vector describing the type of data}
 \item{\dots}{
 Further arguements to the plotting function
 }
