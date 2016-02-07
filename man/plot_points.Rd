@@ -38,6 +38,9 @@ A shape file giving a map to use as a background for the plot
   \item{shapefill}{
 If shape is a polygon, the color to use to fill the polygons. If shape is a line shapefile, the color to use for plotting lines
 }
+  \item{shapeborder}{
+If shape is a polygon, the color to use for plotting the line border
+}
   \item{zlim}{
 The values to use for the extremes of the color scale
 }
@@ -64,6 +67,9 @@ If specified, plots the sampling grid cell borders in this color
 }
   \item{gridlwd}{
 If specified, set the line width of overlaid grid cell borders
+}
+  \item{gridsites}{
+If specified, which grid cells to draw cell borders around
 }
   \item{overlay_shape}{
 Whether to overlay the shape file border on top of the points - only works if shape is a vector shapefile

@@ -279,4 +279,20 @@ add_grid <- function(coords, sites = 1:nrow(coords), border = "lightgrey", lwd =
   rect(lon - cellsize_x, lat - cellsize_y, lon + cellsize_x, lat + cellsize_y, col = NA, border = border, lwd = lwd, ...)
 }
 
+phyplot <- function(x, type = "phylogram", use.edge.length = TRUE, node.pos = NULL, 
+          show.tip.label = TRUE, show.node.label = FALSE, edge.color = "black", 
+          edge.width = 1, edge.lty = 1, font = 3, cex = par("cex"), 
+          adj = NULL, srt = 0, no.margin = FALSE, root.edge = FALSE, 
+          label.offset = 0, underscore = FALSE, x.lim = NULL, y.lim = NULL, 
+          direction = "rightwards", lab4ut = NULL, tip.color = "black", 
+          plot = TRUE, rotate.tree = 0, open.angle = 0, node.depth = 1, 
+          align.tip.label = FALSE, ...) 
+  plot(x, type, use.edge.length, node.pos, 
+       show.tip.label, show.node.label, edge.color, 
+       edge.width, edge.lty, font, cex, 
+       adj, srt, no.margin, root.edge, 
+       label.offset, underscore, x.lim, y.lim, 
+       direction, lab4ut, tip.color, 
+       plot, rotate.tree, open.angle, node.depth, 
+       align.tip.label, ...) 
 

@@ -8,7 +8,9 @@ head.nodiv_result <- function(x, ...) print.nodiv_result(x, ...)
 coords <- function(distrib_data){
   if(!inherits(distrib_data, "distrib_data"))
     stop("object must be of class distrib_data")
-  coordinates(distrib_data$coords)
+  ret <- coordinates(distrib_data$coords)
+  rownames(ret) <- sites(distrib_data)
+  ret
 }
 
 occurrences <- function(distrib_data, species, value = c("index", "names", "logical", "raw")){

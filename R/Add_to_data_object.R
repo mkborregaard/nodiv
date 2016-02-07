@@ -123,7 +123,7 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
     potentials$sites <- site_stat$sites
 
   if(!is.null(site_stat$site))
-    potentials$site <- site_stat$site
+    potentials$sites <- site_stat$site
 
   if(!is.null(site_stat$plot))
     potentials$plot <- site_stat$plot
@@ -144,7 +144,7 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
     potentials$sites <- site_stat$sites
 
   if(!is.null(site_stat$Site))
-    potentials$site <- site_stat$site
+    potentials$sites <- site_stat$site
 
   if(!is.null(site_stat$id))
     potentials$id <- site_stat$id
