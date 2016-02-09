@@ -119,14 +119,24 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
 #   }
 #
   continue <- FALSE
+  temp <- 0
   
   potnams <- c("sites", "site","Sites", "Site", "plot", "Plot", "cell", "Cell", "ID", "id", "Centroid", "centroid") 
   
   potid <- which(names(site_stat) %in% potnams)
-  if(length(potid) == 0) 
+  
+  
+  if(is.null(rownames(site_stat)))
     continue <- TRUE else {
-    potentials <- as.list(as.data.frame(site_stat[[potid]]))
-    
+    if(length(potid) == 0){
+      potentials <- as.list(as.data.frame(rownames(site_stat)))
+      names(potentials) <- "rownames"
+    } else {
+      potentials <- as.list(as.data.frame(site_stat[[potid]]))
+      names(potentials) <- names(site_stat)[potid]    
+      potentials[["rownames"]] <- rownames(site_stat)
+    }
+
     temp <- sapply(1:length(potentials), function(index){
       matches <- sum(potentials[[index]] %in% sites)
       return(matches/nrow(site_stat))
@@ -253,3 +263,4 @@ infer_species <- function(distrib_data, species_stat) # a non-exported convenien
 
   return(list(species = spec, species_stat = species_stat))
 }
+
