@@ -118,57 +118,32 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
 #     }
 #   }
 #
-  potentials <- list()
-  if(!is.null(site_stat$sites))
-    potentials$sites <- site_stat$sites
-
-  if(!is.null(site_stat$site))
-    potentials$sites <- site_stat$site
-
-  if(!is.null(site_stat$plot))
-    potentials$plot <- site_stat$plot
-
-  if(!is.null(site_stat$Plot))
-    potentials$Plot <- site_stat$Plot
-
-  if(!is.null(site_stat$cell))
-    potentials$cell <- site_stat$cell
-
-  if(!is.null(site_stat$Cell))
-    potentials$Cell <- site_stat$Cell
-
-  if(!is.null(site_stat$ID))
-    potentials$ID <- site_stat$ID
-
-  if(!is.null(site_stat$Sites))
-    potentials$sites <- site_stat$sites
-
-  if(!is.null(site_stat$Site))
-    potentials$sites <- site_stat$site
-
-  if(!is.null(site_stat$id))
-    potentials$id <- site_stat$id
+  continue <- FALSE
   
-  if(!is.null(site_stat$centroid))
-    potentials$id <- site_stat$centroid
-
-  if(!is.null(rownames(site_stat)))
-    potentials$rownames <- rownames(site_stat)
-
-  temp <- sapply(1:length(potentials), function(index){
-    matches <- sum(potentials[[index]] %in% sites)
-    return(matches/nrow(site_stat))
-  })
-
-  res <- which(temp == max(temp))
-  if(length(res) > 1){
-    res <- res[1]
-    warning(paste(length(res), "variables had an equally good correspondence to the sitenames:", max(temp), ". Using the first of these,", names(potentials)[res], "to align"))
+  potnams <- c("sites", "site","Sites", "Site", "plot", "Plot", "cell", "Cell", "ID", "id", "Centroid", "centroid") 
+  
+  potid <- which(names(site_stat) %in% potnams)
+  if(length(potid) == 0) 
+    continue <- TRUE else {
+    potentials <- as.list(as.data.frame(site_stat[[potid]]))
+    
+    temp <- sapply(1:length(potentials), function(index){
+      matches <- sum(potentials[[index]] %in% sites)
+      return(matches/nrow(site_stat))
+    })
+  
+    res <- which(temp == max(temp))
+    if(length(res) > 1){
+      res <- res[1]
+      warning(paste(length(res), "variables had an equally good correspondence to the sitenames:", max(temp), ". Using the first of these,", names(potentials)[res], "to align"))
+    }
+    name <- names(potentials)[res]
+    site <- potentials[[res]]
+    
+    if(temp[res] < 0.8) continue <- TRUE
   }
-  name <- names(potentials)[res]
-  site <- potentials[[res]]
-
-  if(temp[res] < 0.8){
+    
+  if (continue) {
     temp2 <- sapply(1:length(site_stat), function(index){
       matches <- sum(site_stat[[index]] %in% sites)
       return(matches/nrow(site_stat))
