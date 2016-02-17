@@ -212,7 +212,7 @@ Node_occupancy <- function(nodiv_data, node = NULL)
 DRscore <- function(x) UseMethod("DRscore")
 
 DRscore.phylo <- function(x){
-  cn <- Create_node_by_species_matrix(tree)[-1,] #we do not need the basal node
+  cn <- Create_node_by_species_matrix(x)[-1,] #we do not need the basal node
   DRbase(x, cn)
 }
 
