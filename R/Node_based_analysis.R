@@ -209,6 +209,41 @@ Node_occupancy <- function(nodiv_data, node = NULL)
       return(sapply(node, function(nod) .local(nodiv_data, nod))) 
 }
 
+DRscore <- function(x) UseMethod("DRscore")
+
+DRscore.phylo <- function(x){
+  cn <- Create_node_by_species_matrix(tree)[-1,] #we do not need the basal node
+  DRbase(x, cn)
+}
+
+DRscore.nodiv_data <- function(x){
+  DRbase(x$phylo, x$node_species[-1,])
+}
+
+DRbase <- function(tree, cn){
+  # create the nodiv matrix
+
+  # number of descendants from a node
+  descnum <- rowSums(cn)
+  
+  # get the lengths of edges leading to tips and nodes
+  edgelengths <- cbind(tree$edge[,2], tree$edge.length)
+  edgelengths = edgelengths[order(edgelengths[,1]),]
+  nodeedge <- edgelengths[-(1:Ntip(tree)),2]
+  tipedge <- edgelengths[(1:Ntip(tree)),2]
+  
+  # and normalize by decendants
+  nodeedge <- nodeedge / descnum
+  
+  # apply this to the nodiv matrix
+  nodevals <- apply(cn, 2, function(x) x * nodeedge)
+  
+  # summarize for each species
+  brsums <- colSums(nodevals) + tipedge
+  
+  # return the inverse
+  1/brsums 
+}
 
 	
 
