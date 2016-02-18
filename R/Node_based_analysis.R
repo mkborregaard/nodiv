@@ -221,22 +221,20 @@ DRscore.nodiv_data <- function(x){
 }
 
 DRbase <- function(tree, cn){
-  # create the nodiv matrix
 
   # number of descendants from a node
   descnum <- rowSums(cn)
   
   # get the lengths of edges leading to tips and nodes
-  edgelengths <- cbind(tree$edge[,2], tree$edge.length)
-  edgelengths = edgelengths[order(edgelengths[,1]),]
-  nodeedge <- edgelengths[-(1:Ntip(tree)),2]
-  tipedge <- edgelengths[(1:Ntip(tree)),2]
+  edgelengths <- tree$edge.length[order(tree$edge[,2])]
+  nodeedge <- edgelengths[-(1:Ntip(tree))]
+  tipedge <- edgelengths[(1:Ntip(tree))]
   
   # and normalize by decendants
   nodeedge <- nodeedge / descnum
   
   # apply this to the nodiv matrix
-  nodevals <- apply(cn, 2, function(x) x * nodeedge)
+  nodevals <- cn * nodeedge
   
   # summarize for each species
   brsums <- colSums(nodevals) + tipedge
