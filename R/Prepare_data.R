@@ -273,7 +273,9 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
 }
 
 isGrid <- function(coords)
-  return(isGridVar(coordinates(coords)[,1]) & isGridVar(coordinates(coords)[,2]))
+  tryCatch({ kk = points2grid(SpatialPoints(coordinates(coords))); TRUE}, error = function(e) FALSE)
+#isGrid <- function(coords)
+ # return(isGridVar(coordinates(coords)[,1]) & isGridVar(coordinates(coords)[,2]))
 
 isGridVar <- function(gridVar)
 {

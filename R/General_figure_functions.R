@@ -13,7 +13,10 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
     if(missing(coords)) stop("coords must be defined if x is not a SpatialPixelsDataFrame") else
       if(inherits(coords, "SpatialPoints"))
       {
-        if(!isGrid(coords)) stop("this function is only suitable for gridded data")
+        if(!inherits(coords, "SpatialPixels"))
+          if(!isGrid(coords)) 
+            stop("this function is only suitable for gridded data")
+
         coords <- SpatialPoints(coords)
         suppressWarnings(rast <- raster(SpatialPixelsDataFrame( coords, as.data.frame(x)))) #TODO NB
       } else {
@@ -268,14 +271,12 @@ add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col)
 }
 
 add_grid <- function(coords, sites = 1:nrow(coords), border = "lightgrey", lwd = 0.4, ...){
-  if(inherits(coords, "SpatialPoints"))
-    coords <- coordinates(coords)
-  lon <- coords[,1]
-  lat <- coords[,2]	
-  cellsize_x <- min(abs(diff(unique(lon))))/2
-  cellsize_y <- min(abs(diff(unique(lat))))/2
-  lon <- lon[sites]
-  lat <- lat[sites]
+  cd <- SpatialPixels(SpatialPoints(coords))[sites]
+  lon <- coordinates(cd)[,1]
+  lat <- coordinates(cd)[,2]	
+  cellsize_x <- cd@grid@cellsize[1]/2
+  cellsize_y <- cd@grid@cellsize[2]/2
+ 
   rect(lon - cellsize_x, lat - cellsize_y, lon + cellsize_x, lat + cellsize_y, col = NA, border = border, lwd = lwd, ...)
 }
 
