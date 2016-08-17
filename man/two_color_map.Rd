@@ -9,7 +9,8 @@ Plots site statistics from objects in the \code{nodiv} package
 }
 \usage{
 two_color_map(distrib_data, vec1, vec2, res = 10, showlegend = T, 
-legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), ...)
+  legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), 
+  colour = c("green_purple", "green_red_purple_cyan"), ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -34,6 +35,9 @@ A vector x1, x2, y1, y2 specifying the location and extent of the color legend
 }
   \item{type}{
 To specify whether to plot as spatial points or a grid
+}
+  \item{colour}{
+What colour scheme to use for plotting
 }
 \item{\dots}{
 Further arguements to the plotting function

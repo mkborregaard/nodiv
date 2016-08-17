@@ -121,10 +121,15 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     commatrix[,3] <- as.character(commatrix[,3])
     commatrix <- sample2matrix(commatrix)   
   }
-
+  
   if(is.data.frame(commatrix)) commatrix <- as.matrix(commatrix)
   if(!is.matrix(commatrix)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   if(!is.numeric(commatrix)) stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
+  if(sum(is.na(as.numeric(commatrix))) > 0){
+    kk = which(is.na(as.numeric(commatrix)))
+    warning(paste(length(kk),"NA values in the presence-absence matrix was replaced by 0s"))
+    commatrix[kk] <- 0
+  }
   if(!sum(!unique(as.numeric(commatrix)) %in% 0:1) == 0) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
   
   temp <- floor(commatrix) #this is currently not necessary, due to the previous line
@@ -134,7 +139,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   if(is.matrix(coords)) coords <- as.data.frame(coords)
   cat("Transforming coords to spatial points\n")
   if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commatrix, type)
-
+  
   if(class(coords) == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords) == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
   
 

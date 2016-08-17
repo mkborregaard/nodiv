@@ -260,12 +260,14 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   if(show.legend)
   {
     par <- oldpar #screen(2)
-    add_legend(col = col, zlim = zlim, realzlim = realzlim)
+    add_legend(col = col, zlim = zlim)
   }
 }
 
 add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim)
 {
+  if(missing(realzlim))
+    realzlim <- zlim
   old.par <- par()
   if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
     stop("plot region too small to add legend\n")

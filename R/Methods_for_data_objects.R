@@ -113,7 +113,7 @@ Nsites<- function(distrib_data)
 
 print.distrib_data <- function(x, printlen = 4, ...)
 {
-  cat(paste("Data object with", x$type," distributions of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
+  cat(paste("Data object with", x$type,"distributions of", Nspecies(x),"species in", Nsites(x),"sites\n\n"))
   cat("Species names:\n")
   cat(paste("\t", paste(species(x)[1:printlen], collapse = ", "),", ...\n", sep = ""))
   cat("Site names:\n")

@@ -16,7 +16,8 @@ plot_points(x, coords, col, shape = NULL,
 plot_grid(x, coords, col, shape = NULL, 
   shapefill = "grey",  shapeborder = NA, zlim = NULL, 
   zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, 
-  gridsites, overlay_shape = FALSE, ...)
+  gridsites, overlay_shape = FALSE, 
+  colscale = c("equal_interval","quantiles"), ...)
 plot_species(distrib_data, species, col = c("darkgreen", "red"), ...)
 }
 
@@ -73,6 +74,9 @@ If specified, which grid cells to draw cell borders around
 }
   \item{overlay_shape}{
 Whether to overlay the shape file border on top of the points - only works if shape is a vector shapefile
+}
+  \item{colscale}{
+Specifies whether to define the colors on an equal interval or a quantile-based color scale
 }
   \item{\dots}{
 Additional arguments to pass to plot

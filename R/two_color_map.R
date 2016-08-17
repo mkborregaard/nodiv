@@ -8,13 +8,17 @@ normvec <- function(vec, res){
 }
 
 
-green_purple <- function(vec1, vec2, res = 10){
+assign_col <- function(vec1, vec2, res = 10, colour = "green_purple")
+{
   ret <- vec1 * vec2
   vec1 <- vec1[!is.na(ret)]
   vec2 <- vec2[!is.na(ret)]
   vec1 <- normvec(vec1, res)
   vec2 <- normvec(vec2, res)
-  tmp <- rgb((vec1 + vec2)/2, vec1, vec2)
+  if(colour == "green_purple")
+    tmp <- rgb((vec1 + vec2)/2, vec1, vec2) else
+    if(colour == "green_red_purple_cyan")
+      tmp <- rgb((1-vec1 + vec2)/2, vec1, 1-vec2) else stop("not recognized colour scheme")
   ret[!is.na(ret)] <- tmp
   
   retvec1 <- ret
@@ -26,13 +30,14 @@ green_purple <- function(vec1, vec2, res = 10){
   ret
 }
 
+
 #legend 
-plot_legend <- function(vec1, vec2, res = 10, show = T){
+plot_legend <- function(vec1, vec2, res = 10, show = T, colour = "green_purple"){
   v1 <- seq(min(vec1, na.rm = T), max(vec1, na.rm = T), length = res)
   v2 <- seq(min(vec2, na.rm = T), max(vec2, na.rm = T), length = res)
   pp = expand.grid((0:(res-1))/(res-1),(0:(res-1))/(res-1))
   pp$colorid <- 1:nrow(pp)
-  pp$color <- green_purple(pp[,1], pp[,2], res)
+  pp$color <- assign_col(pp[,1], pp[,2], res, colour)
   if(show) image(list(x = v1, y = v2, z = matrix(1:(res^2), nrow = res)), col = pp$color)
   pp <- data.frame(pp, data.frame(t(col2rgb(pp$color))),  v1 = v1, v2 = v2)
   box(lwd = 0.5)
@@ -47,9 +52,10 @@ dist_to_highest <- function(vec1, vec2){
   sqrt((1-vec1)^2 + (1-vec2)^2)
 }
 
-two_color_map <- function(distrib_data, vec1, vec2, res = 10, showlegend = T, legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), ...){
+two_color_map <- function(distrib_data, vec1, vec2, res = 10, showlegend = T, legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), colour = c("green_purple", "green_red_purple_cyan"), ...){
   oldpar <- par(c("plt","las","pty", "cex.axis"))
-  retcol <- green_purple(vec1, vec2, res)
+  colour <- match.arg(colour)
+  retcol <- assign_col(vec1, vec2, res, colour)
   
   if(inherits(distrib_data, "distrib_data")){
     sit = sites(distrib_data)
@@ -62,7 +68,7 @@ two_color_map <- function(distrib_data, vec1, vec2, res = 10, showlegend = T, le
   plot_sitestat(distrib_data, 1:nsit, col = retcol, legend = F, ...)
 
   par(new = TRUE, pty = "s", plt = legend_coords, cex.axis = 0.4, las = 2)
-  ret <- plot_legend(vec1, vec2, res, show = showlegend)
+  ret <- plot_legend(vec1, vec2, res, show = showlegend, colour = colour)
   par(oldpar)
   
   colorcoords = data.frame(site = sit, colorid = ret$colorid[match(retcol, ret$color)])
