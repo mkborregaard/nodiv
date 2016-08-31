@@ -123,7 +123,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   }
   
   if(is.data.frame(commatrix)) commatrix <- as.matrix(commatrix)
-  if(!is.matrix(commatrix)) stop("commatrix must be a matrix of 0's and 1's, indicating presence or absence")
+  if(!is.matrix(commatrix)) stop("commatrix must be an integer matrix")
   if(!is.numeric(commatrix)) stop("commatrix must be a numeric matrix of 0's and 1's, indicating presence or absence")
   if(sum(is.na(as.numeric(commatrix))) > 0){
     kk = which(is.na(as.numeric(commatrix)))
@@ -153,14 +153,14 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   
   if(length(not.occupied.sites) > 0)
   {
-    message(paste(length(not.occupied.sites), "sites where dropped because no species occupied them:\n", paste(coords$sites[not.occupied.sites], collapse = "\t")))
+    message(paste(length(not.occupied.sites), "sites were dropped because no species occupied them:\n", paste(coords$sites[not.occupied.sites], collapse = "\t")))
     coords <- coords[ - not.occupied.sites, ]
     commatrix <- commatrix[ - not.occupied.sites,  ]
   }
   
   if(length(not.occurring.species) > 0)
   {
-    message(paste(length(not.occurring.species), "species where dropped because of 0 occurrences in the areas defined by coords:\n", paste(colnames(commatrix)[not.occurring.species], collapse = "\t")))
+    message(paste(length(not.occurring.species), "species were dropped because of 0 occurrences in the areas defined by coords:\n", paste(colnames(commatrix)[not.occurring.species], collapse = "\t")))
     commatrix <- commatrix[, - not.occurring.species]
   }
   

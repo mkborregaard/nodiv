@@ -482,6 +482,8 @@ species_stat <- function(distrib_data, statname = NULL, specs = NULL)
     warning(paste("Dropping species_stats", paste(statname, collapse = ", ") , "not found in distrib_data"))
   
   ret <- distrib_data$species_stats[,species_statnames %in% statname]
+  if(is.factor(ret))
+    ret <- as.character(ret)
   if(is.vector(ret)){
     names(ret) <- species(distrib_data)
     ret <- ret[specs]

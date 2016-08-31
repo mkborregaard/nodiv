@@ -180,11 +180,11 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
   
   if(is.null(shape)) plot(coords, col = plotcol, pch = pch, bg = bg, ...) else
   {
-    if(inherits(shape, "Raster")) legend <- FALSE else legend <- NULL
+    if(inherits(shape, "Raster")) loc_legend <- FALSE else loc_legend <- NULL
     if(inherits(shape, "SpatialPolygonsDataFrame"))
       border <- shapefill else border <- NULL
     if(zoom_to_points)
-      plot(shape, col = shapefill,  xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = legend, border = border, ...) else  plot(shape, col = shapefill, legend = legend, border = border, ...)
+      plot(shape, col = shapefill,  xlim = bbox(coords)[1,], ylim = bbox(coords)[2,], legend = loc_legend, border = border, ...) else  plot(shape, col = shapefill, legend = loc_legend, border = border, ...)
     plot(coords, col = plotcol, pch = pch, bg = bg, add = T)
   } 
 
