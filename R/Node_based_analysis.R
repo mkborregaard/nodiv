@@ -249,6 +249,35 @@ Node_occupancy <- function(nodiv_data, node = NULL)
       return(sapply(node, function(nod) .local(nodiv_data, nod)))
 }
 
+Node_age <- function(tree, node = NULL){
+  if(inherits(tree, "nodiv_data"))
+    tree <- tree$phylo
+  if(!inherits(tree, "phylo"))
+    stop("tree must be an object of type phylo or nodiv_data")
+  if(is.null(node)){
+    bb <- branching.times(tree)
+    return(max(bb) - bb)
+  }
+  suppressWarnings(nodesp <- identify_species(node, tree))
+  if(!is.na(nodesp))
+    node <- nodesp else
+      node <- identify_node(node, tree)
+  
+  ret <- 0
+
+  if(is.null(tree$edge.length))
+    edge.length <- rep(1, nrow(tree$edge)) else edge.length <- tree$edge.length
+  
+  while(!node == basal_node(tree)){
+    ed <- which(tree$edge[,2] == node)
+    node <- Parent(node, tree)
+    ret <- ret + edge.length[ed]
+  }
+  
+  node_local = node
+  ret
+}
+
 DRscore <- function(x) UseMethod("DRscore")
 
 DRscore.phylo <- function(x){

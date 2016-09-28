@@ -73,7 +73,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
 {
   type = match.arg(type)
   cat("Checking input data\n")
-  if(inherits(commatrix, "distrib_data")){
+  if(inherits(commatrix, "distrib_data")){ # copy constructor
     if(is.null(commatrix$species_stats))
       stop("The distrib_data object is from an earlier version of nodiv. Please run update_object on the object before proceeding")
     

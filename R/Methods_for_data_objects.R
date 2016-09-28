@@ -129,9 +129,6 @@ print.nodiv_data <- function(x, printlen = 4, ...)
   cat(paste("\t", paste(sites(x)[1:printlen], collapse = ", "),", ...\n", sep = ""))
 }
 
-identify.distrib_data <- function(x, ...)
-  identify(coordinates(x$coords),  ...)
-
 summary.distrib_data <- function(object, ...)
 {
   if(object$type == "grid")
@@ -190,39 +187,6 @@ add_shape <- function(distrib_data, shape)
     stop("argument must be an object of types distrib_data, nodiv_data or nodiv_results")
   distrib_data$shape <- shape
   distrib_data
-}
-
-plot.distrib_data <- function(x, ...)
-{
-  if(is.null(x$shape)) shape <- NULL else shape <- x$shape
-  if(x$type == "grid")
-    plot_grid(richness(x), x$coords, shape = shape, ...) else
-    plot_points(richness(x), x$coords, shape = shape, ...)
-}  
-
-plot_richness <- function(distrib_data, ...)
-{
-  if(!inherits(distrib_data, "distrib_data"))
-    stop("argument must be an object of type distrib_data, nodiv_data or nodiv_results")
-  plot.distrib_data(distrib_data, ...)
-}
-
-plot_node <- function(nodiv_data, node = basal_node(nodiv_data), sites = NULL, ...)
-{
-  if(!inherits(nodiv_data, "nodiv_data"))
-    stop("argument must be an object of type nodiv_data or nodiv_result")
-  node <- identify_node(node, nodiv_data)
-  plot_richness(subsample.distrib_data(nodiv_data, species = Node_species(nodiv_data, node), sites = sites), ...)
-}
-
-plot.nodiv_data <- function(x,  ...)
-{
-  oldpar <- par()
-  par(mfrow = c(1,2))
-  plot.distrib_data(x, ...)
-  plot(x$phylo, show.tip.label = isTRUE(Nspecies(x) < 40), cex = 0.7) #need to specify explicitly which
-
-  par(mfrow = c(1,1))
 }
 
 subsample<- function(x, ...) UseMethod("subsample")
@@ -360,56 +324,6 @@ occupancy <- function(distrib_data, species = NULL)
     return(sum(distrib_data$comm[, species] > 0, na.rm = T))
   
   return(colSums(distrib_data$comm[, species] > 0, na.rm = T))
-}
-
-plot_sitestat <- function(distrib_data, x, shape = NULL, type = c("auto", "points","grid"), ...)
-{
-  coords = NULL
-  type = match.arg(type)
-  if(inherits(distrib_data, "distrib_data"))
-  {
-    coords = distrib_data$coords
-    if(!is.null(distrib_data$shape)) {
-      if(is.null(shape))
-        shape <- distrib_data$shape else
-        warning("overriding the shape file associated with distrib_data")
-    }
-    
-    if(is.character(x))
-      if(length(x) == 1)
-        x <- sitestat(distrib_data, x) 
-      
-    if(type == "auto")
-      type <- distrib_data$type
-    if(!type == distrib_data$type)
-      warning(paste("Argument type has value",type,"but distrib_data is of type", distrib_data$type,"; this can cause problems or crashes"))
-    nsit = Nsites(distrib_data)
-  } 
-  
-  if(inherits(distrib_data, "SpatialPoints")){
-    coords <- distrib_data
-    nsit <- nrow(coordinates(coords))
-  }
-
-  if(is.matrix(distrib_data))
-    distrib_data <- data.frame(distrib_data)
-  if(is.data.frame(distrib_data))
-    if(ncol(distrib_data) == 2){
-      coords <- distrib_data
-      nsit <- nrow(coords)
-    }
-
-  if(is.null(coords))
-    stop("Wrong argument type for distrib_data - should be a distrib_data objects, spatial points or a two-column matrix of x and y values")
-  
-  if(type == "auto") type <- ifelse(isGrid(coords), "grid", "points")
-
-  if(!length(x) == nsit)
-    stop(paste("x must be a numeric vector of length", nsit, "or the name of a site variable in distrib_data"))
-
-  if(type == "grid")
-    plot_grid(x, coords, shape = shape, ...) else
-      plot_points(x, coords, shape = shape, ...)
 }
 
 sitestat <- function(distrib_data, statname = NULL, site = NULL)
