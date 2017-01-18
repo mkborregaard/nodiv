@@ -87,7 +87,7 @@ plot.nodiv_data <- function(x,  ...)
   par(mfrow = c(1,1))
 }
 
-plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapeborder = NA, zlim = NULL, zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, gridsites, overlay_shape = FALSE, colscale = c("equal_interval", "quantiles"), ...)
+plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapeborder = NA, zlim = NULL, zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, gridsites, overlay_shape = FALSE, colscale = c("equal_interval", "quantiles"), legendlabels = NULL, ...)
 {
   if(inherits(x, "SpatialPixelsDataFrame"))
     rast <- raster(x) else
@@ -113,11 +113,12 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
           suppressWarnings(rast <- raster(SpatialPixelsDataFrame(coords, as.data.frame(x)))) #TODO NB
         } else stop("Undefined arguments")
       }
-  
+
+  rawvalues <- getValues(rast)  
   
   if(!is.null(zlim))
     realzlim <- zlim else
-      realzlim <- c(min(getValues(rast),na.rm = T),max(getValues(rast),na.rm = T))
+      realzlim <- range(rawvalues, na.rm = T)
     
   colscale = match.arg(colscale)
   if(colscale == "quantiles")
@@ -152,11 +153,13 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
   
   mylegend <- FALSE
   if(colscale == "quantiles"){
-    #oldpar <- par()
-    #par(mar = c(5,4,4,6) + 0.1)
-    par( plt = c(0.04,0.84,0.01,1), err = -1)
+    if(legend)
+      par( plt = c(0.04,0.84,0.01,1), err = -1)
+    
     mylegend <- legend
     legend <-  FALSE
+    if(is.null(legendlabels))
+      legendlabels <- signif(quantile(rawvalues, (0:length(col))/length(col), na.rm = T), 3)
   }
 
   
@@ -194,10 +197,10 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
       shapeborder = "white"
     plot(shape, border = shapeborder, add = TRUE, lwd = 0.15, ...) 
   }
-
+  
   if(mylegend) {
     #par <- oldpar
-    add_legend(col = col, zlim = zlim, realzlim = realzlim)
+    add_legend(col = col, zlim = zlim, realzlim = realzlim, lab = legendlabels)
   } 
 
     invisible(rast)
@@ -345,8 +348,10 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   }
 }
 
-add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim)
+add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim, lab)
 {
+  if(!missing(lab))
+    realzlim <- range(lab)
   if(missing(realzlim))
     realzlim <- zlim
   old.par <- par()
@@ -366,19 +371,20 @@ add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim)
   
 
   image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)
-  if(length(col) > 9){
-    axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2, label = NA) 
-    ats <- do.call("axis", axis.args)
-    lab <- signif((ats - min(zlim))/diff(zlim) * diff(realzlim) + min(realzlim), 3)
-    axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2, label = lab, at = ats)     
-    do.call("axis", axis.args)
-
-  } else {
-    ats <- seq(zlim[1], zlim[2], length = length(col)+1)
-    lab = signif((ats - min(zlim))/diff(zlim) * diff(realzlim) + min(realzlim), 2)
-    axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2, label = lab, at = ats) 
-    do.call("axis", axis.args)
-  }
+  
+      if(length(col) > 9){
+      axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2, label = NA) 
+      ats <- do.call("axis", axis.args)
+      lab <- signif((ats - min(zlim))/diff(zlim) * diff(realzlim) + min(realzlim), 3)
+      axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2, label = lab, at = ats)     
+      do.call("axis", axis.args)
+  
+    } else {
+      ats <- seq(zlim[1], zlim[2], length = length(col)+1)
+      if(missing(lab)) lab = signif((ats - min(zlim))/diff(zlim) * diff(realzlim) + min(realzlim), 2)
+      axis.args <- list(side =  4, mgp = c(3, 1, 0), las = 2, label = lab, at = ats) 
+      do.call("axis", axis.args)
+    }
 
   box()
   par(new = FALSE, pty = old.par$pty, plt = old.par$plt, err = old.par$err)

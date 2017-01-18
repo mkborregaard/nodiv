@@ -17,7 +17,7 @@ plot_grid(x, coords, col, shape = NULL,
   shapefill = "grey",  shapeborder = NA, zlim = NULL, 
   zoom_to_points = FALSE, legend = TRUE, gridcol, gridlwd, 
   gridsites, overlay_shape = FALSE, 
-  colscale = c("equal_interval","quantiles"), ...)
+  colscale = c("equal_interval","quantiles"), legendlabels = NULL, ...)
 plot_species(distrib_data, species, col = c("darkgreen", "red"), ...)
 }
 
@@ -77,6 +77,9 @@ Whether to overlay the shape file border on top of the points - only works if sh
 }
   \item{colscale}{
 Specifies whether to define the colors on an equal interval or a quantile-based color scale
+}
+  \item{legendlabels}{
+Specifies custom labels for the colorbar legend
 }
   \item{\dots}{
 Additional arguments to pass to plot
