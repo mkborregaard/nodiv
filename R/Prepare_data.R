@@ -215,7 +215,7 @@ match_commat_coords <- function(commatrix, sitenames)
 }
 
 
-toSpatialPoints <- function(coords, proj4string, commatrix, type)
+toSpatialPoints <- function(coords, proj4string_in, commatrix, type)
 {
   
     xcol <- 0
@@ -240,12 +240,20 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
     
     cat("Identifying sites identifier\n")
     
-    if (ncol(coords)==3 & !(xcol + ycol == 0) & isTRUE(all.equal(coords[,-c(xcol, ycol)], unique(coords[,-c(xcol, ycol)])))) names(coords)[!names(coords) %in% c("myX", "myY")] <- "sites" else 
+    # Are there three columns, and has the two of them been identified as X and Y?
+    if (ncol(coords)==3 & !(xcol + ycol == 0) & isTRUE(all.equal(coords[,-c(xcol, ycol)], unique(coords[,-c(xcol, ycol)])))) 
+      names(coords)[!names(coords) %in% c("myX", "myY")] <- "sites" else 
+      # or are there two columns and the same number of rows as commatrix
       if(nrow(coords) == nrow(commatrix) & !is.null(rownames(commatrix)) & ncol(coords) == 2){
+        # if there are no rownames on coords we just assume they are sorted correctly
         if(is.null(rownames(coords)) | identical(rownames(coords), as.character(1:nrow(coords))))
           coords = data.frame(sites = rownames(commatrix)) else 
-            if (!identical(rownames(commatrix), rownames(coords))) stop("Because the rownames of commatrix and coords differ, sitenames cannot be established unless they are included explicitly as a third column of coords")
+            # if there are rownames on coords and they are the same as commatrix 
+            if (identical(sort(rownames(commatrix)), sort(rownames(coords)))) 
+              coords$sites <- rownames(coords) else
+              stop("Because the rownames of commatrix and coords differ, sitenames cannot be established unless they are included explicitly as a third column of coords")
       }  else {
+      # or are there more than three columns, then we will match the rownames of commatrix to the columns of coords to find the one holding sites
         if(is.null(rownames(commatrix))){
           stop("There must be valid site names in the rownames of commatrix or in the coords data")
         } else {
@@ -261,7 +269,7 @@ toSpatialPoints <- function(coords, proj4string, commatrix, type)
     xy <- coords[, ids]    
     if(!ncol(xy) == 2) stop("coords should be a data.frame or spatial data.frame with 2 columns, giving the x/longitude, and y/latitude of all sites")
     
-    xy <- SpatialPoints(xy, proj4string)
+    xy <- SpatialPoints(xy, proj4string_in)
     type_auto <- ifelse(isGrid(xy), "grid", "points")
     
     if(type == "auto") type <- type_auto else 
