@@ -41,7 +41,7 @@ A shape file giving a map to use as a background for the plot
 }
  \item{type}{A character vector describing the type of data}
 \item{\dots}{
-Further arguements to the plotting function
+Further arguments to the plotting function
 }
 
 }
