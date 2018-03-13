@@ -216,12 +216,12 @@ infer_sites <- function(distrib_data, site_stat) # a non-exported convenience fu
 
 
 match_speciesnames <- function(reference_name, new_name, do_not_match = FALSE){
-  chars <- c(" ", "[.]", "_")
-  ref_ll <- sapply(chars, function(x) length(grep(x, reference_name)))
+  chars <- c(" ", ".", "_")
+  ref_ll <- sapply(chars, function(x) length(grep(x, reference_name, fixed = TRUE)))
   ref_char <- chars[which(ref_ll == max(ref_ll))[1]]
-  new_ll <- sapply(chars, function(x) length(grep(x, new_name)))
+  new_ll <- sapply(chars, function(x) length(grep(x, new_name, fixed = TRUE)))
   new_char <- chars[which(new_ll == max(new_ll))[1]]
-  new_name <- gsub(new_char, ref_char, new_name)
+  new_name <- gsub(new_char, ref_char, new_name, fixed = TRUE)
   if(do_not_match)
     return(new_name)
 
