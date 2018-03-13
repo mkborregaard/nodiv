@@ -9,4 +9,4 @@ Description: An implementation of the nodiv algorithm, see Borregaard, M.K., Rah
 Depends: R (>= 3.0)
 Imports: picante, raster, ape, sp, vegan, utils 
 Suggests: RColorBrewer, parallel, testthat, colorspace
-License: GPL-3
+License: MIT + file LICENSE
