@@ -26,7 +26,7 @@ quasiswap_nodesig <- function(simcom, Node_sp, repeats, show )
   replicate(repeats-1,
   {
     if (show) setTxtProgressBar(pb, ll <<- ll + 1)
-    simcom <- commsimulator(simcom, method = "quasiswap")
+    simcom <- simulate(nullmodel(simcom, method = "quasiswap"))[,,1]
     rowSums(simcom[, Node_sp])
     })
 }
