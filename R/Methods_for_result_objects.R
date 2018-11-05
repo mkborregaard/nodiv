@@ -5,7 +5,7 @@ GND <- function(nodiv_result, node = NULL)
     stop("object must be of type nodiv_result")
   if(is.null(node)) node <- nodenumbers(nodiv_result) else node <- identify_node(node, nodiv_result)
   ret <- nodiv_result$GND[node - Nspecies(nodiv_result)]
-  names(ret) <- nodenumbers(nodiv_result)
+  names(ret) <- nodenumbers(nodiv_result)[node]
   return(ret)
 }
 
