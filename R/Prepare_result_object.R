@@ -15,7 +15,13 @@ parent_representation = function(node_number, rep_matrix, nodiv_data, metric = c
   desc1col = desc[1] - Nspecies(nodiv_data)
   desc2col = desc[2] - Nspecies(nodiv_data)
   desc1 = rep_matrix[,desc1col]
-  desc2 = ifelse(match.arg(metric) == "rval", 1-rep_matrix[, desc2col], -rep_matrix[, desc2col])
+  if(match.arg(metric) == "rval"){
+    print("rval")
+    desc2 = 1-rep_matrix[, desc2col]    
+  } else {
+    print("SR")
+    desc2 = -rep_matrix[, desc2col]
+  }
   return(rowMeans(cbind(desc1, desc2)))
 }
 
