@@ -14,8 +14,7 @@ parent_representation = function(node_number, rep_matrix, nodiv_data)
     return(rep(NA, nrow(rep_matrix)))
   desc1row = desc[1] - Nspecies(nodiv_data)
   desc2row = desc[2] - Nspecies(nodiv_data)
-  
-  return(rowMeans(cbind(rep_matrix[,desc1row], 1-rep_matrix[, desc2row])))
+  return(rowMeans(cbind(rep_matrix[,desc1row], -rep_matrix[, desc2row])))
 }
 
 nodenames <- function(nodiv_data)
