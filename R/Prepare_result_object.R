@@ -7,14 +7,18 @@
 
 
 
-parent_representation = function(node_number, rep_matrix, nodiv_data)
+parent_representation = function(node_number, rep_matrix, nodiv_data, metric = c("rval", "SR"))
 {
   desc = Descendants(node_number, nodiv_data)
   if(desc[1] < basal_node(nodiv_data) | desc[2] < basal_node(nodiv_data))
     return(rep(NA, nrow(rep_matrix)))
-  desc1row = desc[1] - Nspecies(nodiv_data)
-  desc2row = desc[2] - Nspecies(nodiv_data)
-  return(rowMeans(cbind(rep_matrix[,desc1row], -rep_matrix[, desc2row])))
+  desc1col = desc[1] - Nspecies(nodiv_data)
+  desc2col = desc[2] - Nspecies(nodiv_data)
+  desc1 = rep_matrix[,desc1col]
+  desc2 = -rep_matrix[, desc2col]
+  if(metric == "rval")
+    desc2 = desc2 + 1
+  return(rowMeans(cbind(desc1, desc2)))
 }
 
 nodenames <- function(nodiv_data)
@@ -33,12 +37,12 @@ nodiv_res <- function(results, nodiv_data, repeats, method)
   ret$repeats <- repeats
   
   SR <- sapply(results, "[[", 1)  
-  ret$SOS <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, SR, nodiv_data))
+  ret$SOS <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, SR, nodiv_data, metric = "SR"))
   colnames(ret$SOS) <- nodenames(nodiv_data)
   rownames(ret$SOS) <- nodiv_data$coords$sites
   
   rval <- sapply(results, "[[", 2)
-  par_rval <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, rval, nodiv_data))
+  par_rval <- sapply(nodenumbers(nodiv_data), function(node) parent_representation(node, rval, nodiv_data, metric = "rval"))
   pval <- apply(par_rval, 2, pval_sig)
   
   #making sure that none of the values are more extreme than merited by the number of repeats

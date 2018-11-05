@@ -1,4 +1,4 @@
-export(add_shape, add_sitestat, add_species_stat, assemblage, basal_node, coords, Descendants, distrib_data, GND, gridData, MostRecentAncestor, Node_analysis, Node_occupancy, Node_size, Node_species,
+export(add_shape, add_sitestat, add_species_stat, assemblage, basal_node, coords, Descendants, distrib_data, GND, gridData, MostRecentAncestor, Node_analysis, Node_occupancy, Node_sites, Node_size, Node_species,
        nodenumbers, nodes, Nodesig, nodiv_data,  Nsites, Nspecies, occupancy, occurrences, Parent, plot_grid, plot_node, plot_points, plot_richness, plotSOS, 
        phyplot, plot_nodes_phylo, plot_sitestat, plot_species, richness, Sister, sites, sitestat, SOS, species, species_stat, subsample, two_color_map, update_object)
 S3method(identify, distrib_data)
