@@ -17,5 +17,19 @@ test_that("occurrences", {
 })
 
 test_that("assemblage", {
-  
+  expect_equal(sum(assemblage(coquettes, 15)), 93)
+  expect_equal(assemblage(coquettes, 110), c(4, 8, 10, 11, 13, 14, 15, 17))
 })
+
+test_that("clade attributes", {
+  expect_equal(Node_size(coquettes, 34), 3)
+  expect_equal(Node_size(coquettes, 39), 4)
+  expect_s4_class(Node_sites(coquettes, 39), "SpatialPointsDataFrame")
+  expect_lt(abs(Node_sites(coquettes, 39)@bbox[1,2] + 72.93797), 0.001)
+  expect_length(Node_species(coquettes, 28), 15)
+  expect_equal(Node_species(coquettes, 28)[3], "Aglaiocercus_kingi")
+  expect_equivalent(Node_species(coquettes, 28, names = F), 1:15)
+  expect_equal(Node_occupancy(coquettes)[5],  Node_occupancy(coquettes, 29))
+  expect_equal(Node_occupancy(coquettes, 30:32), c(66, 105, 96))
+})
+
