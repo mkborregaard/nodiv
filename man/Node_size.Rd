@@ -39,7 +39,3 @@ For \code{Node_size} and \code{Node_occupancy} the number of species or number o
 Michael Krabbe Borregaard
 }
 
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

@@ -63,7 +63,4 @@ data(coquettes)
 Clade_occupancy <- Node_occupancy(coquettes)
 plot_nodes_phylo(Clade_occupancy, coquettes$phylo, cex = 0.7)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

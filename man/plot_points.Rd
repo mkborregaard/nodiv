@@ -93,7 +93,3 @@ Note that if \code{shape} is a \code{raster} object, the points may shift relati
 Michael Krabbe Borregaard 
 }
 
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
