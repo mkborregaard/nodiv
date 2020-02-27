@@ -26,8 +26,11 @@ add_sitestat <- function(distrib_data, site_stat, site = NULL){
     site <- temp$site
     site_stat <- temp$site_stat
   }
+  
+  if(length(site) == 1 && is.character(site))
+    site <- site_stat$site
 
-  site <- identify_sites(site, distrib_data)
+  site <- suppressWarnings(identify_sites(as.character(site), distrib_data))
 
  # if(length(site) < Nsites(distrib_data))
   #  cat(paste(Nsites(distrib_data)- length(site), "sites from site_stat were not found in", deparse(substitute(distrib_data)), "\n"))
