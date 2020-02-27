@@ -20,16 +20,10 @@ add_sitestat <- function(distrib_data, site_stat, site = NULL){
     rownames(site_stat) <- rownam
   }
 
-  if(is.null(site))
-  {
-    temp <- infer_sites(distrib_data, site_stat)
-    site <- temp$site
-    site_stat <- temp$site_stat
-  }
-  
-  if(length(site) == 1 && is.character(site))
-    site <- site_stat$site
 
+  temp <- infer_sites(distrib_data, site_stat, site)
+  site <- temp$site
+  site_stat <- temp$site_stat
   site <- suppressWarnings(identify_sites(as.character(site), distrib_data))
 
  # if (length(site) < Nsites(distrib_data))
@@ -110,7 +104,7 @@ add_species_stat <- function(distrib_data, species_stat, specs = NULL){
 
 
 
-infer_sites_intern <- function(sites, site_stat) # a non-exported convenience function
+infer_sites_intern <- function(sites, site_stat, name = "", site = NULL) # a non-exported convenience function
 {
 #   suppressWarnings(numsites <- as.numeric(sites)) #I removed this as it caused trouble
 #   if (sum(is.na(numsites)) < 0.2*length(sites)){
@@ -128,45 +122,52 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
   
   potid <- which(names(site_stat) %in% potnams)
   
-  
-  if(is.null(rownames(site_stat)))
-    continue <- TRUE else {
-    if(length(potid) == 0){
-      potentials <- as.list(as.data.frame(rownames(site_stat)))
-      names(potentials) <- "rownames"
+  if (name == "" && !is.null(site)) {
+    name <- "sites"
+  } else {
+    if (name != "") {
+      site <- site_stat[[name]]
     } else {
-      potentials <- as.list(as.data.frame(site_stat[[potid]]))
-      names(potentials) <- names(site_stat)[potid]    
-      potentials[["rownames"]] <- rownames(site_stat)
-    }
-
-    temp <- sapply(1:length(potentials), function(index){
-      matches <- sum(unique(potentials[[index]]) %in% sites)
-      return(matches/nrow(site_stat))
-    })
-  
-    res <- which(temp == max(temp))
-    if(length(res) > 1){
-      res <- res[1]
-      warning(paste(length(res), "variables had an equally good correspondence to the sitenames:", max(temp), ". Using the first of these,", names(potentials)[res], "to align"))
-    }
-    name <- names(potentials)[res]
-    site <- potentials[[res]]
+      if (is.null(rownames(site_stat)))
+        continue <- TRUE else {
+        if (length(potid) == 0) {
+          potentials <- as.list(as.data.frame(rownames(site_stat)))
+          names(potentials) <- "rownames"
+        } else {
+          potentials <- as.list(as.data.frame(site_stat[[potid]]))
+          names(potentials) <- names(site_stat)[potid]    
+          potentials[["rownames"]] <- rownames(site_stat)
+        }
     
-    if(temp[res] < 0.8) continue <- TRUE
-  }
-    
-  if (continue) {
-    temp2 <- sapply(1:length(site_stat), function(index){
-      matches <- sum(unique(site_stat[[index]]) %in% sites)
-      return(matches/nrow(site_stat))
-    })
-    
-    if(max(temp2) > max(temp)){
-      temp <- temp2
-      res <- which(temp == max(temp))[1]
-      name <- names(site_stat)[res]
-      site <- site_stat[[res]]      
+        temp <- sapply(1:length(potentials), function(index){
+          matches <- sum(unique(potentials[[index]]) %in% sites)
+          return(matches/nrow(site_stat))
+        })
+      
+        res <- which(temp == max(temp))
+        if (length(res) > 1) {
+          res <- res[1]
+          warning(paste(length(res), "variables had an equally good correspondence to the sitenames:", max(temp), ". Using the first of these,", names(potentials)[res], "to align"))
+        }
+        name <- names(potentials)[res]
+        site <- potentials[[res]]
+        
+        if (temp[res] < 0.8) continue <- TRUE
+      }
+        
+      if (continue) {
+        temp2 <- sapply(1:length(site_stat), function(index){
+          matches <- sum(unique(site_stat[[index]]) %in% sites)
+          return(matches/nrow(site_stat))
+        })
+        
+        if (max(temp2) > max(temp)) {
+          temp <- temp2
+          res <- which(temp == max(temp))[1]
+          name <- names(site_stat)[res]
+          site <- site_stat[[res]]      
+        }
+      }
     }
   }
 
@@ -203,9 +204,15 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
 }
 
 
-infer_sites <- function(distrib_data, site_stat) # a non-exported convenience function
+infer_sites <- function(distrib_data, site_stat, site = NULL) # a non-exported convenience function
 {
-  ret <- infer_sites_intern(sites(distrib_data), site_stat)
+  if (is.null(site)){
+    name = ""
+  } else {
+    if (length(site) == 1 && is.character(site))
+      name = site
+  }
+  ret <- infer_sites_intern(sites(distrib_data), site_stat, name, site)
 
   suppressWarnings(sitenames <- identify_sites(ret$sites, distrib_data, as.name = TRUE))
   matchsite <- match(ret$sites, sitenames)
