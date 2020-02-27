@@ -107,7 +107,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   
 
   ## Testing that input objects are all right
-  if(class(coords) == "SpatialPointsDataFrame" | class(coords) == "SpatialPixelsDataFrame")
+  if(class(coords)[1] == "SpatialPointsDataFrame" | class(coords)[1] == "SpatialPixelsDataFrame")
     if(!all.equal(proj4string_in,coords@proj4string))
     { 
       proj4string_in <- proj4string(coords)
@@ -140,7 +140,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   cat("Transforming coords to spatial points\n")
   if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commatrix, type)
   
-  if(class(coords) == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords) == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
+  if(class(coords)[1] == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords)[1] == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
   
 
   ## making sure that the points and the commatrix fit
