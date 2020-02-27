@@ -1,24 +1,29 @@
 # Create the 2D color scheme
 
-normvec <- function(vec, res){
-  vec <- vec - min(vec, na.rm = T)
-  vec <- vec/max(vec, na.rm = T) 
+normvec <- function(vec, res, lims = range(vec, na.rm = T)){
+  vec <- vec - lims[1]
+  vec <- vec/diff(lims)
   vec <- round(vec*(res-1)) / (res-1)
   vec
 }
 
 
-assign_col <- function(vec1, vec2, res = 10, colour = "green_purple")
+assign_col <- function(vec1, vec2, res = 10, colour = "green_purple", vec1lims = range(vec1, na.rm = T), vec2lims = range(vec2, na.rm = T), samelims = FALSE)
 {
+  if(samelims)
+    vec1lims = vec2lims = range(c(vec1lims, vec2lims))
   ret <- vec1 * vec2
   vec1 <- vec1[!is.na(ret)]
   vec2 <- vec2[!is.na(ret)]
-  vec1 <- normvec(vec1, res)
-  vec2 <- normvec(vec2, res)
+  vec1 <- normvec(vec1, res, vec1lims)
+  vec2 <- normvec(vec2, res, vec2lims)
   if(colour == "green_purple")
     tmp <- rgb((vec1 + vec2)/2, vec1, vec2) else
     if(colour == "green_red_purple_cyan")
-      tmp <- rgb((1-vec1 + vec2)/2, vec1, 1-vec2) else stop("not recognized colour scheme")
+      tmp <- rgb((1-vec1 + vec2)/2, vec1, 1-vec2) else 
+        if(colour == "green_red_purple_cyan_2")
+          tmp <- rgb((vec1 + vec2)/2, 1-vec1, 1-vec2) else 
+            stop("not recognized colour scheme")
   ret[!is.na(ret)] <- tmp
   
   retvec1 <- ret
@@ -32,9 +37,11 @@ assign_col <- function(vec1, vec2, res = 10, colour = "green_purple")
 
 
 #legend 
-plot_legend <- function(vec1, vec2, res = 10, show = T, colour = "green_purple"){
-  v1 <- seq(min(vec1, na.rm = T), max(vec1, na.rm = T), length = res)
-  v2 <- seq(min(vec2, na.rm = T), max(vec2, na.rm = T), length = res)
+plot_legend <- function(vec1, vec2, res = 10, show = T, colour = "green_purple", vec1lims = range(vec1, na.rm = T), vec2lims = range(vec2, na.rm = T), samelims = FALSE){
+  if(samelims)
+    vec1lims = vec2lims = range(c(vec1lims, vec2lims))
+  v1 <- seq(vec1lims[1], vec1lims[2], length = res)
+  v2 <- seq(vec2lims[1], vec2lims[2], length = res)
   pp = expand.grid((0:(res-1))/(res-1),(0:(res-1))/(res-1))
   pp$colorid <- 1:nrow(pp)
   pp$color <- assign_col(pp[,1], pp[,2], res, colour)
