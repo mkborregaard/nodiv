@@ -138,7 +138,7 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
     }
 
     temp <- sapply(1:length(potentials), function(index){
-      matches <- sum(potentials[[index]] %in% sites)
+      matches <- sum(unique(potentials[[index]]) %in% sites)
       return(matches/nrow(site_stat))
     })
   
@@ -155,7 +155,7 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
     
   if (continue) {
     temp2 <- sapply(1:length(site_stat), function(index){
-      matches <- sum(site_stat[[index]] %in% sites)
+      matches <- sum(unique(site_stat[[index]]) %in% sites)
       return(matches/nrow(site_stat))
     })
     
