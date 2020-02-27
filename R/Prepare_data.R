@@ -41,7 +41,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
     cat(paste("  - removed ", commdropped, " species from commatrix not found in phylo\n"))
   
   md <- match(colnames(nodiv_dat$comm), nodiv_dat$species_stats$species)
-  nodiv_dat$species_stats <- subrow_data.frame(nodiv_dat$species_stats, md)
+  nodiv_dat$species_stats <- nodiv_dat$species_stats[md,,drop = FALSE]
     
   nodiv_dat$coords <- dist_dat$coords[na.omit(match(rownames(nodiv_dat$comm), dist_dat$coords$sites)),]
   nodiv_dat$hcom <- matrix2sample(nodiv_dat$comm) # do I actually need this for anything?

@@ -239,7 +239,7 @@ subsample.distrib_data <- function(x, sites = NULL, species = NULL, ...)
 
   ret$comm <- ret$comm[sites_keep, species_keep]
   
-  ret$species_stats <- subrow_data.frame(ret$species_stats, species[species_keep])
+  ret$species_stats <- ret$species_stats[species[species_keep],,drop = FALSE]
   ret$coords <- ret$coords[ret$coords$sites %in% rownames(ret$comm),]
   
   
@@ -268,7 +268,7 @@ subsample.nodiv_data <- function(x, sites = NULL, species = NULL, node = NULL, .
   new_phylo <- dat$phy
   old_nodes <- as.numeric(new_phylo$node.label)
   ret$phylo <- drop.tip(x$phylo, which(! species(x) %in% new_phylo$tip.label))  #this line
-  ret$species_stats <- subrow_data.frame(x$species_stats, match(ret$phylo$tip.label, x$species_stats$species))
+  ret$species_stats <- x$species_stats[match(ret$phylo$tip.label, x$species_stats$species),,drop = FALSE]
   
   ret$hcom <- subset(x$hcom, x$hcom$plot %in% ret$coords$sites & x$hcom$id %in% ret$species_stats$species)
   ret$node_species <- x$node_species[, colnames(x$node_species) %in% ret$species_stats$species]

@@ -7,8 +7,8 @@
 ##############INTERNAL FUNCTIONS (NOT TO BE EXPORTED)###############
 
 
-subrow_data.frame <- function(data.frame, index)
-  as.data.frame(lapply(data.frame, function(var) var[index]), stringsAsFactors = FALSE)
+#subrow_data.frame <- function(data.frame, index)
+#  as.data.frame(lapply(data.frame, function(var) var[index]), stringsAsFactors = FALSE)
 
 Node_comm <- function(nodiv_data, node, names = TRUE)
 # returns a samplelist of sites occupied by at least one member of the node

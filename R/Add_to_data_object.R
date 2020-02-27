@@ -170,10 +170,10 @@ infer_sites_intern <- function(sites, site_stat) # a non-exported convenience fu
 
   ##### We need a matching function here to do the actual matching!
 
-  site_stat <- subrow_data.frame(site_stat, which(!is.na(site)))
+  site_stat <- site_stat[!is.na(site),,drop = FALSE]
   site <- site[!is.na(site)]
 
-  site_stat_ret <- subrow_data.frame(site_stat,match(sites, as.character(site)))
+  site_stat_ret <- site_stat[match(sites, as.character(site)),,drop = FALSE]
 
   cat(paste("Matching sites by", name, "\n"))
   hits = sum(site %in% sites)
@@ -207,7 +207,7 @@ infer_sites <- function(distrib_data, site_stat) # a non-exported convenience fu
   suppressWarnings(sitenames <- identify_sites(ret$sites, distrib_data, as.name = TRUE))
   matchsite <- match(ret$sites, sitenames)
 
-  site_stat <- subrow_data.frame(ret, which(!is.na(matchsite)))
+  site_stat <- ret[!is.na(matchsite),,drop = FALSE]
   site <- site_stat$sites
   site_stat$sites <- NULL
 
@@ -249,14 +249,14 @@ infer_species <- function(distrib_data, species_stat) # a non-exported convenien
   species_stat$rownames <- NULL
 
 
-  species_stat <- subrow_data.frame(species_stat, which(!is.na(spec)))
+  species_stat <- species_stat[!is.na(spec),, drop = FALSE]
   spec <- spec[!is.na(spec)]
 
 
   suppressWarnings(specnames <- identify_species(spec, distrib_data, as.name = TRUE))
   matchspec <- match(spec, specnames)
 
-  species_stat <- subrow_data.frame(species_stat, which(!is.na(matchspec)))
+  species_stat <- species_stat[!is.na(matchspec),, drop = FALSE]
   spec <- spec[!is.na(matchspec)]
 
   cat(paste("Matching species by", name, "\n"))
