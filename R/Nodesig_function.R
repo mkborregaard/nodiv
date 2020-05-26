@@ -6,7 +6,7 @@ pval_sig <- function(pval)
 
 logit <- function(p)
 {
-  if(!(sum(p >= 1, na.rm = T) + sum(p <= 0, na.rm = T) == 0))
+  if (!(sum(p >= 1, na.rm = T) + sum(p <= 0, na.rm = T) == 0))
     warning("logit is only defined between the interval 0 and 1")
   p[p == 0] <- NA
   p[p == 1] <- NA
@@ -56,18 +56,18 @@ rdtable_nodesig <- function(simcom, Node_sp, repeats, show )
 
 Nodesig <- function(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"), show = T)
 {
-  if(!inherits(nodiv_data, "distrib_data"))
+  if (!inherits(nodiv_data, "distrib_data"))
     stop("nodiv_data must be an object of type nodiv_data or distrib_data")
   
-  if(is.null(Node_sp)) 
-    if(inherits(nodiv_data, "nodiv_data"))
+  if (is.null(Node_sp)) 
+    if (inherits(nodiv_data, "nodiv_data"))
       Node_sp <- Node_species(nodiv_data, Descendants(basal_node(nodiv_data), nodiv_data)[1], names = FALSE) else
       stop("Node_sp must be defined if nodiv_data has type distrib_data")
   # a boolean vector indicating which of species descending from the parent node that descend from the focal node
-  if(is.character(Node_sp))
+  if (is.character(Node_sp))
     Node_sp <- which(species(nodiv_data) %in% Node_sp)  # make a boolean vector
   
-  if(length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1 | Nsites(nodiv_data) < 2) 
+  if (length(Node_sp) == 1 | length(Node_sp) == Nspecies(nodiv_data)-1 | Nsites(nodiv_data) < 2) 
     return(list(SR = rep(NA,Nsites(nodiv_data)),  rval = rep(NA,Nsites(nodiv_data)), nodeemp = rep(NA,Nsites(nodiv_data)), nodemeans = rep(NA,Nsites(nodiv_data)), nodesds = rep(NA,Nsites(nodiv_data)))) #if one of the descendant clades is a single species
  
   method = match.arg(method)

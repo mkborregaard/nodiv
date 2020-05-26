@@ -35,14 +35,14 @@ nodiv_anal <- function(node, nodiv_data, repeats, method)
 
 Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quasiswap"), cores = 1, log_parallel_progress = FALSE)
 {
-  if(!inherits(nodiv_data, "nodiv_data")) stop("This function only works on objects of class nodiv_data")
+  if (!inherits(nodiv_data, "nodiv_data")) stop("This function only works on objects of class nodiv_data")
   method <- match.arg(method)
  
   paral <- FALSE
-  if(cores > 1)
-    if(requireNamespace("parallel"))
+  if (cores > 1)
+    if (requireNamespace("parallel"))
       paral <- TRUE
-  if(paral)
+  if (paral)
   {
    cl <- parallel::makeCluster(cores)  
    pb <- txtProgressBar(min = Nspecies(nodiv_data) + 1, max = Ntip(nodiv_data$phylo) + Nnode(nodiv_data$phylo), style = 3)
@@ -51,7 +51,7 @@ Node_analysis <- function(nodiv_data, repeats = 100, method = c("rdtable", "quas
    {
      #setTxtProgressBar(pb, node)
      ret <- nodiv_anal(node, nodiv_data, repeats, method)
-     if(log_parallel_progress)
+     if (log_parallel_progress)
        save(ret, file = paste(node,".rda", sep = ""))
      ret[,1:2]
    })

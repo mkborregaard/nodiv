@@ -28,25 +28,25 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
   
   coltype = match.arg(coltype)
   
-  if(is.character(vec))
+  if (is.character(vec))
     vec <- as.factor(vec)
   
-  if(is.factor(vec))
+  if (is.factor(vec))
     zlim = c(1,length(levels(vec)))
   
-  if(is.null(zlim)){
+  if (is.null(zlim)){
     zlim <- range(vec, na.rm = TRUE)
     
-    if(zlim[1] * zlim[2] < 0)
+    if (zlim[1] * zlim[2] < 0)
       zlim <- c(-max(abs(vec), na.rm = TRUE), max(abs(vec), na.rm = TRUE))
   }
   
-  if(coltype == "auto"){
-    if(is.factor(vec))
+  if (coltype == "auto"){
+    if (is.factor(vec))
       coltype <- "individual" else {
         
-        if(zlim[1] * zlim[2] < 0){
-          if(sum(zlim) == 0){
+        if (zlim[1] * zlim[2] < 0){
+          if (sum(zlim) == 0){
             coltype <- "divergent" 
           } else {
             warning("ramp color scheme chosen - if you want divergent colors use zlims symmetric around 0")
@@ -57,23 +57,23 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
       }
   }
   
-  if(coltype == "individual"){
+  if (coltype == "individual"){
     n <- length(unique(vec))
-    if(requireNamespace("RColorBrewer")){
-      if(n <= 9)
+    if (requireNamespace("RColorBrewer")){
+      if (n <= 9)
         ret <- RColorBrewer::brewer.pal(n, "Set1") else
-          if(n <= 12)
+          if (n <= 12)
             ret <- RColorBrewer::brewer.pal(n, "Set3") else
-              if(n <= 21)
+              if (n <= 21)
                 ret <- c(RColorBrewer::brewer.pal(9, "Set1"), RColorBrewer::brewer.pal(12, "Set3"))[1:n] else 
-                  if(requireNamespace("colorspace"))
+                  if (requireNamespace("colorspace"))
                     ret <- colorspace::rainbow_hcl(n) else
                       ret <- rainbow(n)
     } else {
-      if(n <= 8)
+      if (n <= 8)
         ret <- palette()[1:n] else
         {
-          if(requireNamespace("colorspace"))
+          if (requireNamespace("colorspace"))
             ret <- colorspace::rainbow_hcl(n) else 
               ret <- rainbow(n)
         }
@@ -81,7 +81,7 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
     }
   }
   
-  if(coltype == "ramp"){
+  if (coltype == "ramp"){
     ret <- parula() 
   # ret <- HMrainbow 
     #if(requireNamespace("fields"))
@@ -89,7 +89,7 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
     #    ret <- rev(terrain.colors(64))
   }
   
-  if(coltype == "divergent"){
+  if (coltype == "divergent"){
     #if(requireNamespace("RColorBrewer"))
       #ret <- RColorBrewer::brewer.pal(11, "RdBu") else
         #if(requireNamespace("colorspace"))
@@ -97,16 +97,16 @@ choose.colors <- function(vec, zlim = NULL, coltype = c("auto", "ramp", "monochr
             ret <- redblue(64)
   }
   
-  if(coltype == "monochrome"){
+  if (coltype == "monochrome"){
     ret <- blackbodycol()
     #if(requireNamespace("RColorBrewer"))
     #  ret <- RColorBrewer::brewer.pal(9, "YlOrRd") else
-    #    if(requireNamespace("colorspace"))
+    #    if (requireNamespace("colorspace"))
     #      ret <- colorspace::sequential_hcl(64) else
     #        ret <- rev(heat.colors(64))
   }
   
-  if(length(unique(na.omit(vec))) == 2)
+  if (length(unique(na.omit(vec))) == 2)
     ret <- c("darkgrey", "red")
   
   attr(ret, "zlim") <- zlim
@@ -118,11 +118,11 @@ custom_palette <- function(colname = c("parula", "jet", "blackbody", "HMblueyell
                                        "HMrainbow", "HMlinear_optimal", "HMoptimal_scale", 
                                        "cube1", "cubeyf1", "redblue", "moreland", "fire"), n = NULL, alpha = 1){
   colname <- match.arg(colname)
-  if(is.null(n)){
-    if(colname %in% c("parula", "jet"))
+  if (is.null(n)){
+    if (colname %in% c("parula", "jet"))
       n <- 64 else 
-        if(colname %in% c("RedBlue")) n <- 12 else 
-          if(colname %in% c("moreland")) n <- 33 else 
+        if (colname %in% c("RedBlue")) n <- 12 else 
+          if (colname %in% c("moreland")) n <- 33 else 
             n <- 256
   }
   switch(colname,
@@ -145,19 +145,19 @@ create.cols <- function(vec, col, zlim, coltype = c("auto", "ramp", "monochrome"
 {
   coltype = match.arg(coltype)
   
-  if(missing(zlim)){
+  if (missing(zlim)){
     zlim <- range(vec, na.rm = TRUE)
-    if(zlim[1] * zlim[2] < 0)
+    if (zlim[1] * zlim[2] < 0)
       zlim <- c(-max(abs(vec), na.rm = TRUE), max(abs(vec), na.rm = TRUE))
   }
   
-  if(missing(col)) 
+  if (missing(col)) 
     col <- choose.colors(vec, zlim, coltype)
   
-  if(length(col) == length(unique(vec)))
+  if (length(col) == length(unique(vec)))
     return(col[match(vec, sort(unique(vec)))])
   
-  if(min(vec, na.rm = TRUE) == 0 & identical(vec, floor(vec)) & length(col) > 3) col <- c("grey", col)
+  if (min(vec, na.rm = TRUE) == 0 & identical(vec, floor(vec)) & length(col) > 3) col <- c("grey", col)
   
   vec = vec - zlim[1]
   vec = floor(vec * (length(col)-1)/(zlim[2]- zlim[1]))+1

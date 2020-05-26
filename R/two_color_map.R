@@ -10,18 +10,18 @@ normvec <- function(vec, res, lims = range(vec, na.rm = T)){
 
 assign_col <- function(vec1, vec2, res = 10, colour = "green_purple", vec1lims = range(vec1, na.rm = T), vec2lims = range(vec2, na.rm = T), samelims = FALSE)
 {
-  if(samelims)
+  if (samelims)
     vec1lims = vec2lims = range(c(vec1lims, vec2lims))
   ret <- vec1 * vec2
   vec1 <- vec1[!is.na(ret)]
   vec2 <- vec2[!is.na(ret)]
   vec1 <- normvec(vec1, res, vec1lims)
   vec2 <- normvec(vec2, res, vec2lims)
-  if(colour == "green_purple")
+  if (colour == "green_purple")
     tmp <- rgb((vec1 + vec2)/2, vec1, vec2) else
-    if(colour == "green_red_purple_cyan")
+    if (colour == "green_red_purple_cyan")
       tmp <- rgb((1-vec1 + vec2)/2, vec1, 1-vec2) else 
-        if(colour == "green_red_purple_cyan_2")
+        if (colour == "green_red_purple_cyan_2")
           tmp <- rgb((vec1 + vec2)/2, 1-vec1, 1-vec2) else 
             stop("not recognized colour scheme")
   ret[!is.na(ret)] <- tmp
@@ -38,14 +38,14 @@ assign_col <- function(vec1, vec2, res = 10, colour = "green_purple", vec1lims =
 
 #legend 
 plot_legend <- function(vec1, vec2, res = 10, show = T, colour = "green_purple", vec1lims = range(vec1, na.rm = T), vec2lims = range(vec2, na.rm = T), samelims = FALSE){
-  if(samelims)
+  if (samelims)
     vec1lims = vec2lims = range(c(vec1lims, vec2lims))
   v1 <- seq(vec1lims[1], vec1lims[2], length = res)
   v2 <- seq(vec2lims[1], vec2lims[2], length = res)
   pp = expand.grid((0:(res-1))/(res-1),(0:(res-1))/(res-1))
   pp$colorid <- 1:nrow(pp)
   pp$color <- assign_col(pp[,1], pp[,2], res, colour)
-  if(show) image(list(x = v1, y = v2, z = matrix(1:(res^2), nrow = res)), col = pp$color)
+  if (show) image(list(x = v1, y = v2, z = matrix(1:(res^2), nrow = res)), col = pp$color)
   pp <- data.frame(pp, data.frame(t(col2rgb(pp$color))),  v1 = v1, v2 = v2)
   box(lwd = 0.5)
   invisible(pp)
@@ -63,12 +63,12 @@ two_color_map <- function(distrib_data, vec1, vec2, res = 10, showlegend = T, le
   colour <- match.arg(colour)
   retcol <- assign_col(vec1, vec2, res, colour)
   
-  if(inherits(distrib_data, "distrib_data")){
+  if (inherits(distrib_data, "distrib_data")){
     sit = sites(distrib_data)
     nsit = Nsites(distrib_data)
   } else {
-    if(inherits(distrib_data, "SpatialPoints")) nsit = nrow(coordinates(distrib_data)) else nsit = nrow(distrib_data)
-    if(!is.null(names(vec1))) sit = names(vec1) else sit = 1:nsit
+    if (inherits(distrib_data, "SpatialPoints")) nsit = nrow(coordinates(distrib_data)) else nsit = nrow(distrib_data)
+    if (!is.null(names(vec1))) sit = names(vec1) else sit = 1:nsit
   }
 
   plot_sitestat(distrib_data, 1:nsit, col = retcol, legend = F, ...)
