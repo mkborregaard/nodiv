@@ -36,9 +36,9 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   phylodropped <- Ntip(phylo) - Ntip(nodiv_dat$phylo)
   commdropped <- ncol(dist_dat$comm) - ncol(nodiv_dat$comm)
   if(phylodropped > 0)
-    cat(paste("  - removed ", phylodropped, " species from phylo that are not found in commatrix\n"))
+    message(paste("  - removed ", phylodropped, " species from phylo that are not found in commatrix"))
   if(commdropped > 0)
-    cat(paste("  - removed ", commdropped, " species from commatrix not found in phylo\n"))
+    message(paste("  - removed ", commdropped, " species from commatrix not found in phylo"))
   
   md <- match(colnames(nodiv_dat$comm), nodiv_dat$species_stats$species)
   nodiv_dat$species_stats <- nodiv_dat$species_stats[md,,drop = FALSE]
@@ -48,7 +48,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
   nodiv_dat$hcom[,1] <- as.character(nodiv_dat$hcom[,1])
   nodiv_dat$hcom[,3] <- as.character(nodiv_dat$hcom[,3])
   
-  cat("Calculating which species descend from each node\n")
+  message("Calculating which species descend from each node")
   nodiv_dat$node_species <- Create_node_by_species_matrix(nodiv_dat$phylo)
     
   class(nodiv_dat) <- c("nodiv_data","distrib_data")
@@ -72,9 +72,9 @@ BenHoltMatrix <- function(commatrix){
 distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.character(NA)), type = c("auto", "grid", "points"), shape = NULL)
 {
   type = match.arg(type)
-  cat("Checking input data\n")
-  if(inherits(commatrix, "distrib_data")){ # copy constructor
-    if(is.null(commatrix$species_stats))
+  message("Checking input data")
+  if (inherits(commatrix, "distrib_data")){ # copy constructor
+    if (is.null(commatrix$species_stats))
       stop("The distrib_data object is from an earlier version of nodiv. Please run update_object on the object before proceeding")
     
     ret <- list()
@@ -88,7 +88,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   }
   if(is.null(coords)){
     if(isWorldmapData(commatrix)){
-      cat("Data format identified as Worldmap export file\n")
+      message("Data format identified as Worldmap export file")
       coords <- data.frame(site = paste(commatrix[, 4], commatrix[, 5], sep = '_'), Long = commatrix[, 4], Lat = commatrix[, 5])
       commatrix <- data.frame(site = coords$site, abu = rep(1, nrow(commatrix)), species = commatrix[, 1])
       coords <- coords[!duplicated(coords$site), ]
@@ -97,7 +97,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     } else {
       if((firstnumeric <- BenHoltMatrix(commatrix)) > 1){
         # this first bit should be moved up under isworldmapmatrix and be used to check for the Ben type of matrix perhaps
-        cat(paste("Commatrix assumed to be a concatenation of coordinates (", firstnumeric - 1," columns) and community matrix\n", sep = ""))
+        message(paste("Commatrix assumed to be a concatenation of coordinates (", firstnumeric - 1," columns) and community matrix", sep = ""))
         coords <- commatrix[, 1:(firstnumeric-1)]
         commatrix <- commatrix[, -(1:firstnumeric-1)]
       } else stop("If not commatrix is already of type distrib_data or nodiv_data, a worldmap matrix, or a concatenation of coords and community matrix, coords must be specified")       
@@ -116,7 +116,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
 
   if(is.data.frame(commatrix) & ncol(commatrix) == 3 & !is.numeric(commatrix[,3])) #i.e. is the commatrix in phylocom format?
   {
-    cat("Commatrix identified as phylocom format\n")
+    message("Commatrix identified as phylocom format")
     commatrix[,1] <- as.character(commatrix[,1])
     commatrix[,3] <- as.character(commatrix[,3])
     commatrix <- sample2matrix(commatrix)   
@@ -137,7 +137,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
     stop("commatrix had non-integer entries, please revise")
   
   if(is.matrix(coords)) coords <- as.data.frame(coords)
-  cat("Transforming coords to spatial points\n")
+  message("Transforming coords to spatial points")
   if(is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commatrix, type)
   
   if(class(coords)[1] == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords)[1] == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
@@ -201,11 +201,11 @@ match_commat_coords <- function(commatrix, sitenames)
   if(sum(rownames(commatrix) %in% sitenames) < length(sitenames)*0.8)
     if(nrow(commatrix) == length(sitenames)) {
       rownames(commatrix) <- sitenames
-      cat("Rownames of the matrix ignored because not a sufficient match to sitenames\n")
+      message("Rownames of the matrix ignored because not a sufficient match to sitenames")
     } else stop("The number of sites in coords and the data matrix do not fit and the sitenames did not match the matrix names sufficiently well for matching")  
   
   if(sum(sitenames %in% rownames(commatrix)) < length(rownames(commatrix)))
-    cat(paste(length(rownames(commatrix)) - sum(sitenames %in% rownames(commatrix)), " sites removed from the dataset because the rownames of the data matrix did not match the site names. Make sure the rownames are correct\n"))
+    message(paste(length(rownames(commatrix)) - sum(sitenames %in% rownames(commatrix)), " sites removed from the dataset because the rownames of the data matrix did not match the site names. Make sure the rownames are correct"))
   
   sitenames <- sitenames[sitenames %in% rownames(commatrix)]
 
@@ -238,7 +238,7 @@ toSpatialPoints <- function(coords, proj4string_in, commatrix, type)
     names(coords)[xcol] = "myX"
     names(coords)[ycol] = "myY"
     
-    cat("Identifying sites identifier\n")
+    message("Identifying sites identifier")
     
     # Are there three columns, and has the two of them been identified as X and Y?
     if (ncol(coords)==3 & !(xcol + ycol == 0) & isTRUE(all.equal(coords[,-c(xcol, ycol)], unique(coords[,-c(xcol, ycol)])))) 

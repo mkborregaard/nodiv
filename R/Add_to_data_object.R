@@ -27,7 +27,7 @@ add_sitestat <- function(distrib_data, site_stat, site = NULL){
   site <- suppressWarnings(identify_sites(as.character(site), distrib_data))
 
  # if (length(site) < Nsites(distrib_data))
-  #  cat(paste(Nsites(distrib_data)- length(site), "sites from site_stat were not found in", deparse(substitute(distrib_data)), "\n"))
+  #  message(paste(Nsites(distrib_data)- length(site), "sites from site_stat were not found in", deparse(substitute(distrib_data))))
 
   mergeframe <- as.data.frame(lapply(site_stat, function(column) {
     ret <- vector(mode = typeof(column), length = Nsites(distrib_data))
@@ -80,7 +80,7 @@ add_species_stat <- function(distrib_data, species_stat, specs = NULL){
   specs <- identify_species(specs, distrib_data)
 
   if (length(specs) < Nspecies(distrib_data))
-    cat(paste(num - length(specs), "species were not found in", deparse(substitute(distrib_data)), "\n"))
+    message(paste(num - length(specs), "species were not found in", deparse(substitute(distrib_data))))
 
   mergeframe <- as.data.frame(lapply(species_stat, function(column) {
     ret <- vector(mode = typeof(column), length = Nspecies(distrib_data))
@@ -179,11 +179,11 @@ infer_sites_intern <- function(sites, site_stat, name = "", site = NULL) # a non
 
   site_stat_ret <- site_stat[match(sites, as.character(site)),,drop = FALSE]
 
-  cat(paste("Matching sites by", name, "\n"))
+  message(paste("Matching sites by", name))
   hits = sum(site %in% sites)
   if (hits == length(site) & hits == length(site))
-    cat("All sites matched\n") else
-    cat(paste(hits, " sites were matched:\n\t", floor(hits/length(site) * 100), "% of ", length(site), " sites in site_stat\n\t", floor(hits/length(sites) * 100), "% of ", length(sites), " sites in distrib_data\n", sep = ""))
+    message("All sites matched") else
+    message(paste(hits, " sites were matched:\n\t", floor(hits/length(site) * 100), "% of ", length(site), " sites in site_stat\n\t", floor(hits/length(sites) * 100), "% of ", length(sites), " sites in distrib_data", sep = ""))
 
   if (name == "rownames"){
     site_stat_ret$sites <- as.character(site)[match(sites, as.character(site))]
@@ -269,7 +269,7 @@ infer_species <- function(distrib_data, species_stat) # a non-exported convenien
   species_stat <- species_stat[!is.na(matchspec),, drop = FALSE]
   spec <- spec[!is.na(matchspec)]
 
-  cat(paste("Matching species by", name, "\n"))
+  message(paste("Matching species by", name))
 
   return(list(species = spec, species_stat = species_stat))
 }
