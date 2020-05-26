@@ -79,8 +79,8 @@ plot_node <- function(nodiv_data, node = basal_node(nodiv_data), sites = NULL, .
 
 plot.nodiv_data <- function(x,  ...)
 {
-  oldpar <- par()
-  par(mfrow = c(1,2))
+  oldpar <- par(mfrow = c(1,2))
+  on.exit(par(oldpar))
   plot.distrib_data(x, ...)
   plot(x$phylo, show.tip.label = isTRUE(Nspecies(x) < 40), cex = 0.7) #need to specify explicitly which
   
@@ -154,7 +154,8 @@ plot_grid <- function(x, coords, col, shape = NULL, shapefill = "grey", shapebor
   mylegend <- FALSE
   if(colscale == "quantiles"){
     if(legend)
-      par( plt = c(0.04,0.84,0.01,1), err = -1)
+      oldpar <- par(plt = c(0.04,0.84,0.01,1), err = -1)
+      on.exit(par(oldpar))
     
     mylegend <- legend
     legend <-  FALSE
@@ -243,9 +244,9 @@ plot_points <- function(x, coords, col , shape = NULL, shapefill = "grey", zlim=
   #split.screen( rbind(c(0, .8,0,1), c(.8,1,0,1)))
   #screen(1)
   
-  oldpar <- par()
   #par(plt = c(0,0.8,0,1))
-  par(mar = c(5,4,4,6) + 0.1)
+  oldpar <- par(mar = c(5,4,4,6) + 0.1)
+  on.exit(par(oldpar))
   
   if(is.character(col))
     if(length(col) == 1)
@@ -330,8 +331,8 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   {
   #  split.screen( rbind(c(0, .9,0,1), c(.9,1,0,1)))
   #  screen(1)
-    oldpar <- par()
-    par(mar = c(5,4,4,6) + 0.1)
+    oldpar <- par(mar = c(5,4,4,6) + 0.1)
+    on.exit(par(oldpar))
   }
   
   plot(tree, show.tip.label = show.tip.label, ...)
@@ -341,7 +342,7 @@ plot_nodes_phylo <- function(variable, tree, label = variable, main = deparse(su
   
   if(show.legend)
   {
-    par <- oldpar #screen(2)
+    par(oldpar) #screen(2)
     add_legend(col = col, zlim = zlim)
   }
 }
@@ -352,7 +353,6 @@ add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim, lab
     realzlim <- range(lab)
   if(missing(realzlim))
     realzlim <- zlim
-  old.par <- par()
   if ((smallplot[2] < smallplot[1]) | (smallplot[4] < smallplot[3])) {
     stop("plot region too small to add legend\n")
   }
@@ -365,7 +365,8 @@ add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim, lab
   midpoints <- seq(minz + binwidth/2, maxz - binwidth/2, by = binwidth)
   iy <- midpoints
   iz <- matrix(iy, nrow = 1, ncol = length(iy))
-  par(new = TRUE, pty = "m", plt = smallplot, err = -1)
+  oldpar <- par(new = TRUE, pty = "m", plt = smallplot, err = -1)
+  on.exit(par(oldpar))
   
 
   image(ix, iy, iz, xaxt = "n", yaxt = "n", xlab = "", ylab = "", col = col)
@@ -385,7 +386,6 @@ add_legend <- function (zlim, smallplot=c(.85,.866, .38,.65), col, realzlim, lab
     }
 
   box()
-  par(new = FALSE, pty = old.par$pty, plt = old.par$plt, err = old.par$err)
   invisible()
 }
 

@@ -60,7 +60,6 @@ dist_to_highest <- function(vec1, vec2){
 }
 
 two_color_map <- function(distrib_data, vec1, vec2, res = 10, showlegend = T, legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), colour = c("green_purple", "green_red_purple_cyan"), ...){
-  oldpar <- par(c("plt","las","pty", "cex.axis"))
   colour <- match.arg(colour)
   retcol <- assign_col(vec1, vec2, res, colour)
   
@@ -74,7 +73,7 @@ two_color_map <- function(distrib_data, vec1, vec2, res = 10, showlegend = T, le
 
   plot_sitestat(distrib_data, 1:nsit, col = retcol, legend = F, ...)
 
-  par(new = TRUE, pty = "s", plt = legend_coords, cex.axis = 0.4, las = 2)
+  oldpar <- par(new = TRUE, pty = "s", plt = legend_coords, cex.axis = 0.4, las = 2)
   ret <- plot_legend(vec1, vec2, res, show = showlegend, colour = colour)
   par(oldpar)
   

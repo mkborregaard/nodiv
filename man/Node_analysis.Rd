@@ -89,9 +89,10 @@ Michael Krabbe Borregaard
 \examples{
 data(coquettes)
 res <- Node_analysis(coquettes, 50, "rdtable")
-par(mfrow = c(1,2))
+opar <- par(mfrow = c(1,2))
 plot(res)
 plotSOS(res, 28, shapefill = terrain.colors(64))
 summary(res)
+par(opar)
 }
 
