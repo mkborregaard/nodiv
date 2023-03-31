@@ -1,8 +1,8 @@
 Package: nodiv
 Type: Package
 Title: Compares the Distribution of Sister Clades Through a Phylogeny
-Version: 1.4.0
-Date: 2020-05-26
+Version: 1.4.1
+Date: 2023-03-31
 Author: Michael Krabbe Borregaard
 Maintainer: Michael Krabbe Borregaard <mkborregaard@sund.ku.dk>
 Description: An implementation of the nodiv algorithm, see Borregaard, M.K., Rahbek, C., Fjeldsaa, J., Parra, J.L., Whittaker, R.J. & Graham, C.H. 2014. Node-based analysis of species distributions. Methods in Ecology and Evolution 5(11): 1225-1235. <DOI:10.1111/2041-210X.12283>. Package for phylogenetic analysis of species distributions. The main function goes through each node in the phylogeny, compares the distributions of the two descendant nodes, and compares the result to a null model. This highlights nodes where major distributional divergence have occurred. The distributional divergence for these nodes is mapped.
