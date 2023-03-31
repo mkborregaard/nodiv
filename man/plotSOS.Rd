@@ -7,7 +7,7 @@
 Gives the SOS values for a given node.
 }
 \description{
-\code{SOS} gives the SOS value for the node, used in the interpretation of node-based analysis of species distributions after running \code{Node_analysis}.  \code{plotSOS} plots the values on a map. \code{GND} gives the GND values.
+\code{SOS} gives the SOS value for the node, used in the interpretation of node-based analysis of species distributions after running \code{Node_analysis}.  \code{plotSOS} plots the values on a map. \code{GND} gives the GND values.  
 }
 \usage{
 SOS(nodiv_result, node)
@@ -31,7 +31,7 @@ Further arguments to pass to the plotting function
 }
 }
 \details{
-The plot will be done as a spatial grid or as colored points, depending on the \code{type} of the \code{nodiv_result} object. If the \code{nodiv_result} object has a \code{shape} object of type \code{raster}, this will be plotted normally in the background - but resizing the window will cause the plots/pixels and the underlying raster object to lose alignment, due to a bug in the \code{raster} package.
+The first descendant clade (i.e. the first returned by a call to \code{Descendants}) is associated with positive SOS values, the second descendant clade is associated with negative values. The plot will be done as a spatial grid or as colored points, depending on the \code{type} of the \code{nodiv_result} object. If the \code{nodiv_result} object has a \code{shape} object of type \code{raster}, this will be plotted normally in the background - but resizing the window will cause the plots/pixels and the underlying raster object to lose alignment, due to a bug in the \code{raster} package.
 }
 \value{
 \code{SOS} returns a numerical vector with the SOS values. If \code{nodiv_result} has \code{type raster}, a raster object of the SOS values is returned by \code{plotSOS}. 
