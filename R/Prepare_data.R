@@ -5,7 +5,7 @@ nodiv_data <- function(phylo, commatrix, coords, proj4string_in = CRS(as.charact
 {
   type = match.arg(type)
   
-  if (!(class(phylo) == "phylo")) stop ("phylo must be a phylogeny in the ape format") 
+  if (!(inherits(phylo,  "phylo"))) stop ("phylo must be a phylogeny in the ape format") 
   
   if (!inherits(commatrix, "distrib_data"))
   {
@@ -107,7 +107,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   
 
   ## Testing that input objects are all right
-  if (class(coords)[1] == "SpatialPointsDataFrame" | class(coords)[1] == "SpatialPixelsDataFrame")
+  if (inherits(coords, "SpatialPointsDataFrame") | inherits(coords, "SpatialPixelsDataFrame"))
     if (!all.equal(proj4string_in,coords@proj4string))
     { 
       proj4string_in <- proj4string(coords)
@@ -140,7 +140,7 @@ distrib_data <- function(commatrix, coords = NULL, proj4string_in = CRS(as.chara
   message("Transforming coords to spatial points")
   if (is.data.frame(coords)) coords <- toSpatialPoints(coords,proj4string_in, commatrix, type)
   
-  if (class(coords)[1] == "SpatialPixelsDataFrame") type <- "grid" else if (class(coords)[1] == "SpatialPointsDataFrame") type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
+  if (inherits(coords, "SpatialPixelsDataFrame")) type <- "grid" else if (inherits(coords, "SpatialPointsDataFrame")) type <- "points" else stop("coords must be a data.frame of coordinates or an sp data.frame object")
   
 
   ## making sure that the points and the commatrix fit
