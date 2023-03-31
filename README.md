@@ -1,6 +1,6 @@
 The `nodiv` R package
 
-[![Build Status](https://travis-ci.org/mkborregaard/nodiv.svg?branch=master)](https://travis-ci.org/mkborregaard/nodiv) [![Downloads](http://cranlogs.r-pkg.org/badges/nodiv?color=brightgreen)](https://cran.r-project.org/package=nodiv) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/nodiv)](https://cran.r-project.org/package=nodiv) [![codecov.io](https://codecov.io/github/mkborregaard/nodiv/coverage.svg?branch=master)](https://codecov.io/github/mkborregaard/nodiv?branch=master)
+ [![Downloads](http://cranlogs.r-pkg.org/badges/nodiv?color=brightgreen)](https://cran.r-project.org/package=nodiv) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/nodiv)](https://cran.r-project.org/package=nodiv) [![codecov](https://codecov.io/github/mkborregaard/nodiv/branch/master/graph/badge.svg?token=7mDtrqzWJG)](https://codecov.io/github/mkborregaard/nodiv)
 
 ## nodiv - Node-based analysis of species distributions
 
