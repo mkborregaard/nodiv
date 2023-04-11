@@ -1,6 +1,6 @@
 citHeader("To cite nodiv in a publication:")
 
-bibentry(entry="Article",
+bibentry(bibtype="Article",
 	title = "Node-based analysis of species distributions",
         author = c(as.person("M.K. Borregaard"), as.person("C. Rahbek"), as.person("J. Fjeldsaa"), as.person("J.L. Parra"), as.person("R.J. Whittaker"), as.person("C.H. Graham")),
 	journal = "Methods in Ecology and Evolution",
