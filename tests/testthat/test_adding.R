@@ -1,7 +1,7 @@
 test_that("add shape to object", {
   sh <- coquettes$shape
   coquettes$shape <- NULL
-  expect(is.null(coquettes$shape))
+  expect_true(is.null(coquettes$shape))
   coquettes <- add_shape(coquettes, sh)
   expect_s4_class(coquettes$shape, "RasterLayer")
 })
