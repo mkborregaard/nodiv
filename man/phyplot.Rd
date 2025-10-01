@@ -101,7 +101,7 @@
     accepted).}
   \item{open.angle}{if \code{type = "f"} or \code{"r"}, the angle in
     degrees left blank. Use a non-zero value if you want to call
-    \code{\link{axisPhylo}} after the tree is plotted.}
+    \code{\link[ape]{axisPhylo}} after the tree is plotted.}
   \item{node.depth}{an integer value (1 or 2) used if branch lengths are
     not used to plot the tree; 1: the node depths are proportional to
     the number of tips descending from each node (the default and was the

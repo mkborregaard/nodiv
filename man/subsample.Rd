@@ -49,8 +49,10 @@ Michael Krabbe Borregaard
 \code{\link{distrib_data}}, ~~~
 }
 \examples{
+## Not run:
 data(coquettes)
 new <- subsample(coquettes, sites = which(richness(coquettes) > 3))
 plot(new, show.tip = FALSE)
+## End(Not run)
 }
 

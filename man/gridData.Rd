@@ -43,8 +43,10 @@ Michael Krabbe Borregaard
 \code{\link{distrib_data}}, ~~~
 }
 \examples{
+## Not run: 
 data(coquettes)
 new <- gridData(coquettes, 2)
 plot_richness(new)
+## End(Not run)
 }
 
