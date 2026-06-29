@@ -1,8 +1,8 @@
 Package: nodiv
 Type: Package
 Title: Compares the Distribution of Sister Clades Through a Phylogeny
-Version: 1.4.3
-Date: 2025-09-12
+Version: 1.4.4
+Date: 2026-06-23
 Author: Michael Krabbe Borregaard [aut, cre]
 Authors@R: person(given = c("Michael", "Krabbe"), family = "Borregaard", role = c("aut", "cre"), email = "mkborregaard@sund.ku.dk")
 Maintainer: Michael Krabbe Borregaard <mkborregaard@sund.ku.dk>
