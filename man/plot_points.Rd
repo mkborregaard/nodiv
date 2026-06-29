@@ -89,7 +89,11 @@ Additional arguments to pass to plot
 Note that if \code{shape} is a \code{raster} object, the points may shift relative to the background when resizing the image. This seems to be due to a bug in the \code{raster} package. 
 }
 
+\value{
+No return value, called for side effects (produces a spatial plot of the variable \code{x} using a color scale).
+}
+
 \author{
-Michael Krabbe Borregaard 
+Michael Krabbe Borregaard
 }
 

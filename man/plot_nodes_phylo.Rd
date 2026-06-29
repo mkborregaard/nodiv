@@ -55,6 +55,10 @@ Further arguments to pass to plot.phylo
 }
 }
 
+\value{
+No return value, called for side effects (produces a plot of the phylogeny with colored node labels representing the supplied variable).
+}
+
 \author{
 Michael Krabbe Borregaard
 }

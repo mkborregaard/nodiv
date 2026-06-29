@@ -9,7 +9,7 @@ Compares the overlap of species richness of a pair of sister clades to the expec
 }
 \usage{
 Nodesig(nodiv_data, Node_sp = NULL, repeats = 100, method = c("rdtable", "quasiswap"),
-  show = T)
+  show = TRUE)
 }
 
 \arguments{

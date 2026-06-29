@@ -8,7 +8,7 @@ Plot the relative amounts of two variables using a purple-green color scheme
 Plots site statistics from objects in the \code{nodiv} package
 }
 \usage{
-two_color_map(distrib_data, vec1, vec2, res = 10, showlegend = T, 
+two_color_map(distrib_data, vec1, vec2, res = 10, showlegend = TRUE,
   legend_coords = c(0.2, 0.26, 0.36, 0.44), type = c("auto", "grid", "points"), 
   colour = c("green_purple", "green_red_purple_cyan"), ...)
 
